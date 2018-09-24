@@ -547,6 +547,7 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
     partner_name = serializers.CharField(source="partner.legal_name")
     partner_is_verified = serializers.NullBooleanField(source="partner.is_verified")
     application_status_display = serializers.CharField(read_only=True)
+    partner_profile_is_complete = serializers.BooleanField(read_only=True, source='partner.profile_is_complete')
 
     class Meta:
         model = Application
@@ -555,6 +556,7 @@ class SelectedPartnersSerializer(serializers.ModelSerializer):
             'partner_id',
             'partner_name',
             'partner_is_verified',
+            'partner_profile_is_complete',
             'application_status',
             'application_status_display',
         )
