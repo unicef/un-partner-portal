@@ -7,7 +7,7 @@ import VerificationQuestion from './verificationQuestion';
 import ObservationsTable from './observationsTable';
 
 const messages = {
-  certUpload: 'Has the CSO/partner uploaded its valid, non-expired registration certificate issued by the correct government body?',
+  certUpload: 'Has the CSO/partner uploaded its valid, non-expired registration certificate issued by the correct government body, or otherwise indicated eligibility to operate in the country?',
   mmConsistent: 'Are the mandate and mission of the CSO/partner consistent with that of the UN?',
   indicateResults: 'Does the CSO/partner have mechanisms to combat fraud and corruption, prevent sexual exploitation and abuse, and protect and safeguard beneficiaries?',
   observationsPose: 'Do these observations pose unacceptable risk to the UN?',

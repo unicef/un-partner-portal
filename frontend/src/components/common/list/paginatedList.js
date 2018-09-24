@@ -1,3 +1,4 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { Grid, Table, TableHeaderRow, TableRowDetail, PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import { withStyles } from 'material-ui/styles';
@@ -33,7 +34,7 @@ const styleSheet = (theme) => {
 
 const getSelectTableRowTemplateArgs = (
   { selectByRowClick, highlightSelected, hovered, ...restParams }, // current selection
-// action that changes row selection
+  // action that changes row selection
 ) => {
   const { rowId, row } = restParams.tableRow;
   return ({
@@ -119,7 +120,8 @@ class PaginatedList extends Component {
       allowSorting,
       changeSorting,
       changePageSize,
-      changePageNumber } = this.props;
+      changePageNumber,
+      customColumns } = this.props;
 
     const { hoveredRow } = this.state;
 
@@ -134,7 +136,7 @@ class PaginatedList extends Component {
             {allowSorting && <SortingState
               sorting={sorting}
               onSortingChange={changeSorting}
-            /> }
+            />}
 
             <PagingState
               currentPage={pageNumber - 1}
@@ -145,7 +147,7 @@ class PaginatedList extends Component {
             />
 
             {expandable &&
-            <RowDetailState onExpandedRowIdsChange={this.changeExpandedDetails} />}
+              <RowDetailState onExpandedRowIdsChange={this.changeExpandedDetails} />}
 
             <Table
               table
@@ -163,7 +165,7 @@ class PaginatedList extends Component {
                 <TemplateConnector>
                   {(getters, actions) => (
                     <TemplateRenderer
-                    // custom template
+                      // custom template
                       template={this.tableRowTemplate}
                       // custom template params
                       params={
@@ -179,10 +181,16 @@ class PaginatedList extends Component {
                 </TemplateConnector>
               )}
             </Template>
-            <TableHeaderRow allowSorting={allowSorting} />
+            <TableHeaderRow cellComponent={({ ...props }) => {
+              if (customColumns && R.contains(props.column.name, customColumns)) {
+                return <TableCell>{props.column.title}</TableCell>
+              } 
+
+              return <TableHeaderRow.Cell {...props} />
+            }} allowSorting={allowSorting} />
 
             {expandable &&
-            <TableRowDetail contentComponent={({ row }) => expandedCell(row)} />}
+              <TableRowDetail contentComponent={({ row }) => expandedCell(row)} />}
 
             <PagingPanel
               allowedPageSizes={table.allowedPageSizes}
@@ -212,6 +220,7 @@ PaginatedList.propTypes = {
   changePageNumber: PropTypes.func,
   onTableRowClick: PropTypes.func,
   clickableRow: PropTypes.bool,
+  customColumns: PropTypes.array,
   headerAction: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
 };
 
