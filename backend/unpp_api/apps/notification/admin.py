@@ -3,8 +3,13 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import Notification, NotifiedUser
+from notification.models import Notification, NotifiedUser
 
 
-admin.site.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'source')
+    list_filter = ('source', )
+
+
+admin.site.register(Notification, NotificationAdmin)
 admin.site.register(NotifiedUser)
