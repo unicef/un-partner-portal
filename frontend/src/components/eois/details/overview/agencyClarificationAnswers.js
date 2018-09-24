@@ -29,6 +29,7 @@ const messages = {
   isCfeiDeadlinePassed: 'Upload will be enabled when clarification request deadline date has passed.',
   publishedUntil: 'UN Response will be available after Clarification Request Deadline date.',
   maxFile: 'You can upload up to three files.',
+  noResponse: 'No response from UN',
 };
 
 const styleSheet = theme => ({
@@ -94,49 +95,50 @@ class AgencyClarificationAnswers extends Component {
       isFocalPoint } = this.props;
 
     return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
-    || (hasActionPermission && isBasEd && isCreator)
-    || (hasActionPermission && isMFT && isFocalPoint)
-    || (hasActionPermission && isPAM && isCreator));
+      || (hasActionPermission && isBasEd && isCreator)
+      || (hasActionPermission && isMFT && isFocalPoint)
+      || (hasActionPermission && isPAM && isCreator));
   }
 
   fileItems() {
     const { classes, answers, dialogOpen, handleDialogClose, handleDialogOpen,
       id, hasPermissionToAdd, role } = this.props;
 
-    return (answers.map(item => (
-      <React.Fragment key={item.id}>
-        {dialogOpen[remove] && <DeleteClarificationAnswerModal
-          cfeiId={id}
-          id={item.id}
-          dialogOpen={dialogOpen[remove]}
-          handleDialogClose={handleDialogClose}
-        />}
-        <div key={item.id}>
-          <Typography type="subheading" className={classes.iconLabel} gutterBottom >
-            <Attachment className={classes.icon} />
-            <div
-              role="button"
-              tabIndex={0}
-              className={classes.link}
-              onClick={() => { window.open(item.file); }}
-            >
-              {item.title}
-            </div>
-            {this.hasPermission(hasPermissionToAdd) && role === ROLES.AGENCY
-              && <IconButton onClick={() => handleDialogOpen(remove)}>
-                <Close className={classes.removeIcon} />
-              </IconButton>}
-          </Typography>
-        </div>
-      </React.Fragment>),
-    ));
+    return (answers.length > 0
+      ? answers.map(item => (
+        <React.Fragment key={item.id}>
+          {dialogOpen[remove] && <DeleteClarificationAnswerModal
+            cfeiId={id}
+            id={item.id}
+            dialogOpen={dialogOpen[remove]}
+            handleDialogClose={handleDialogClose}
+          />}
+          <div key={item.id}>
+            <Typography type="subheading" className={classes.iconLabel} gutterBottom >
+              <Attachment className={classes.icon} />
+              <div
+                role="button"
+                tabIndex={0}
+                className={classes.link}
+                onClick={() => { window.open(item.file); }}
+              >
+                {item.title}
+              </div>
+              {this.hasPermission(hasPermissionToAdd) && role === ROLES.AGENCY
+                && <IconButton onClick={() => handleDialogOpen(remove)}>
+                  <Close className={classes.removeIcon} />
+                </IconButton>}
+            </Typography>
+          </div>
+        </React.Fragment>)) 
+      : <Typography type="body1">{messages.noResponse}</Typography>);
   }
 
   uploadFile() {
     const { classes, handleDialogOpen, isClarificationDeadlinePassed,
       count, hasPermissionToAdd } = this.props;
     const tooltipText = (!isClarificationDeadlinePassed && messages.isCfeiDeadlinePassed)
-                          || (count === 3 && messages.maxFile);
+      || (count === 3 && messages.maxFile);
 
     return (
       (!isClarificationDeadlinePassed || count === 3) ?
@@ -224,7 +226,7 @@ const mapStateToProps = (state, ownProps) => ({
   loadingAnswers: state.clarificationAnswers.status.loading,
   isClarificationDeadlinePassed: isCfeiClarificationDeadlinePassed(state, ownProps.id),
   hasPermissionToAdd:
-  checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
+    checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
   count: selectClarificationAnswersCount(state, ownProps.id),
   answers: selectClarificationAnswers(state, ownProps.id),
   id: ownProps.id,
