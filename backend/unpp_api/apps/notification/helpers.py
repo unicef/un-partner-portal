@@ -34,25 +34,27 @@ def send_notification(notification_type, obj, users, context=None, send_in_feed=
 
     body = render_notification_template_to_str(notification_payload.get('template_name'), context)
 
-    notification = Notification.objects.create(
-        name=notification_payload.get('subject'),
-        description=body,
+    notification, _ = Notification.objects.get_or_create(
+        content_type=ContentType.objects.get_for_model(obj),
+        object_id=obj.id,
         source=notification_type,
-        content_object=obj,
+        defaults={
+            'name': notification_payload.get('subject'),
+            'description': body,
+        }
     )
 
-    notified_users = []
     for user in users:
         user_has_emails_enabled = bool(user.profile.notification_frequency)
         if send_in_feed or user_has_emails_enabled:
-            notified_users.append(NotifiedUser(
+            NotifiedUser.objects.get_or_create(
                 notification=notification,
-                did_read=not send_in_feed,
-                sent_as_email=not user_has_emails_enabled,
-                recipient_id=user.id
-            ))
-
-    NotifiedUser.objects.bulk_create(notified_users)
+                recipient_id=user.id,
+                defaults={
+                    'did_read': not send_in_feed,
+                    'sent_as_email': not user_has_emails_enabled
+                }
+            )
 
     return notification
 

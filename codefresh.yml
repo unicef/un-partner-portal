@@ -132,7 +132,7 @@ steps:
           - POSTGRES_USER=${{POSTGRES_USER}}
           - POSTGRES_DB=${{POSTGRES_DB}}
           - POSTGRES_HOST=${{POSTGRES_HOST}}
-          - KUBERNETES_DEPLOYMENT_TIMEOUT=300
+          - KUBERNETES_DEPLOYMENT_TIMEOUT=500
         when:
           branch:
             only:
@@ -150,7 +150,7 @@ steps:
           - KUBECONTEXT=${{KUBECONTEXT}}
           - KUBERNETES_NAMESPACE=${{NAMESPACE}}
           - ENV=${{ENV}}
-          - KUBERNETES_DEPLOYMENT_TIMEOUT=300
+          - KUBERNETES_DEPLOYMENT_TIMEOUT=500
         when:
           branch:
             only:
@@ -168,6 +168,7 @@ steps:
           - KUBECONTEXT=${{KUBECONTEXT}}
           - KUBERNETES_NAMESPACE=${{NAMESPACE}}
           - ENV=${{ENV}}
+          - KUBERNETES_DEPLOYMENT_TIMEOUT=500
         when:
           branch:
             only:
