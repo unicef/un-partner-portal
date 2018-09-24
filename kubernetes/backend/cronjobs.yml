@@ -45,7 +45,7 @@ spec:
                 - name: EMAIL_HOST_USER
                   value: "{{EMAIL_HOST_USER}}"
           restartPolicy: OnFailure
-      backoffLimit: 4
+          backoffLimit: 4
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -93,7 +93,7 @@ spec:
                 - name: EMAIL_HOST_USER
                   value: "{{EMAIL_HOST_USER}}"
           restartPolicy: OnFailure
-      backoffLimit: 4
+          backoffLimit: 4
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -141,7 +141,7 @@ spec:
                 - name: EMAIL_HOST_USER
                   value: "{{EMAIL_HOST_USER}}"
           restartPolicy: OnFailure
-      backoffLimit: 4
+          backoffLimit: 4
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -189,7 +189,7 @@ spec:
                 - name: DJANGO_ALLOWED_HOST
                   value: {{DJANGO_ALLOWED_HOST}}
           restartPolicy: OnFailure
-      backoffLimit: 4
+          backoffLimit: 4
 
 ---
 apiVersion: batch/v1beta1
@@ -244,4 +244,4 @@ spec:
                 - name: UNICEF_API_PASSWORD
                   value: "{{UNICEF_API_PASSWORD}}"
           restartPolicy: OnFailure
-      backoffLimit: 4
+          backoffLimit: 4
