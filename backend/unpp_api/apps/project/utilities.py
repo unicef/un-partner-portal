@@ -18,6 +18,11 @@ def _users_valid_for_agency(cfei, user_ids):
 
 
 def update_cfei_focal_points(cfei, user_ids):
+    try:
+        user_ids = list(map(int, user_ids))
+    except (TypeError, ValueError):
+        return
+
     if user_ids is None:
         return
     elif not user_ids:
@@ -41,6 +46,11 @@ def update_cfei_focal_points(cfei, user_ids):
 
 
 def update_cfei_reviewers(cfei, user_ids):
+    try:
+        user_ids = list(map(int, user_ids))
+    except (TypeError, ValueError):
+        return
+
     if user_ids is None:
         return
     elif not user_ids:
