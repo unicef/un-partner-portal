@@ -7,7 +7,7 @@ metadata:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
 spec:
-  schedule: "* 12 * * *"
+  schedule: "0 12 * * *"
   jobTemplate:
     spec:
       template:
@@ -55,7 +55,7 @@ metadata:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
 spec:
-  schedule: "* 12 * * *"
+  schedule: "0 12 * * *"
   jobTemplate:
     spec:
       template:
@@ -103,7 +103,7 @@ metadata:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
 spec:
-  schedule: "* 12 * * 1"
+  schedule: "0 12 * * 1"
   jobTemplate:
     spec:
       template:
@@ -151,7 +151,7 @@ metadata:
     revision: "{{CF_SHORT_REVISION}}"
   namespace: {{NAMESPACE}}
 spec:
-  schedule: "* 12 * * 1"
+  schedule: "0 12 * * 1"
   jobTemplate:
     spec:
       template:
