@@ -94,6 +94,7 @@ const DatePoint = (props) => {
     flexSize,
     align,
     bold,
+    open,
     fullWidth,
     color } = props;
   const mainClass = className(
@@ -142,7 +143,7 @@ const DatePoint = (props) => {
             <div className={labelClass}>{formatDateForPrint(date) || ''}</div>
           </div>}
           placement={position}
-          open
+          open={open}
         >
           <SvgIcon className={classes.firstIcon} viewBox={viewBox}>
             <circle cx="5" cy="5" r="5" />
@@ -184,6 +185,10 @@ DatePoint.propTypes = {
    * whether date element should take all remaining space
    */
   fullWidth: PropTypes.bool,
+  /**
+   * whether tooltip is open
+   */
+  open: PropTypes.bool,
 };
 
 
