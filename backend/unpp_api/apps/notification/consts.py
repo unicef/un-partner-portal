@@ -91,7 +91,7 @@ NOTIFICATION_DATA = {
         'subject': 'UN New Partnership Opportunity'
     },
     NotificationType.CFEI_DEADLINE_UPDATE: {
-        'template_name': 'Update_CFEI_prev_invited_submited_app',
+        'template_name': 'Update_CFEI_prev_invited_submitted_app',
         'subject': 'CFEI Deadline Updated'
     },
     NotificationType.SELECTED_AS_CFEI_REVIEWER: {
