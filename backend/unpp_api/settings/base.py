@@ -227,8 +227,6 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
-LOGS_PATH = os.getenv('UNPP_LOGS_PATH', os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs'))
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -251,12 +249,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
         },
-        'filesystem': {
-            'level': 'DEBUG',
-            'class': 'common.utils.DeferredRotatingFileHandler',
-            'filename': 'django.log',
-            'formatter': 'verbose',
-        },
         'elasticapm': {
             'level': 'ERROR',
             'class': 'elasticapm.contrib.django.handlers.LoggingHandler',
@@ -269,7 +261,7 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['default', 'filesystem'],
+            'handlers': ['default'],
             'level': 'INFO',
             'propagate': True
         },
