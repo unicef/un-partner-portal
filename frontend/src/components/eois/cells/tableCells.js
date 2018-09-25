@@ -10,6 +10,8 @@ import CountriesCell from '../../partners/countriesCell';
 import EoiDSPartnersCell from './eoiDSPartnersCell';
 import { formatDateForPrint } from '../../../helpers/dates';
 import EoiFocalPointCell from './eoiFocalPointCell';
+import EoiAgencyFocalCell from './eoiAgencyFocalCell';
+import CountriesCellCfeiID from '../../partners/countriesCellCfeiID';
 
 export default type => ({ row, column, value }) => {
   if (column.name === 'focal_points') {
@@ -22,6 +24,10 @@ export default type => ({ row, column, value }) => {
     return (
       <CountriesCell countries={row.country_code} />
     );
+  } else if (column.name === 'country_code_cfei') {
+    return (
+      <CountriesCellCfeiID countries={row.country_code} cfeiID={row.displayID} />
+    );
   } else if (column.name === 'specializations') {
     return (
       <TableCell padding="dense" >
@@ -32,6 +38,10 @@ export default type => ({ row, column, value }) => {
       <TableCell padding="dense">
         {row.agency.name}
       </TableCell>);
+  } else if (column.name === 'agency_focal') {
+    return <TableCell padding="dense" >
+      <EoiAgencyFocalCell agency={row.agency.name} focalPoints={row.focal_points} />
+    </TableCell>;
   } else if (column.name === 'status' && type === 'open') {
     return (
       <TableCell >
