@@ -108,6 +108,30 @@ function authorizedPostUpload({ uri, body = {}, params }) {
     .then(response => response.data);
 }
 
+export function authorizedFileDownload({ uri }) {
+  const opt = {
+    headers: buildHeaders(true),
+    responseType: 'blob'
+  };
+  return axios.get(`${host}${uri}`, { ...opt }).then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+
+    const filename_match = response.headers['content-disposition'].match(/filename="(.+)"/);
+    if (filename_match) {
+      link.setAttribute('download', filename_match[1]);
+    }
+    else {
+      link.setAttribute('download', "export.pdf");
+    }
+
+    document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+  });
+}
 
 // Accounts
 export function postRegistration(body) {

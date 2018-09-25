@@ -4,6 +4,7 @@ import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { PROJECT_STATUSES } from '../../../../helpers/constants';
+import { authorizedFileDownload } from '../../../../helpers/api/api';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
@@ -105,7 +106,7 @@ class PartnerOpenHeaderOptions extends Component {
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+        content: <DownloadButton handleClick={() => { authorizedFileDownload({uri: `/projects/${id}/?export=pdf`}); }} />,
       },
     ];
 

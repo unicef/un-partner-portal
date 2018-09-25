@@ -28,6 +28,7 @@ import {
   isUserACreator,
   selectCfeiDetails,
 } from '../../../../store';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const edit = 'edit';
 const del = 'del';
@@ -59,7 +60,7 @@ class AgencyDirectHeaderOptions extends Component {
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+        content: <DownloadButton handleClick={() => { authorizedFileDownload({uri: `/projects/${id}/?export=pdf`}); }} />,
       },
     ];
 
@@ -117,7 +118,7 @@ class AgencyDirectHeaderOptions extends Component {
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+        content: <DownloadButton handleClick={() => { authorizedFileDownload({uri: `/projects/${id}/?export=pdf`}); }} />,
       },
     ];
 

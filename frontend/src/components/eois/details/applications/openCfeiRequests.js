@@ -13,6 +13,7 @@ import {
 import { loadClarificationRequests } from '../../../../reducers/clarificationRequests';
 import IconWithTextButton from '../../../common/iconWithTextButtonWrapped';
 import { formatDateForPrint } from '../../../../helpers/dates';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const columns = [
   { name: 'partner', title: 'Organization name' },
@@ -77,7 +78,7 @@ class OpenCfeiRequests extends Component {
               color={'accent'}
               icon={<Save />}
               text={messages.download}
-              onClick={() => { window.open(`/api/projects/${id}/questions?export=pdf`, '_self'); }}
+              onClick={() => { authorizedFileDownload({uri: `/projects/${id}/questions?export=pdf`}); }}
             />}
         />
       </div>

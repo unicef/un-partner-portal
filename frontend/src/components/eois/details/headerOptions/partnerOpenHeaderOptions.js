@@ -8,6 +8,7 @@ import PinnedCell from '../../cells/pinnedCell';
 import DownloadButton from '../../buttons/downloadCfeiButton';
 import PinButton from '../../buttons/pinItemButton';
 import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const download = 'download';
 
@@ -25,7 +26,7 @@ const PartnerOpenHeaderOptions = (props) => {
             [
               {
                 name: download,
-                content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+                content: <DownloadButton handleClick={() => { authorizedFileDownload({uri: `/projects/${id}/?export=pdf`}); }} />,
               },
               {
                 name: 'pinItem',
