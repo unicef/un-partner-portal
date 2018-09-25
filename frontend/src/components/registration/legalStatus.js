@@ -31,7 +31,7 @@ const messages = {
   'and articles of association, or another formal, legal document.',
   haveGovDoc: 'Does the Organization have a Governing Document?',
   governingDoc: 'Please upload Governing Document',
-  haveRefLetter: 'Does the organization have a letter o reference from a donor agency, government authority or community association?',
+  haveRefLetter: 'Does the organization have a letter of reference from a donor agency, government authority or community association?',
   referenceLetter: 'Please upload letter of reference',
   nameOfRefferer: 'Name of referring organization',
   received: 'Date Received',
