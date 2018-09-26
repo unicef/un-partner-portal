@@ -48,6 +48,7 @@ const HeaderOptionsContainer = (props) => {
     id,
     partnerId,
     completedReasonDisplay,
+    hasDsrConvertPermission,
   } = props;
   let options;
   let status = <EoiStatusHeader status={cfeiStatus} />;
