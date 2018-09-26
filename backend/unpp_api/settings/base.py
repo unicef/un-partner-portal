@@ -33,15 +33,15 @@ ALLOWED_EXTENSIONS = (
     'pdf', 'doc', 'docx', 'xls', 'xlsx' 'img', 'png', 'jpg', 'jpeg'
 )
 UPLOADS_DIR_NAME = 'uploads'
-MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
-MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME))
+MEDIA_URL = f'/api/{UPLOADS_DIR_NAME}/'
+MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, UPLOADS_DIR_NAME))
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 
 
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
-STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
+STATIC_ROOT = f'{DATA_VOLUME}/staticserve'
 
 # static serving
 STATICFILES_FINDERS = (
