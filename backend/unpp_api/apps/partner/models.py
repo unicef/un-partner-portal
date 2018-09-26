@@ -12,7 +12,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MinLengthValidator
 from django.db.models import Q, Count
 from django.db.models.signals import post_save
 from model_utils.models import TimeStampedModel
@@ -51,7 +51,9 @@ logger = logging.getLogger(__name__)
 
 
 class Partner(MigratedTimeStampedModel):
-    legal_name = models.CharField(max_length=255)
+    legal_name = models.TextField(max_length=255, validators=[
+        MinLengthValidator(1),
+    ])
     display_type = models.CharField(max_length=3, choices=PARTNER_TYPES, verbose_name='Organization Type')
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)

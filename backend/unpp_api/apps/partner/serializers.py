@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from agency.serializers import AgencySerializer
@@ -1161,7 +1162,7 @@ class PartnerProfileOtherInfoSerializer(
 class PartnerCountryProfileSerializer(serializers.ModelSerializer):
 
     countries_profile = serializers.SerializerMethodField(read_only=True)
-    chosen_country_to_create = serializers.SerializerMethodField()
+    chosen_country_to_create = serializers.ListField(write_only=True)
 
     class Meta:
         model = Partner
@@ -1198,29 +1199,27 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
         return data
 
     def get_countries_profile(self, obj):
-        choose = []
+        choices = []
         for country_code in obj.country_presence:
             item = {
                 "country_code": country_code,
                 "country_name": COUNTRIES_ALPHA2_CODE_DICT.get(country_code),
-                "exist": False,
+                "exist": obj.children.filter(country_code=country_code).exists(),
             }
-            if obj.country_profiles.filter(country_code=country_code).exists():
-                item["exist"] = True
-            choose.append(item)
+            choices.append(item)
 
-        return choose
-
-    def get_chosen_country_to_create(self, obj):
-        # we need this data only to upload - post
-        return []
+        return choices
 
     @transaction.atomic
     def create(self, validated_data):
-        hq_id = self.context['request'].parser_context.get('kwargs', {}).get('pk')
+        hq: Partner = get_object_or_404(
+            Partner,
+            id=self.context['request'].parser_context.get('kwargs', {}).get('pk')
+        )
         for country_code in validated_data['chosen_country_to_create']:
             partner = Partner.objects.create(
-                hq_id=hq_id,
+                hq=hq,
+                legal_name=hq.legal_name,
                 country_code=country_code,
                 display_type=PARTNER_TYPES.international,
             )
@@ -1238,4 +1237,4 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
 
             PartnerPolicyArea.objects.bulk_create(policy_areas)
 
-        return Partner.objects.get(pk=hq_id)  # we want to refresh changes after creating related models
+        return hq

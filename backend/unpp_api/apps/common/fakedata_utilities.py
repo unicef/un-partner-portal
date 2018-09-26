@@ -193,11 +193,15 @@ def generate_fake_data(country_count=3):
             for partner_type, display_type in PARTNER_TYPES:
                 if partner_type == PARTNER_TYPES.international:
                     name_parts = ingo_hqs[index].legal_name.split(' ') + [country_code]
+                    hq = ingo_hqs[index]
                     partner_kwargs = {
                         'legal_name': f'{"-".join(name_parts)}.{partner_type}'.lower(),
-                        'hq': ingo_hqs[index]
+                        'hq': hq
                     }
                     ingo_partners_created += 1
+                    if country_code not in hq.country_presence:
+                        hq.country_presence.append(country_code)
+                        hq.save()
                 else:
                     def get_legal_name():
                         name_parts = get_partner_name().split(" ")
