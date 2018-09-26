@@ -133,6 +133,7 @@ class PartnerSerializer(serializers.ModelSerializer):
     org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
+    country_display = serializers.CharField(source='get_country_code_display', read_only=True)
 
     class Meta:
         model = Partner
@@ -143,6 +144,7 @@ class PartnerSerializer(serializers.ModelSerializer):
             'logo',
             'legal_name',
             'country_code',
+            'country_display',
             'display_type',
             'partner_additional',
             'org_logo_thumbnail',
@@ -531,6 +533,8 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
 
 class PartnerProfileSummarySerializer(serializers.ModelSerializer):
 
+    display_type_display = serializers.CharField(source='get_display_type_display', read_only=True)
+    country_display = serializers.CharField(source='get_country_code_display', read_only=True)
     location_of_office = PointSerializer()
     location_field_offices = PointSerializer(many=True)
     country_presence_display = serializers.SerializerMethodField()
@@ -546,6 +550,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
     vendor_numbers = PartnerVendorNumberSerializer(many=True, read_only=True)
+    hq = PartnerSerializer(read_only=True, allow_null=True)
 
     class Meta:
         model = Partner
@@ -553,8 +558,10 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'id',
             'legal_name',
             'display_type',
+            'display_type_display',
             'is_hq',
             'country_code',
+            'country_display',
             'location_of_office',
             'location_field_offices',
             'country_presence_display',
@@ -572,6 +579,7 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'has_potential_sanction_match',
             'is_locked',
             'vendor_numbers',
+            'hq',
         )
         read_only_fields = (
             'is_locked',
