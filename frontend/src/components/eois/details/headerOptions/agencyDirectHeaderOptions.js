@@ -145,6 +145,16 @@ class AgencyDirectHeaderOptions extends Component {
     return false;
   }
 
+  isPartnerProfileComplete() {
+    const { cfei } = this.props;
+
+    if (cfei.direct_selected_partners && cfei.direct_selected_partners.length > 0) {
+      return cfei.direct_selected_partners[0].partner_profile_is_complete;
+    }
+
+    return false;
+  }
+
   render() {
     const { params: { id },
       isFocalPoint,
@@ -171,7 +181,7 @@ class AgencyDirectHeaderOptions extends Component {
 
         {!isPublished && !isCompleted && hasPublishPermission &&
           (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
-          && <PublishDsrButton disabled={!this.isPartnerVerified()} handleClick={() => handleDialogOpen(publish)} />}
+          && <PublishDsrButton isVerified={this.isPartnerVerified()} isComplete={this.isPartnerProfileComplete()} handleClick={() => handleDialogOpen(publish)} />}
 
         <DropdownMenu
           options={status === 'Dra' ? this.sendOptions() : this.publishOptions()}

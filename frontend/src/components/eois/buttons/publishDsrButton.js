@@ -6,17 +6,18 @@ import ButtonWithTooltipEnabled from '../../common/buttonWithTooltipEnabled';
 const messages = {
   text: 'Publish',
   tooltipInfo: 'This DS/R cannot be published as partner selected does not have a \'verification passed\' status. The partner must be verified in order to proceed.',
+  tooltipInfoProfile: 'This DS/R cannot be published as partner selected does not have a \'complete profile\'. The partner must complete profile information in order to proceed.',
 };
 
 const PublishDsrButton = (props) => {
-  const { handleClick, disabled } = props;
-  return disabled ?
+  const { handleClick, isComplete, isVerified } = props;
+  return (!isComplete || !isVerified) ?
     <ButtonWithTooltipEnabled
       name="publish"
       text={messages.text}
-      tooltipText={messages.tooltipInfo}
+      tooltipText={!isVerified ? messages.tooltipInfo : messages.tooltipInfoProfile}
       onClick={handleClick}
-      disabled={disabled}
+      disabled={!isComplete || !isVerified}
     />
     : <Button
       raised
@@ -29,7 +30,8 @@ const PublishDsrButton = (props) => {
 
 PublishDsrButton.propTypes = {
   handleClick: PropTypes.func,
-  disabled: PropTypes.bool,
+  isComplete: PropTypes.bool,
+  isVerified: PropTypes.bool,
 };
 
 export default PublishDsrButton;

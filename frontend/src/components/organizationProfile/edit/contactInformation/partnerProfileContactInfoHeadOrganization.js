@@ -20,13 +20,13 @@ const messages = {
   email: 'Email',
 };
 
-const authorisedOfficerForm = (head, readOnly) => (
+const authorisedOfficerForm = (head, index, readOnly) => (
   <CustomGridColumn>
     <GridRow columns={3}>
       <TextFieldForm
         label={messages.fullname}
         fieldName={`${head}.fullname`}
-        readOnly
+        readOnly={index === 0 || readOnly}
       />
       <TextFieldForm
         label={messages.jobTitle}
@@ -89,7 +89,7 @@ const PartnerProfileContactInfoHeadOrganization = (props) => {
       initial
       label={messages.officers}
       fieldName="organisation_heads"
-      outerField={officer => authorisedOfficerForm(officer, readOnly)}
+      outerField={(officer, index) => authorisedOfficerForm(officer, index, readOnly)}
       readOnly={readOnly}
     />
   </FormSection>

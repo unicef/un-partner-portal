@@ -24,7 +24,7 @@ const messages = {
   error: 'Registration failed',
   declarationInfo: 'You must answer "yes" to all of the declarations in order to proceed.',
   warning: 'Notice',
-  legalInfo: 'You must upload at least one of the following documents: (1) Registration certificate or (2) Governing document or (3) Letter of reference' +  
+  legalInfo: 'You must upload at least one of the following documents: (1) Registration certificate or (2) Governing document or (3) Letter of reference ' +  
   'from a donor agency, government authority or community association in order to register your organization on UN Partner Portal.',
 };
 
@@ -97,7 +97,7 @@ class RegistrationStepper extends React.Component {
     return this.props.registerUser(payload.json).catch((error) => {
       const errorMsg = R.path(['response', 'data', 'non_field_errors'], error) || messages.error;
       if (error.response.data.user) {
-        this.setState({ stepIndex: 3 });
+        this.setState({ stepIndex: 4 });
       }
       throw new SubmissionError({
         json: { ...error.response.data },
