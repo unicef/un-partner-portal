@@ -12,30 +12,36 @@ import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const download = 'download';
 
+let dropdownOptions = [
+  {
+    name: download,
+    content: <DownloadButton handleClick={() => { authorizedFileDownload({ uri: `/projects/${id}/?export=pdf` }); }} />,
+  },
+]
+
 const PartnerOpenHeaderOptions = (props) => {
   const { params: { id }, hasPermission } = props;
+
+  if (hasPermission) {
+    dropdownOptions.push(
+      {
+        name: 'pinItem',
+        content: <PinButton id={id} />,
+      });
+  }
 
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={0}>
       <Grid item>
         <PinnedCell id={id} />
       </Grid>
-      {hasPermission && <Grid item>
+      <Grid item>
         <DropdownMenu
           options={
-            [
-              {
-                name: download,
-                content: <DownloadButton handleClick={() => { authorizedFileDownload({uri: `/projects/${id}/?export=pdf`}); }} />,
-              },
-              {
-                name: 'pinItem',
-                content: <PinButton id={id} />,
-              },
-            ]
+            dropdownOptions
           }
         />
-      </Grid>}
+      </Grid>
     </Grid>
   );
 };
