@@ -192,7 +192,7 @@ class PartnerOpenHeaderOptions extends Component {
         {isPublished && this.isFinalizeAllowed(hasFinalizePermission)
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
-        {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission &&
+        {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission && !isPAM && 
           <SendCfeiButton handleClick={() => handleDialogOpen(send)} />}
 
         {!isPublished && !isCompleted && hasPublishPermission &&
