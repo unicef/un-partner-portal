@@ -18,6 +18,7 @@ import { selectCfeiStatus,
 } from '../../../../store';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 import PartnerUcnHeaderOptions from './partnerUcnHeaderOptions';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../../helpers/permissions';
 
 const messages = {
   infoDsr: 'This direct selection/retention was sent to the focal point for review and issuance to the selected partner.',
@@ -66,7 +67,7 @@ const HeaderOptionsContainer = (props) => {
   } else if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.PARTNER) {
     options = <PartnerUcnHeaderOptions id={id} />;
   }
-  if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.AGENCY) {
+  if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.AGENCY && hasDsrConvertPermission) {
     return !cfeiConverted ? <ConvertToDS partnerId={partnerId} id={id} /> : null;
   }
 
@@ -98,6 +99,7 @@ HeaderOptionsContainer.propTypes = {
   role: PropTypes.string,
   type: PropTypes.string,
   cfeiCompleted: PropTypes.bool,
+  hasDsrConvertPermission: PropTypes.bool,
   cfeiConverted: PropTypes.number,
   cfeiStatus: PropTypes.string,
   id: PropTypes.string,
@@ -111,6 +113,7 @@ const mapStateToProps = (state, ownProps) => ({
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
   completedReasonDisplay: selectCfeiCompletedReasonDisplay(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
+  hasDsrConvertPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_PUBLISH, state),
 });
 
 export default connect(
