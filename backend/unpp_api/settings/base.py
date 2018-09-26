@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import os
+import subprocess
 import sys
 
 
@@ -317,3 +318,6 @@ if LEGACY_DB_HOST and 'test' not in sys.argv:
         'legacy.database_routers.LegacyDatabaseRouter',
     ]
     INSTALLED_APPS += ['legacy']
+
+
+GIT_VERSION = os.getenv('GIT_VERSION', 'UNKNOWN')

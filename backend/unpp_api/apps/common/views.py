@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from collections import defaultdict
 
+from django.conf import settings
 from django.db import connections
 from django.db.migrations.recorder import MigrationRecorder
 from rest_framework import status as statuses
@@ -142,6 +143,7 @@ class GeneralConfigAPIView(APIView):
             "cfei-types": CFEI_TYPES,
             "cfei-statuses": CFEI_STATUSES,
             "business-areas": BUSINESS_AREAS,
+            "version": settings.GIT_VERSION,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

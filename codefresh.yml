@@ -10,6 +10,7 @@ steps:
         tag: ${{CF_BRANCH}}
         build_arguments:
             - env=${{ENV}}
+            - GIT_VERSION=${{CF_REVISION}}
 
     build_db:
         type: build

@@ -6,6 +6,9 @@ ENV ENV ${env:-dev}
 ARG requirement_file
 ENV REQUIREMENT_FILE ${requirement_file:-dev.pip}
 
+ARG GIT_VERSION
+ENV GIT_VERSION ${GIT_VERSION:-UNKNOWN}
+
 RUN apk update
 RUN apk add --upgrade --no-cache "postgresql-client" "postgresql-contrib" "postgresql-dev" bash curl
 RUN apk add --upgrade --no-cache g++ linux-headers gcc make libffi-dev git wget jpeg-dev zlib-dev libpng-dev graphviz-dev

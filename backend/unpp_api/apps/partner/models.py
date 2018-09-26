@@ -617,9 +617,12 @@ class Person(TimeStampedModel):
             self.job_title,
             self.telephone,
             self.email,
-            hasattr(self, 'authorized') and self.authorized is not None,
-            hasattr(self, 'board_member') and self.board_member is not None,
         }
+        if hasattr(self, 'authorized'):
+            required_fields.add(self.authorized is not None)
+        if hasattr(self, 'board_member'):
+            required_fields.add(self.board_member is not None)
+
         return all(required_fields)
 
 
