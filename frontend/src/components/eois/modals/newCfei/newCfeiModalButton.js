@@ -17,13 +17,13 @@ const messages = {
 };
 
 const NewCfeiModalButton = (props) => {
-  const { type, handleDialogClose, handleDialogOpen, dialogOpen, hasDsPermission, hasOpenPermission, hasUcnPermission } = props;
+  const { type, handleDialogClose, handleDialogOpen, dialogOpen, hasDsPermission, hasOpenPermission, hasUcnPermission, isHq } = props;
 
   return (
     <Grid item>
       {((hasDsPermission && type === PROJECT_TYPES.DIRECT)
       || (hasOpenPermission && type === PROJECT_TYPES.OPEN)
-      || (hasUcnPermission && type === PROJECT_TYPES.UNSOLICITED))
+      || (hasUcnPermission && type === PROJECT_TYPES.UNSOLICITED && !isHq))
     && <Button
       raised
       color="accent"
@@ -45,6 +45,7 @@ NewCfeiModalButton.propTypes = {
   hasDsPermission: PropTypes.bool,
   hasOpenPermission: PropTypes.bool,
   hasUcnPermission: PropTypes.bool,
+  isHq: PropTypes.bool,
 };
 
 
@@ -52,6 +53,7 @@ const mapStateToProps = state => ({
   hasDsPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_CREATE_DRAFT_MANAGE_FOCAL_POINTS, state),
   hasOpenPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_CREATE, state),
   hasUcnPermission: checkPermission(PARTNER_PERMISSIONS.UCN_DRAFT, state),
+  isHq: state.session.isHq,
 });
 
 export default compose(
