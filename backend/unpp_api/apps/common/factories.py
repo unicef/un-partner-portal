@@ -818,13 +818,14 @@ class UnsolicitedFactory(factory.django.DjangoModelFactory):
         model = Application
 
     @factory.post_generation
-    def proposal_of_eoi_details(self, create, extracted, **kwargs):
+    def eoi_details(self, create, extracted, **kwargs):
         self.proposal_of_eoi_details = {
             'specializations': [
                 Specialization.objects.all().order_by("?").first().id,
             ],
-            'title': 'fake title'
+            'title': fake.sentence()
         }
+        self.locations_proposal_of_eoi.add(PointFactory())
         self.save()
 
 

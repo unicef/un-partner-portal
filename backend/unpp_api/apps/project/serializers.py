@@ -1192,44 +1192,49 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
         focal_points = self.initial_data.get('focal_points', [])
         submitter = self.context['request'].user
         app_id = self.context['request'].parser_context['kwargs']['pk']
-        app = get_object_or_404(
+        application: Application = get_object_or_404(
             Application,
             id=app_id,
             is_unsolicited=True,
             eoi_converted__isnull=True
         )
 
-        eoi = EOI(**validated_data['eoi'])
+        if not application.locations_proposal_of_eoi.first():
+            raise serializers.ValidationError('Invalid application, no locations specified.')
+
+        eoi: EOI = EOI(**validated_data['eoi'])
+        eoi.displayID = get_eoi_display_identifier(
+            application.agency.name, application.locations_proposal_of_eoi.first().admin_level_1.country_code
+        )
         eoi.created_by = submitter
         eoi.display_type = CFEI_TYPES.direct
-        eoi.title = app.proposal_of_eoi_details.get('title')
-        eoi.agency = app.agency
+        eoi.title = application.proposal_of_eoi_details.get('title')
+        eoi.agency = application.agency
         # we can use get direct because agent have one agency office
         eoi.agency_office = submitter.agency_members.get().office
         eoi.selected_source = DIRECT_SELECTION_SOURCE.ucn
         eoi.is_published = True
-
         eoi.save()
 
-        for specialization in app.proposal_of_eoi_details.get('specializations', []):
+        for specialization in application.proposal_of_eoi_details.get('specializations', []):
             eoi.specializations.add(specialization)
-        for location in app.locations_proposal_of_eoi.all():
+        for location in application.locations_proposal_of_eoi.all():
             eoi.locations.add(location)
 
-        app.ds_justification_select = ds_justification_select
-        app.eoi_converted = eoi
-        app.save()
+        application.ds_justification_select = ds_justification_select
+        application.eoi_converted = eoi
+        application.save()
 
         ds_app = Application.objects.create(
-            partner=app.partner,
+            partner=application.partner,
             eoi=eoi,
             agency=eoi.agency,
-            submitter=app.submitter,
+            submitter=application.submitter,
             status=APPLICATION_STATUSES.pending,
             did_win=True,
             did_accept=False,
             ds_justification_select=ds_justification_select,
-            justification_reason=app.justification_reason
+            justification_reason=application.justification_reason
         )
         update_cfei_focal_points(eoi, focal_points)
 
