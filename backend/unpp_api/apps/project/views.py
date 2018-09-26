@@ -769,11 +769,11 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
 
 class ConvertUnsolicitedAPIView(CreateAPIView):
     serializer_class = ConvertUnsolicitedSerializer
-    queryset = Application.objects.all()
+    queryset = Application.objects.filter(is_unsolicited=True)
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_PUBLISH,
+                AgencyPermission.CFEI_SELECT_PARTNER,
             ]
         ),
     )
