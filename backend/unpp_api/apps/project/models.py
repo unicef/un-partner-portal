@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from datetime import date
 
 from django.conf import settings
+from django.core.validators import MinLengthValidator
 from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
@@ -26,7 +27,9 @@ class EOI(TimeStampedModel):
     """
     Call of Expression of Interest
     """
-    displayID = models.TextField(max_length=32, unique=True, editable=False)
+    displayID = models.TextField(max_length=32, unique=True, editable=False, validators=[
+        MinLengthValidator(1),
+    ])
     display_type = models.CharField(
         max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open, verbose_name='Type of Call'
     )
