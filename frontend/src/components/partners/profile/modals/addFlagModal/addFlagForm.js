@@ -92,6 +92,9 @@ const AddVerification = (props) => {
             fieldName="contact_email"
             validation={[email]}
             required
+            textFieldProps={{
+              "type": "email"
+            }}
           />
         </GridRow>
         <FileForm

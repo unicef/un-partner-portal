@@ -114,6 +114,9 @@ const UpdateObservationForm = (props) => {
             validation={[email]}
             required
             readOnly
+            textFieldProps={{
+              "type": "email"
+            }}
           />
         </GridRow>
         <FileForm

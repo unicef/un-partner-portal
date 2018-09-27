@@ -65,6 +65,9 @@ const directorForm = (director, readOnly) => (
         optional
         validation={[email]}
         readOnly={readOnly}
+        textFieldProps={{
+          "type": "email"
+        }}
       />
     </GridRow>
   </GridColumn>
@@ -110,6 +113,9 @@ const authorisedOfficerForm = (officer, readOnly) => (
         optional
         validation={[email]}
         readOnly={readOnly}
+        textFieldProps={{
+          "type": "email"
+        }}
       />
     </GridRow>
   </GridColumn>

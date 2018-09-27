@@ -95,6 +95,9 @@ const UpdateEscalatedObservationForm = (props) => {
             validation={[email]}
             required
             readOnly
+            textFieldProps={{
+              "type": "email"
+            }}
           />
         </GridRow>
         <FileForm
