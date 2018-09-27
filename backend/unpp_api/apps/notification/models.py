@@ -21,7 +21,9 @@ class Notification(TimeStampedModel):
     content_object = GenericForeignKey('content_type', 'object_id')
 
     class Meta:
-        ordering = ['-created']
+        ordering = (
+            '-created',
+        )
 
     def __str__(self):
         return "Notification {}".format(self.name)
@@ -34,7 +36,9 @@ class NotifiedUser(TimeStampedModel):
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="notified")
 
     class Meta:
-        ordering = ['created']
+        ordering = (
+            '-created',
+        )
         unique_together = (
             'notification', 'recipient'
         )

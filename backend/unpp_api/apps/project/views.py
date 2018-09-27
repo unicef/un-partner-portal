@@ -933,15 +933,20 @@ class EOISendToPublishAPIView(RetrieveAPIView):
             return
         self.permission_denied(request)
 
+    @transaction.atomic
     def post(self, *args, **kwargs):
-        # TODO: Notify focal point
-        obj = self.get_object()
-        if obj.deadline_passed:
+        project: EOI = self.get_object()
+        if project.deadline_passed:
             raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
 
-        obj.sent_for_publishing = True
-        obj.save()
-        return Response(self.serializer_class(obj).data)
+        project.sent_for_publishing = True
+        project.save()
+
+        send_notification(NotificationType.CFEI_DRAFT_SENT_FOR_REVIEW, project, project.focal_points.all(), context={
+            'eoi': project,
+        })
+
+        return Response(self.serializer_class(project).data)
 
 
 class PublishCFEIAPIView(RetrieveAPIView):
