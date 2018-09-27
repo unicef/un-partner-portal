@@ -77,7 +77,7 @@ const fields = (partner, button) => (
 const summaryHeader = lastUpdate => (
   <SpreadContent>
     <Typography type="headline" >{labels.profileSummary}</Typography>
-    <ItemRowCell alignRight label={labels.updated} content={formatDateForPrint(lastUpdate)} />
+    {lastUpdate && <ItemRowCell alignRight label={labels.updated} content={formatDateForPrint(lastUpdate)} />}
   </SpreadContent>
 );
 
