@@ -441,7 +441,10 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
     org_head = PartnerHeadOrganizationSerializer(read_only=True)
     organisation_heads = PartnerHeadOrganizationSerializer(many=True)
-    hq_org_head = serializers.SerializerMethodField()
+    hq_org_head = PartnerHeadOrganizationSerializer(source='hq.org_head', read_only=True, allow_null=True)
+    hq_organisation_heads = PartnerHeadOrganizationSerializer(
+        source='hq.organisation_heads', read_only=True, many=True, allow_null=True
+    )
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
     budgets = serializers.SerializerMethodField()
@@ -518,15 +521,12 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "has_sanction_match",
             "registration_declaration",
             "organisation_heads",
+            "hq_organisation_heads",
         )
 
     def get_hq_budgets(self, partner):
         if partner.is_hq is False:
             return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner.hq), many=True).data
-
-    def get_hq_org_head(self, obj):
-        if obj.is_hq is False:
-            return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
 
     def get_budgets(self, partner):
         return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner), many=True).data
