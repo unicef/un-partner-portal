@@ -80,7 +80,7 @@ class Partner(MigratedTimeStampedModel):
     declaration = models.ForeignKey('common.CommonFile', null=True, blank=True)
 
     class Meta:
-        ordering = ('id', )
+        ordering = ('-created', )
 
     def __str__(self):
         return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
@@ -345,10 +345,10 @@ class PartnerProfile(TimeStampedModel):
     explain = models.TextField(max_length=5000, null=True, blank=True, verbose_name="Please explain")
 
     class Meta:
-        ordering = ('id', )
+        ordering = ('-created', )
 
     def __str__(self):
-        return "PartnerProfile <pk:{}>".format(self.id)
+        return f"[{self.pk}] PartnerProfile of {self.partner}"
 
     @property
     def registration_date(self):

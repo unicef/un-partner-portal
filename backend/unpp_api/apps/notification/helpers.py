@@ -22,7 +22,9 @@ from partner.models import Partner
 from review.models import PartnerFlag
 
 
-def send_notification(notification_type, obj, users, context=None, send_in_feed=True):
+def send_notification(
+    notification_type: str, obj, users, context=None, send_in_feed=True
+):
     """
     notification_type - check NotificationType class in const.py
     obj - object directly associated w/ notification. generic fk to it

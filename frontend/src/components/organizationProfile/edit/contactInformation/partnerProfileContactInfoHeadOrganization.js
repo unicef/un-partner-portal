@@ -61,6 +61,9 @@ const authorisedOfficerForm = (head, index, readOnly) => (
         fieldName={`${head}.email`}
         validation={[email]}
         readOnly
+        textFieldProps={{
+          "type": "email"
+        }}
       />
     </GridRow>
     <GridRow columns={3}>

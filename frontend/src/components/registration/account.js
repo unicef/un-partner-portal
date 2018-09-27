@@ -60,6 +60,9 @@ class Account extends Component {
                   placeholder="Provide E-mail"
                   fieldName="json.user.email"
                   validation={[email]}
+                  textFieldProps={{
+                    "type": "email"
+                  }}
                 />
               </Grid>
               <Grid item sm={6} xs={12}>
