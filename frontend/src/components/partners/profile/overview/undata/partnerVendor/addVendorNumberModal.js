@@ -12,6 +12,7 @@ import AddVendorNumberForm from './addVendorNumberForm';
 import PaddedContent from '../../../../../common/paddedContent';
 import { addVendorNumber } from '../../../../../../reducers/vendorNumber';
 import { getPartnerUnData } from '../../../../../../reducers/partnerUnData';
+import { selectNormalizedBusinessAreas } from '../../../../../../store';
 
 const messages = {
   title: 'Add the Partner\'s vendor number/partner ID',
@@ -67,8 +68,10 @@ class AddVendorNumberModal extends Component {
   }
 
   confirmData() {
-    const { partnerName, classes } = this.props;
+    const { partnerName, classes, businessArea } = this.props;
     const { payload } = this.state;
+    const area = payload && R.find(R.propEq('value', payload.business_area))(businessArea)
+    
     return (payload && <PaddedContent>
       <div className={classes.center}>
         <Typography type="body2">{messages.partnerName}</Typography>&nbsp;
@@ -80,7 +83,7 @@ class AddVendorNumberModal extends Component {
       </div>
       <div className={classes.center}>
         <Typography type="body2">{messages.area}</Typography>&nbsp;
-        <Typography type="body1">{payload.business_area}</Typography>
+        <Typography type="body1">{area && area.label}</Typography>
       </div>
     </PaddedContent>);
   }
@@ -142,6 +145,7 @@ AddVendorNumberModal.propTypes = {
   agencyId: PropTypes.number,
   showLoading: PropTypes.bool,
   loadUnData: PropTypes.func,
+  businessArea: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -153,6 +157,7 @@ const mapStateToProps = (state, ownProps) => {
     partnerName,
     query: ownProps.location.query,
     showLoading: state.vendorNumber.newVendorNumberSubmitting,
+    businessArea: selectNormalizedBusinessAreas(state),
   };
 };
 
