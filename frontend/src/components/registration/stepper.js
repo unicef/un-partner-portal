@@ -96,8 +96,11 @@ class RegistrationStepper extends React.Component {
 
     return this.props.registerUser(payload.json).catch((error) => {
       const errorMsg = R.path(['response', 'data', 'non_field_errors'], error) || messages.error;
+
       if (error.response.data.user) {
         this.setState({ stepIndex: 4 });
+      } else if (error.response.data.partner_head_organization) {
+        this.setState({ stepIndex: 1 });
       }
       throw new SubmissionError({
         json: { ...error.response.data },
