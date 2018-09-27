@@ -94,10 +94,20 @@ class EOI(TimeStampedModel):
     preselected_partners = ArrayField(models.IntegerField(), default=list)
 
     class Meta:
-        ordering = ['id']
+        ordering = (
+            '-created',
+        )
+        verbose_name = 'Project'
+        verbose_name_plural = 'Projects'
 
     def __str__(self):
-        return "CFEI {} <pk:{}>".format(self.title, self.id)
+        return f"[{self.pk}] {self.verbose_type} #{self.displayID} {self.title}"
+
+    @property
+    def verbose_type(self):
+        if self.is_direct:
+            return 'Direct Selection / Retention'
+        return 'Call for Expression of Interest'
 
     @property
     def status(self):

@@ -178,7 +178,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         ])
         response = self.client.post(self.url, data=payload)
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
-        eoi = EOI.objects.last()
+        eoi = EOI.objects.order_by('id').last()
         self.assertEquals(response.data['title'], payload['title'])
         self.assertEquals(eoi.created_by.id, self.user.id)
         self.assertEquals(response.data['id'], eoi.id)
@@ -375,7 +375,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['display_type'], CFEI_TYPES.direct)
-        self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
+        self.assertEquals(response.data['eoi']['id'], EOI.objects.order_by('id').last().id)
         app = Application.objects.get(pk=response.data['applications'][0]['id'])
         self.assertEquals(app.submitter, self.user)
         self.assertEquals(
