@@ -21,7 +21,7 @@ const messages = {
   warning: 'Warning',
   verifyPartner: 'Partner profile is not verified. Please verify partner before adding an observation.',
   addVerification: 'Partner profile can not be verified until HQ profile will be verified.',
-  hasFinished: 'Partner profile has not filled all required informations.',
+  hasFinished: 'This profile cannot be verified as the partner has not completed their profile.',
   hasSanctionMatch: 'Partner has sanction match observation and can not be verified.',
 };
 
