@@ -130,8 +130,8 @@ class AgencyClarificationAnswers extends Component {
                 </IconButton>}
             </Typography>
           </div>
-        </React.Fragment>)) 
-      : <Typography type="body1">{messages.noResponse}</Typography>);
+        </React.Fragment>))
+      : role === ROLES.PARTNER && <Typography type="body1">{messages.noResponse}</Typography>)
   }
 
   uploadFile() {
