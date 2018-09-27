@@ -7,6 +7,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from django.core import mail
+from faker import Faker
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -14,6 +15,9 @@ from common.consts import PARTNER_TYPES, FUNCTIONAL_RESPONSIBILITY_CHOICES
 from common.tests.base import BaseAPITestCase
 from partner.models import Partner
 from account.models import User
+
+
+fake = Faker()
 
 
 class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
@@ -201,7 +205,6 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
 
     def test_fails_to_register_duplicate_partner_in_same_country(self):
         url = reverse('accounts:registration')
-
         response = self.client.post(url, data=self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
         self.assertTrue(status.is_success(response.status_code))
@@ -209,6 +212,7 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
         self.assertEquals(response.data['user']['email'], self.data['user']['email'])
 
         duplicate_partner_data = self.data.copy()
+        duplicate_partner_data['partner_head_organization']['email'] = fake.email()
         duplicate_partner_data['user'] = {
             "email": 'anotehr@mail.com',
             "password": 'Test123123!',
@@ -229,6 +233,7 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
         self.assertEquals(response.data['user']['email'], self.data['user']['email'])
 
         duplicate_partner_data = self.data.copy()
+        duplicate_partner_data['partner_head_organization']['email'] = fake.email()
         duplicate_partner_data['user'] = {
             "email": 'anotehr@mail.com',
             "password": 'Test123123!',
@@ -258,7 +263,7 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
 
         response = self.client.post(url, data=duplicate_partner_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(len(response.data['non_field_errors']), 1)
+        self.assertIsNotNone(response.data['partner_head_organization']['email'])
 
 
 class TestUserProfileUpdateAPITestCase(BaseAPITestCase):

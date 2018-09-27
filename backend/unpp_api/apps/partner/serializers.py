@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
 from agency.serializers import AgencySerializer
 from common.consts import (
@@ -261,6 +262,17 @@ class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerHeadOrganization
         exclude = ("partner", )
+        extra_kwargs = {
+            'email': {
+                'validators': [
+                    UniqueValidator(
+                        queryset=PartnerHeadOrganization.objects.all(),
+                        message='Organization Head with provided email already exists.',
+                        lookup='iexact'
+                    )
+                ]
+            }
+        }
 
 
 class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
