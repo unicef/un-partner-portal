@@ -17,7 +17,7 @@ const messages = {
   headTitle: 'Title of Head',
   headEmail: 'Email of Head',
   languages: 'Working languages',
-  specialisation: 'Sector and areas of specialisation',
+  specialization: 'Sector and areas of specialization',
   education: 'Education',
   food: 'Food Security',
   health: 'Health',
@@ -76,7 +76,7 @@ const PartnerProfileDetailItem = (props) => {
           <ItemWorkingLanguagesCell label={messages.languages} content={partner.working_languages} />
         </GridRow>
         <GridRow columns={1} spacing={24}>
-          <ItemSectorsCell label={messages.specialisation} content={partner.experiences} />
+          <ItemSectorsCell label={messages.specialization} content={partner.experiences} />
         </GridRow>
       </GridColumn>
     );
