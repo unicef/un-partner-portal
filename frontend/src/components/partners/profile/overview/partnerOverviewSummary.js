@@ -28,7 +28,7 @@ const labels = {
   fax: 'Fax',
   email: 'Email',
   contact: 'Contact Info',
-  sectors: 'Sector and areas of specialisation',
+  sectors: 'Sector and areas of specialization',
   year: 'Year of registration',
   populations: 'Populations of concern',
   experience: 'Years of establishment in country of origin',
