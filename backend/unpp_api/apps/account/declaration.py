@@ -136,7 +136,6 @@ class PartnerDeclarationPDFCreator:
 
         table = Table(signed_by_rows, colWidths='*', style=self.basic_info_table_style)
         paragraphs.append(table)
-        paragraphs.append(Spacer(1, self.margin))
 
         document.build(paragraphs)
 
