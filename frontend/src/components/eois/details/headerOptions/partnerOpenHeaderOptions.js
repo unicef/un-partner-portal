@@ -12,15 +12,15 @@ import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const download = 'download';
 
-let dropdownOptions = [
-  {
-    name: download,
-    content: <DownloadButton handleClick={() => { authorizedFileDownload({ uri: `/projects/${id}/?export=pdf` }); }} />,
-  },
-]
-
 const PartnerOpenHeaderOptions = (props) => {
   const { params: { id }, hasPermission } = props;
+
+  let dropdownOptions = [
+    {
+      name: download,
+      content: <DownloadButton handleClick={() => { authorizedFileDownload({ uri: `/projects/${id}/?export=pdf` }); }} />,
+    },
+  ]
 
   if (hasPermission) {
     dropdownOptions.push(
