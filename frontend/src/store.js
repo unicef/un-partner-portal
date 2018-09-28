@@ -312,7 +312,7 @@ export const selectNormalizedCfeiStatuses = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['cfei-statuses']);
 
 export const selectNormalizedFlagTypes = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['flag-types']);
+  mapValuesForSelectionField(state.partnerProfileConfig['flag-types'], 'value');
 
 export const selectCountriesWithOptionalLocations = state =>
   state.partnerProfileConfig['countries-with-optional-location'];
