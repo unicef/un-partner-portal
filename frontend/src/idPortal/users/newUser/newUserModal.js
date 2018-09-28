@@ -15,7 +15,7 @@ import Loader from '../../../components/common/loader';
 const messages = {
   title: 'Add new user',
   status: 'Status: ',
-  header: 'Email with invitation will be send to provided email.',
+  header: 'Email with invitation will be sent to provided email.',
   error: 'Unable to create new user',
 };
 
