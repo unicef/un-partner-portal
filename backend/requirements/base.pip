@@ -36,6 +36,7 @@ coolname==1.0.4
 reportlab==3.4.0
 Babel==2.6.0
 defusedxml==0.5.0
+mapbox==0.17.1
 
 # Testing
 astroid==1.5.2

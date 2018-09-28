@@ -762,7 +762,7 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def attachments(self, create, extracted, **kwargs):
-        for _ in range(random.randint(0, 3)):
+        for _ in range(random.randint(1, 5)):
             EOIAttachment.objects.create(
                 created_by=self.created_by,
                 eoi=self,
