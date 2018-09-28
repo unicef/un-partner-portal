@@ -13,7 +13,7 @@ import { ROLES } from '../../../../helpers/constants';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import HeaderList from '../../../common/list/headerList';
 import PaddedContent from '../../../common/paddedContent';
-import { isCfeiClarificationDeadlinePassed, selectClarificationAnswersCount, selectClarificationAnswers, isUserAFocalPoint, isUserACreator } from '../../../../store';
+import { isCfeiClarificationDeadlinePassed, selectClarificationAnswersCount, selectClarificationAnswers, isUserAFocalPoint, isUserACreator, isCfeiDeadlinePassed } from '../../../../store';
 import { checkPermission, AGENCY_PERMISSIONS, isRoleOffice, AGENCY_ROLES } from '../../../../helpers/permissions';
 import Loader from '../../../common/loader';
 import { loadClarificationAnswers } from '../../../../reducers/clarificationAnswers';
@@ -27,6 +27,7 @@ const messages = {
   title: 'Requests for additional \n Information/Clarifications',
   upload: 'Upload file',
   isCfeiDeadlinePassed: 'Upload will be enabled when clarification request deadline date has passed.',
+  cfeiDeadlinePassed: 'Upload is disabled after application deadline.',
   publishedUntil: 'UN Response will be available after Clarification Request Deadline date.',
   maxFile: 'You can upload up to three files.',
   noResponse: 'No response from UN',
@@ -135,13 +136,13 @@ class AgencyClarificationAnswers extends Component {
   }
 
   uploadFile() {
-    const { classes, handleDialogOpen, isClarificationDeadlinePassed,
+    const { classes, handleDialogOpen, isClarificationDeadlinePassed, isApplicationDeadlinePassed,
       count, hasPermissionToAdd } = this.props;
     const tooltipText = (!isClarificationDeadlinePassed && messages.isCfeiDeadlinePassed)
-      || (count === 3 && messages.maxFile);
+     || (isApplicationDeadlinePassed && messages.cfeiDeadlinePassed) || (count === 3 && messages.maxFile);
 
     return (
-      (!isClarificationDeadlinePassed || count === 3) ?
+      (!isClarificationDeadlinePassed || isApplicationDeadlinePassed || count === 3) ?
         <ButtonWithTooltip
           name="publish"
           className={classes.btnSize}
@@ -206,6 +207,7 @@ AgencyClarificationAnswers.propTypes = {
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
   isClarificationDeadlinePassed: PropTypes.bool,
+  isApplicationDeadlinePassed: PropTypes.bool,
   hasPermissionToAdd: PropTypes.bool,
   loading: PropTypes.bool,
   loadingAnswers: PropTypes.bool,
@@ -225,6 +227,7 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.addClarificationAnswer.status.loading,
   loadingAnswers: state.clarificationAnswers.status.loading,
   isClarificationDeadlinePassed: isCfeiClarificationDeadlinePassed(state, ownProps.id),
+  isApplicationDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
   hasPermissionToAdd:
     checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
   count: selectClarificationAnswersCount(state, ownProps.id),
