@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from account.models import User
+from agency.roles import AgencyRole
 from management.fields import CurrentAgencyFilteredPKField, CurrentPartnerFilteredPKField
 from agency.models import AgencyMember, AgencyOffice
 from management.invites import send_partner_user_invite, send_agency_user_invite
@@ -33,6 +34,15 @@ class AgencyMemberManagementSerializer(serializers.ModelSerializer):
             'office',
             'office_id',
         )
+
+    def get_extra_kwargs(self):
+        extra_kwargs = super(AgencyMemberManagementSerializer, self).get_extra_kwargs()
+        request = self.context.get('request')
+        extra_kwargs['role'] = {
+            'choices': AgencyRole.get_choices(request.user.agency) if request else ()
+        }
+
+        return extra_kwargs
 
 
 class AgencyUserManagementSerializer(serializers.ModelSerializer):

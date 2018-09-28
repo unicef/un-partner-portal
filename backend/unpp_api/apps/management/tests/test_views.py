@@ -47,7 +47,7 @@ class TestAgencyUserManagement(BaseAPITestCase):
         new_offices = AgencyOfficeFactory.create_batch(2, agency=self.user.agency)
         payload['office_memberships'] = [{
             'office_id': office.id,
-            'role': random.choice(list(AgencyRole)).name
+            'role': random.choice(AgencyRole.get_choices(self.user.agency))[0]
         } for office in new_offices]
 
         url = reverse('management:user-details', kwargs={'pk': response.data['id']})
