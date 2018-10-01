@@ -51,7 +51,7 @@ const HeaderActionsBase = (props) => {
 };
 
 const mapStateToPropsForHeaderActions = (state, ownProps) => ({
-  changeDisabled: selectCfeiStatus(state, ownProps.params.id) !== PROJECT_STATUSES.OPE,
+  changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
   status: selectCfeiStatus(state, ownProps.params.id),
 });
 
@@ -172,7 +172,7 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,
-  changeDisabled: selectCfeiStatus(state, ownProps.params.id) !== PROJECT_STATUSES.OPE,
+  changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
     && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
 });

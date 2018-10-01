@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Tooltip from 'material-ui/Tooltip';
 import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
+import Divider from 'material-ui/Divider';
 
 const messages = {
   focal: 'CFEI Focal Point(s)',
