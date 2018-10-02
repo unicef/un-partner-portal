@@ -14,6 +14,7 @@ function CheckboxForm(props) {
     optional,
     validation,
     warn,
+    labelType,
     readOnly,
   } = props;
   return (
@@ -25,6 +26,7 @@ function CheckboxForm(props) {
           validate={(optional ? (validation || []) : [requiredBool].concat(validation || []))}
           warn={warn ? warningBool : null}
           disabled={readOnly}
+          labelType={labelType}
           label={label}
           {...textFieldProps}
         />
@@ -43,6 +45,7 @@ CheckboxForm.propTypes = {
    * label used in field, also placeholder is built from it by adding 'Provide'
    */
   label: PropTypes.string,
+  labelType: PropTypes.string,
   /**
    * props passed to wrapped TextField
    */

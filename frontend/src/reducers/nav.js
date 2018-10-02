@@ -12,7 +12,7 @@ export const AGENCY = 'agency';
 
 const initialState = [
   { path: '/dashboard', label: 'Dashboard', roles: [PARTNER, AGENCY], icon: dashboardIcon },
-  { path: '/cfei', label: 'Expressions of Interest', roles: [PARTNER, AGENCY], icon: cfeiIcon },
+  { path: '/cfei', label: 'Partnership Opportunities', roles: [PARTNER, AGENCY], icon: cfeiIcon },
   { path: '/partner', label: 'Partners', roles: [AGENCY], icon: partnersIcon },
   { path: '/applications', label: 'Your Applications', roles: [PARTNER], icon: applicationsIcon },
   { path: '/profile', label: 'Profile', roles: [PARTNER], icon: settingsIcon },

@@ -19,6 +19,7 @@ import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 import CancelCfeiModal from '../../modals/completeCfei/cancelCfeiModal';
+import DeleteCfeiModal from '../../modals/completeCfei/deleteCfeiModal';
 import SendCfeiButton from '../../buttons/sendCfeiButton';
 import DeleteButton from '../../buttons/deleteCfeiButton';
 import PublishCfeiButton from '../../buttons/publishCfeiButton';
@@ -211,6 +212,11 @@ class PartnerOpenHeaderOptions extends Component {
           options={this.sendOptions()}
         />
 
+        {dialogOpen[del] && <DeleteCfeiModal
+          id={id}
+          dialogOpen={dialogOpen[del]}
+          handleDialogClose={handleDialogClose}
+        />}
         {dialogOpen[cancel] && <CancelCfeiModal
           id={id}
           dialogOpen={dialogOpen[cancel]}

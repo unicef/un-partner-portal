@@ -12,7 +12,7 @@ import GridColumn from '../../components/common/grid/gridColumn';
 import HeaderList from '../../components/common/list/headerList';
 
 const messages = {
-  header: 'Dashboard',
+  header: 'User management dashboard',
   yourRole: 'Your role',
 };
 

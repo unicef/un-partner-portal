@@ -121,7 +121,7 @@ class ObservationsTable extends Component {
               ? <EmptyContent />
               : <PaddedContent big><Typography>{messages.noInfo}</Typography></PaddedContent>
               : observations.map(observation =>
-                (<div>
+                (<div key={observation.id}>
                   <div className={classes.marginIcon}>
                     <ObservationTypeIcon
                       flagType={observation.flag_type}

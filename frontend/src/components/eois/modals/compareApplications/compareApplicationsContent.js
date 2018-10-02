@@ -81,7 +81,7 @@ class CompareApplicationContent extends React.Component {
       hasSelectRecommendedPermission } = this.props;
 
     return ((hasSelectRecommendedPermission && isAdvEd && isFocalPoint)
-    || (hasSelectRecommendedPermission && isMFT && isFocalPoint));
+      || (hasSelectRecommendedPermission && isMFT && isFocalPoint));
   }
 
   isSelectActionAllowed() {
@@ -198,7 +198,7 @@ class CompareApplicationContent extends React.Component {
                   key={ids[index]}
                 >{singleVerification}</Typography>);
               }
-              return (<div style={{ msGridColumn: index + 1 }}><VerificationText
+              return (<div key={ids[index]} style={{ msGridColumn: index + 1 }}><VerificationText
                 key={ids[index]}
                 verified={singleVerification}
               /></div>);
@@ -268,36 +268,6 @@ class CompareApplicationContent extends React.Component {
           </div>
           <Divider />
         </div>
-        <div>
-          <div
-            style={{
-              grid: `none / repeat(${columns}, 1fr)`,
-              msGridColumns: '1fr '.repeat(columns),
-              msGridRow: 9,
-            }}
-            className={classes.subGrid}
-          >
-            <Typography type="body2">{messages.labelAward}</Typography>
-            {applications.map((application, index) => (
-              <div style={{ msGridColumn: index + 2 }}>
-                {(this.isSelectActionAllowed() || this.isSelectRecommendedActionAllowed)
-                  && <AwardApplicationButtonContainer
-                    key={ids[index]}
-                    loading={loading}
-                    status={APPLICATION_STATUSES.PRE}
-                    isVerified={verification[index + 1]}
-                    redFlags={flagging[index + 1].red}
-                    completedReview={applicationsMeta[index].assessments_is_completed}
-                    applicationId={application}
-                    eoiId={id}
-                    didWin={applicationsMeta[index].did_win}
-                    didWithdraw={applicationsMeta[index].did_withdraw}
-                    linkedButton
-                  />}
-              </div>))}
-          </div>
-          <Divider />
-        </div>
         <Grid container justify="flex-end">
           <Grid item>
             <Button className={classes.printButton} onClick={onPrint} color="accent">{messages.print}</Button>
@@ -341,7 +311,7 @@ const mapStateToProps = (state, ownProps) => {
     budgetOptions: state.partnerProfileConfig['budget-choices'],
     hasSelectPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_PARTNER, state),
     hasSelectRecommendedPermission:
-    checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_RECOMMENDED_PARTNER, state),
+      checkPermission(AGENCY_PERMISSIONS.CFEI_SELECT_RECOMMENDED_PARTNER, state),
   };
 };
 

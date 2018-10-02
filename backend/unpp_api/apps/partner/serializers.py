@@ -736,7 +736,8 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     working_languages = serializers.ListField(source="profile.working_languages")
     working_languages_other = serializers.CharField(
         source="profile.working_languages_other",
-        allow_null=True
+        allow_null=True, 
+        allow_blank=True
     )
     has_finished = serializers.BooleanField(read_only=True, source="profile.contact_is_complete")
 

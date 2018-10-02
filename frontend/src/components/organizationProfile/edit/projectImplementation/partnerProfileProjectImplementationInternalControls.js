@@ -18,7 +18,7 @@ const messages = {
   segregationOf: 'Segregation of Duties',
   pleaseComment: 'Please comment',
   experiencedStaff: 'Does the organization have an adequate number of experienced staff responsible for financial management in all operations?',
-  policyArea: 'Does the organization have documented policies in the following subject areas?',
+  policyArea: 'Does the organization have segregation of duties in the following areas of responsibility?',
   selectArea: 'Select Area',
   documentedPolicies: 'Documented Policies?',
 };
