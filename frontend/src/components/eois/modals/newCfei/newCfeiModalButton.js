@@ -21,36 +21,32 @@ const messages = {
 const NewCfeiModalButton = (props) => {
   const { type, handleDialogClose, handleDialogOpen, dialogOpen, hasDsPermission,
     hasOpenPermission, hasUcnPermission, isHq, isProfileComplete } = props;
-
+  
   return (
     <Grid item>
-      {((hasDsPermission && type === PROJECT_TYPES.DIRECT)
-        || (hasOpenPermission && type === PROJECT_TYPES.OPEN)
-        || (hasUcnPermission && type === PROJECT_TYPES.UNSOLICITED))
-        &&
-        type === PROJECT_TYPES.UNSOLICITED
+      {hasUcnPermission && type === PROJECT_TYPES.UNSOLICITED
         ? <Grid item>
           {!isHq
-           && (isProfileComplete
-            ? <Button
-              raised
-              color="accent"
-              onClick={handleDialogOpen}
-            >
-              {messages[type]}
-            </Button>
-            : <ButtonWithTooltipEnabled
-              name="ucn"
-              text={messages.unsolicited}
-              tooltipText={messages.tooltipInfo}
-              disabled
-           />)}
-          <NewCfeiModal type={type} open={dialogOpen} onDialogClose={handleDialogClose} />
+            && (isProfileComplete
+              ? <Button
+                raised
+                color="accent"
+                onClick={handleDialogOpen}
+              >
+                {messages[type]}
+              </Button>
+              : <ButtonWithTooltipEnabled
+                name="ucn"
+                text={messages.unsolicited}
+                tooltipText={messages.tooltipInfo}
+                disabled
+              />)}
         </Grid>
-        : <Button raised color="accent" onClick={handleDialogOpen}>
+        : ((hasDsPermission && type === PROJECT_TYPES.DIRECT)
+          || (hasOpenPermission && type === PROJECT_TYPES.OPEN))
+        && <Button raised color="accent" onClick={handleDialogOpen}>
           {messages[type]}
-        </Button>
-      }
+        </Button>}
       <NewCfeiModal type={type} open={dialogOpen} onDialogClose={handleDialogClose} />
     </Grid>
   );
