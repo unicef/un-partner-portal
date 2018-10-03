@@ -157,8 +157,8 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    if (hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA
-      || (hasEditSentPermission && isFocalPoint)) {
+    if (!isPublished && (hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA
+      || (hasEditSentPermission && isFocalPoint))) {
       options.push(
         {
           name: del,
@@ -166,7 +166,7 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    if (isPublished && this.isPuslishPermissionAllowed(hasCancelPublishPermission)) {
+    if (!isPublished && this.isPuslishPermissionAllowed(hasCancelPublishPermission)) {
       options.push(
         {
           name: cancel,
