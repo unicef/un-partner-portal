@@ -2,6 +2,7 @@ import os
 import tempfile
 
 from mapbox import Static
+from mapbox.errors import ValidationError
 from rest_framework import status
 
 from common.models import Point
@@ -36,11 +37,14 @@ def render_point_to_image_file(point: Point, **kwargs):
     kwargs.setdefault('lat', float(point.lat))
     kwargs.setdefault('lon', float(point.lon))
 
-    response = mapbox_service.image(
-        'mapbox.streets',
-        features=[point_data],
-        **kwargs
-    )
+    try:
+        response = mapbox_service.image(
+            'mapbox.streets',
+            features=[point_data],
+            **kwargs
+        )
+    except ValidationError:
+        return None
 
     if not response.status_code == status.HTTP_200_OK:
         return None
