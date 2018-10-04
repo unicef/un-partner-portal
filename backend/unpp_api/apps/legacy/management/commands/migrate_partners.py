@@ -22,6 +22,12 @@ from partner.models import (
 )
 
 
+def clean_value(value):
+    if hasattr(value, 'strip'):
+        value = value.strip()
+    return value or None
+
+
 class Command(BaseCommand):
 
     # Just to detect whether some data has been unintentionally omitted
@@ -112,17 +118,23 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerAuthorisedOfficer {source.pk} for {partner}')
 
+        defaults = {
+            'created': source.created,
+            'modified': source.modified,
+            'fullname': clean_value(source.fullname),
+            'job_title': clean_value(source.job_title),
+            'telephone': clean_value(source.telephone),
+            'email': clean_value(source.email),
+            'fax': clean_value(source.fax),
+        }
+
+        if not any(defaults.values()):
+            self.stderr.write('Empty PartnerAuthorisedOfficer data, skipping...')
+            return
+
         PartnerAuthorisedOfficer.objects.update_or_create(
             partner=partner,
-            defaults={
-                'created': source.created,
-                'modified': source.modified,
-                'fullname': source.fullname,
-                'job_title': source.job_title,
-                'telephone': source.telephone,
-                'email': source.email,
-                'fax': source.fax,
-            }
+            defaults=defaults
         )
 
     def migrate_budget_info(self, source: legacy_models.PartnerPartnerbudget):
