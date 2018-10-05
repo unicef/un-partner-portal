@@ -922,8 +922,9 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
 
     any_partnered_with_un = serializers.BooleanField(source="profile.any_partnered_with_un")
     any_accreditation = serializers.BooleanField(source="profile.any_accreditation")
-    any_reference = serializers.BooleanField(source="profile.any_reference")
     has_finished = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
+
+    any_reference = serializers.BooleanField(source="profile.any_reference")
 
     class Meta:
         model = Partner
@@ -939,7 +940,7 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
         )
 
     related_names = [
-        "profile", "collaborations_partnership", "collaboration_evidences"
+        "profile", "collaborations_partnership", "collaboration_evidences",
     ]
     exclude_fields = {
         "collaborations_partnership": PartnerCollaborationPartnershipSerializer.Meta.read_only_fields
