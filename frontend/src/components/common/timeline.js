@@ -10,9 +10,9 @@ const messages = {
   posted: 'Posted',
   clarification: 'Clarification Request Deadline',
   deadline: 'Application Deadline',
-  notificaiton: 'Notification of results',
+  notification: 'Notification of results',
   estimated: 'Estimated start date',
-}
+};
 
 const styleSheet = theme => ({
   root: {
@@ -109,7 +109,7 @@ class Timeline extends Component {
           <DateLegend label={messages.posted} color="green" />
           <DateLegend label={messages.clarification} color="orange" />
           <DateLegend label={messages.deadline} color="red" />
-          <DateLegend label={messages.notificaiton} color="blue" />
+          <DateLegend label={messages.notification} color="blue" />
           <DateLegend label={messages.estimated} color="dark" />
         </div>
       </div>
