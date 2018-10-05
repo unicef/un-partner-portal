@@ -280,10 +280,20 @@ class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerHeadOrganization
         fields = "__all__"
-        read_only_fields = (
-            'fullname',
-            'email',
-        )
+
+    def get_extra_kwargs(self):
+        extra_kwargs = super(PartnerHeadOrganizationSerializer, self).get_extra_kwargs()
+        if type(self.instance) == PartnerHeadOrganization:
+            extra_kwargs['email'] = {
+                'validators': [
+                    UniqueValidator(
+                        queryset=PartnerHeadOrganization.objects.exclude(partner=self.instance.partner),
+                        message='Organization Head with provided email already exists.',
+                        lookup='iexact'
+                    )
+                ]
+            }
+        return extra_kwargs
 
 
 class PartnerDirectorSerializer(serializers.ModelSerializer):
