@@ -111,6 +111,7 @@ const AddReview = (props) => {
           ? <CheckboxForm
             fieldName="is_a_committee_score"
             label={messages.confirmReview}
+            labelType="body1"
             optional
           />
           : null}

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { submit } from 'redux-form';
+import { submit, formValueSelector } from 'redux-form';
 import { withRouter } from 'react-router';
 import ControlledModal from '../../../common/modals/controlledModal';
 import { updateApplicationReview } from '../../../../reducers/applicationReviews';
 import AddReviewForm from './addReviewForm';
-import { selectApplicationPartnerName } from '../../../../store';
+import { selectApplicationPartnerName, selectApplicationProject, selectCfeiDetails } from '../../../../store';
 
 const messages = {
   header: 'You are reviewing application of',
@@ -26,7 +26,7 @@ class AddReviewModal extends Component {
   }
 
   render() {
-    const { id, scores, title, submit, dialogOpen, handleDialogClose, partnerName } = this.props;
+    const { id, scores, title, submit, dialogOpen, handleDialogClose, partnerName, isConfirmed, isSingleReviewer } = this.props;
     return (
       <div>
         <ControlledModal
@@ -42,9 +42,10 @@ class AddReviewModal extends Component {
             raised: {
               handleClick: submit,
               label: messages.save,
+              disabled: isSingleReviewer ? !isConfirmed : false,
             },
           }}
-          content={<AddReviewForm scores={scores} id={id} onSubmit={this.onFormSubmit} />}
+          content={<AddReviewForm isConfirmed={isConfirmed} scores={scores} id={id} onSubmit={this.onFormSubmit} />}
         />
       </div >
     );
@@ -60,13 +61,20 @@ AddReviewModal.propTypes = {
   partnerName: PropTypes.string,
   title: PropTypes.string,
   scores: PropTypes.object,
+  isConfirmed: PropTypes.bool,
+  isSingleReviewer: PropTypes.bool,
 };
 
+const selector = formValueSelector('addReview');
 
 const mapStateToProps = (state, ownProps) => {
   const { applicationId } = ownProps.params;
   const partnerName = selectApplicationPartnerName(state, applicationId);
+  const eoi = selectApplicationProject(state, applicationId);
+  const cfeiDetails = selectCfeiDetails(state, eoi);
   return {
+    isSingleReviewer: cfeiDetails.reviewers.length === 1,
+    isConfirmed: selector(state, 'is_a_committee_score'),
     partnerName,
   };
 };
