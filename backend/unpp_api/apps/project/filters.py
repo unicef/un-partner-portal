@@ -33,7 +33,7 @@ class BaseProjectFilter(django_filters.FilterSet):
     posted_from_date = DateFilter(name='created', lookup_expr='date__gte')
     posted_to_date = DateFilter(name='created', lookup_expr='date__lte')
     selected_source = CharFilter(lookup_expr='iexact')
-    status = ChoiceFilter(method='filter_status', choices=CFEI_STATUSES, label='Status')
+    status = CommaSeparatedListFilter(method='filter_status', choices=CFEI_STATUSES, label='Statuses')
     focal_points = ModelMultipleChoiceFilter(
         widget=CSVWidget(), queryset=User.objects.all()
     )
@@ -66,7 +66,7 @@ class BaseProjectFilter(django_filters.FilterSet):
             return queryset.filter(is_published=False)
         return queryset
 
-    def filter_status(self, queryset, name, value):
+    def filter_status(self, queryset, name, values):
         # Logic here should match EOI.status property
         filters = {
             CFEI_STATUSES.draft: Q(
@@ -95,7 +95,12 @@ class BaseProjectFilter(django_filters.FilterSet):
             ),
         }
 
-        return queryset.filter(filters.get(value, Q()))
+        query = Q()
+
+        for val in values:
+            query |= filters.get(val, Q())
+
+        return queryset.filter(query)
 
 
 class ApplicationsFilter(django_filters.FilterSet):
