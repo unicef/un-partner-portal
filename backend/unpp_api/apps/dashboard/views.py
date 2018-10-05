@@ -67,9 +67,10 @@ class ApplicationsToScoreListAPIView(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        open_eois_as_reviewer = user.eoi_as_reviewer.filter(completed_reason=None, completed_date=None)
         return Application.objects.filter(
-            eoi__in=open_eois_as_reviewer
+            eoi__reviewers=user,
+            eoi__completed_reason=None,
+            eoi__completed_date=None,
         ).exclude(assessments__reviewer=user).order_by('eoi__modified').distinct('eoi__modified', 'eoi')
 
 
