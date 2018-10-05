@@ -40,7 +40,7 @@ const styleSheet = (theme) => {
 const getSelectTableRowTemplateArgs = (
   { selectByRowClick, highlightRow, hovered, ...restParams },
   { selection }, // current selection
-// action that changes row selection
+  // action that changes row selection
 ) => {
   const { rowId, row } = restParams.tableRow;
   return ({
@@ -57,7 +57,6 @@ class SelectableList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected: [],
       hovered: null,
     };
 
@@ -67,6 +66,7 @@ class SelectableList extends Component {
     this.onPageSize = this.onPageSize.bind(this);
     this.tableRowTemplate = this.tableRowTemplate.bind(this);
     this.clearSelections = this.clearSelections.bind(this);
+    this.selectionCell = this.selectionCell.bind(this);
   }
 
   componentWillMount() {
@@ -96,18 +96,16 @@ class SelectableList extends Component {
   }
 
   handleSelect(newSelected, isSelected) {
-    const { saveSelectedItems } = this.props;
+    const { saveSelectedItems, selections } = this.props;
     let appendSelection = [];
 
     if (isSelected) {
-      appendSelection = this.state.selected.concat(newSelected);
+      appendSelection = selections.concat(newSelected);
     } else {
-      appendSelection = R.filter(item => item !== newSelected, this.state.selected);
+      appendSelection = R.filter(item => item !== newSelected, selections);
     }
 
     saveSelectedItems(appendSelection);
-
-    return this.setState({ selected: appendSelection });
   }
 
   handleRowMouseEnter(newHovered) {
@@ -151,17 +149,15 @@ class SelectableList extends Component {
   clearSelections() {
     const { saveSelectedItems } = this.props;
 
-    this.setState({
-      selected: [],
-    });
-
     saveSelectedItems([]);
   }
 
   selectionCell(rowIndex) {
+    const { selections } = this.props;
+
     return (<TableCell padding="checkbox">
       <Checkbox
-        checked={R.contains(rowIndex, this.state.selected)}
+        checked={R.contains(rowIndex, selections)}
         onChange={(event, selected) => this.handleSelect(rowIndex, selected)}
       />
     </TableCell>);
@@ -180,8 +176,9 @@ class SelectableList extends Component {
       pathName,
       hideList,
       query,
+      selections,
     } = this.props;
-    const { selected, hoveredRow } = this.state;
+    const { hoveredRow } = this.state;
     return (
       !hideList && <ListLoader
         loading={loading}
@@ -191,7 +188,7 @@ class SelectableList extends Component {
             rows={items}
             columns={columns}
             headerPlaceholderComponent={() => this.navigationHeader(
-              selected,
+              selections,
               items,
               headerAction)}
           >
@@ -269,6 +266,7 @@ SelectableList.propTypes = {
   onTableRowClick: PropTypes.func,
   clickableRow: PropTypes.bool,
   saveSelectedItems: PropTypes.func,
+  selections: PropTypes.array,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -276,6 +274,7 @@ const mapStateToProps = (state, ownProps) => ({
   query: ownProps.location.query,
   pageSize: Number(ownProps.location.query.page_size) || 0,
   pageNumber: Number(ownProps.location.query.page) || 0,
+  selections: state.selectableList.items,
 });
 
 const mapDispatch = dispatch => ({

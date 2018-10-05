@@ -6,6 +6,7 @@ import {
   stopLoading,
   saveErrorMsg,
 } from './apiStatus';
+import { saveSelectedItems } from './selectableListItems';
 
 export const REPORTS_CFEI_LOAD_STARTED = 'REPORTS_CFEI_LOAD_STARTED';
 export const REPORTS_CFEI_LOAD_SUCCESS = 'REPORTS_CFEI_LOAD_SUCCESS';
@@ -46,6 +47,8 @@ export const loadCfeiReportsList = params => (dispatch) => {
     .then((reports) => {
       dispatch(reportsCfeiLoadEnded());
       dispatch(reportsCfeiLoadSuccess(reports));
+
+      dispatch(saveSelectedItems(reports.results.map(item => item.id)));
     })
     .catch((error) => {
       dispatch(reportsCfeiLoadEnded());
