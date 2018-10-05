@@ -18,6 +18,8 @@ const labels = {
   partnerName: 'Partner name',
   partnerId: 'Partner ID',
   type: 'Type of organization',
+  orgHq: 'Organization\'s HQ',
+  orgHqLocation: ' Location of Organization\'s HQ',
   country: 'Country',
   location: 'Location of office',
   headOfOrganization: 'Head of organization',
@@ -44,6 +46,8 @@ const fields = (partner, button) => (
     <ItemRowCellDivider label={labels.partnerName} content={R.prop('name', partner)} />
     <ItemRowCellDivider label={labels.partnerId} content={`${R.prop('partnerId', partner)}`} />
     <ItemRowCellDivider label={labels.type} content={R.prop('organisationType', partner)} />
+    {R.prop('hq', partner) && <ItemRowCellDivider label={labels.orgHq} content={R.path(['hq', 'legal_name'], partner)} />}
+    {R.prop('hq', partner) && <ItemRowCellDivider label={labels.orgHqLocation} content={R.path(['hq', 'country_display'], partner)} />}
     <ItemRowCellDivider label={labels.country} content={R.prop('operationCountry', partner)} />
     <ItemRowCellDivider label={labels.location} content={R.prop('location', partner)} />
     <ItemRowCellDivider divider label={labels.headOfOrganization} />
@@ -55,8 +59,8 @@ const fields = (partner, button) => (
     <ItemRowCellDivider labelSecondary label={labels.email} content={R.path(['head', 'email'], partner)} />
     <ItemRowCellDivider label={labels.contact} content={R.prop('contact', partner)} />
     <ItemRowCellDivider label={labels.sectors} content={R.prop('sectors', partner)} />
-    <ItemRowCellDivider label={labels.year} content={R.prop('yearOfEstablishment', partner)} />
     <ItemRowCellDivider label={labels.populations} content={R.prop('population', partner)} />
+    <ItemRowCellDivider label={labels.year} content={R.prop('yearOfEstablishment', partner)} />
     <ItemRowCellDivider label={labels.unExperience} content={R.prop('unExperience', partner)} />
     <ItemRowCellDivider label={labels.budget} content={R.prop('budget', partner)} />
     <ItemRowCellDivider label={labels.results} content={R.prop('keyResults', partner)} />
@@ -83,6 +87,7 @@ const summaryHeader = lastUpdate => (
 
 const PartnerOverviewSummary = (props) => {
   const { partner, loading, button } = props;
+  console.log(partner);
   return (
     <HeaderList
       header={summaryHeader(R.prop('lastUpdate', partner))}
