@@ -6,6 +6,7 @@ import {
   stopLoading,
   saveErrorMsg,
 } from './apiStatus';
+import { saveSelectedItems } from './selectableListItems';
 
 export const REPORTS_PARTNER_LOAD_STARTED = 'REPORTS_PARTNER_LOAD_STARTED';
 export const REPORTS_PARTNER_LOAD_SUCCESS = 'REPORTS_PARTNER_LOAD_SUCCESS';
@@ -46,6 +47,8 @@ export const loadPartnerReportsList = params => (dispatch) => {
     .then((reports) => {
       dispatch(reportsPartnerLoadEnded());
       dispatch(reportsPartnerLoadSuccess(reports));
+
+      dispatch(saveSelectedItems(reports.results.map(item => item.id)));
     })
     .catch((error) => {
       dispatch(reportsPartnerLoadEnded());
