@@ -3,6 +3,7 @@ import applicationsIcon from 'material-ui-icons/Assignment';
 import settingsIcon from 'material-ui-icons/Settings';
 import partnersIcon from 'material-ui-icons/Group';
 import dashboardIcon from 'material-ui-icons/Dashboard';
+import help from 'material-ui-icons/Help';
 
 
 import { SESSION_READY } from './session';
@@ -17,6 +18,8 @@ const initialState = [
   { path: '/applications', label: 'Your Applications', roles: [PARTNER], icon: applicationsIcon },
   { path: '/profile', label: 'Profile', roles: [PARTNER], icon: settingsIcon },
   { path: '/reports', label: 'Reports', roles: [AGENCY], icon: applicationsIcon },
+  { path: 'https://unpartnerportalcso.zendesk.com/hc/en-us', external: true, label: 'Resource Library', roles: [PARTNER], icon: help },
+  { path: 'https://unpartnerportalhelpcenter.zendesk.com/hc/en-us', external: true, label: 'Resource Library', roles: [AGENCY], icon: help },
 ];
 
 export const filterItems = (state, role) => state.filter(
