@@ -87,7 +87,7 @@ const summaryHeader = lastUpdate => (
 
 const PartnerOverviewSummary = (props) => {
   const { partner, loading, button } = props;
-  console.log(partner);
+
   return (
     <HeaderList
       header={summaryHeader(R.prop('lastUpdate', partner))}
