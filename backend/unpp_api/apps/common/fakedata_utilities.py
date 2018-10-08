@@ -253,7 +253,11 @@ def generate_fake_data(country_count=3):
             print(f'Creating {agency.name} in {country_name}')
             index += 1
             office = AgencyOfficeFactory(country=country_code, agency=agency)
-            for role_name, display_name in AgencyRole.get_choices(agency=agency):
+            roles = AgencyRole.get_choices(agency=agency) + [
+                (AgencyRole.HQ_EDITOR.value, AgencyRole.HQ_EDITOR.name)
+            ]
+
+            for role_name, display_name in roles:
                 user = UserFactory(
                     email=f'agency-{index}-{USERNAME_AGENCY_ROLE_POSTFIXES[role_name]}@{agency.name.lower()}.org',
                     is_superuser=True,

@@ -219,34 +219,38 @@ class PartnerProfilePDFExporter:
         return self.wrap_table(table_rows)
 
     def get_organization_head_table(self):
-        org_head = getattr(self.partner.hq or self.partner, 'org_head', None)
-        table_rows = [
-            [
-                'Full name',
-                getattr(org_head, 'fullname', None),
-            ],
-            [
-                'Job Title/Position',
-                getattr(org_head, 'job_title', None),
-            ],
-            [
-                'Telephone',
-                getattr(org_head, 'telephone', None),
-            ],
-            [
-                'Mobile (optional)',
-                getattr(org_head, 'mobile', None),
-            ],
-            [
-                'Fax (optional)',
-                getattr(org_head, 'fax', None),
-            ],
-            [
-                'Email',
-                getattr(org_head, 'email', None),
-            ],
-        ]
-        return self.wrap_table(table_rows)
+        tables = []
+
+        for org_head in self.partner.organisation_heads.order_by('-created'):
+            table_rows = [
+                [
+                    'Full name',
+                    getattr(org_head, 'fullname') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Job Title/Position',
+                    getattr(org_head, 'job_title') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Telephone',
+                    getattr(org_head, 'telephone') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Mobile (optional)',
+                    getattr(org_head, 'mobile') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Fax (optional)',
+                    getattr(org_head, 'fax') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Email',
+                    getattr(org_head, 'email') or NO_INFO_PLACEHOLDER,
+                ],
+            ]
+            tables.append(ListItem(self.wrap_table(table_rows)))
+
+        return ListFlowable(tables, bulletType='a')
 
     def get_connectivity_table(self):
         table_rows = [
@@ -277,21 +281,22 @@ class PartnerProfilePDFExporter:
     def get_ethics_table(self):
         table_rows = [
             [
-                'Does the organization have a policy or code of conduct to '
-                'safeguard against the violation and abuse of beneficiaries?',
+                'Briefly describe the organization’s mechanisms to safeguard against the violation '
+                'and abuse of beneficiaries, including sexual exploitation and abuse.',
+                self.partner.mandate_mission.ethic_safeguard_comment or NO_INFO_PLACEHOLDER,
+            ],
+            [
+                'Are these mechanisms formally documented in an organizational policy or code of conduct?',
                 BOOLEAN_DISPLAY[self.partner.mandate_mission.ethic_safeguard],
             ],
             [
-                'Please comment',
-                self.partner.mandate_mission.ethic_safeguard_comment,
+                'Briefly describe the organization’s mechanisms to safeguard against '
+                'fraud, corruption and other unethical behaviour.',
+                self.partner.mandate_mission.ethic_fraud_comment or NO_INFO_PLACEHOLDER,
             ],
             [
-                'Does the organization have a policy or code of conduct to safeguard against fraud and corruption?',
+                'Are these mechanisms formally documented in an organizational policy or code of conduct?',
                 BOOLEAN_DISPLAY[self.partner.mandate_mission.ethic_fraud],
-            ],
-            [
-                'Please comment',
-                self.partner.mandate_mission.ethic_fraud_comment,
             ],
         ]
         return self.wrap_table(table_rows)
@@ -508,10 +513,10 @@ class PartnerProfilePDFExporter:
                 CustomParagraph('Contact information', style=self.style_h3),
                 CustomParagraph('Mailing Address', self.style_h4),
                 self.get_mailing_address_table(),
+                CustomParagraph('Head(s) of Organization', self.style_h4),
+                self.get_organization_head_table(),
                 CustomParagraph('Key Personnel', self.style_h4),
                 self.get_key_personnel_table(),
-                CustomParagraph('Head of Organization', self.style_h4),
-                self.get_organization_head_table(),
                 CustomParagraph('Connectivity', self.style_h4),
                 self.get_connectivity_table(),
                 CustomParagraph('Working Languages', self.style_h4),

@@ -772,8 +772,7 @@ class PartnerMandateMission(TimeStampedModel):
                      'beneficiaries, including sexual exploitation and abuse.'
     )
     ethic_safeguard = models.NullBooleanField(
-        verbose_name='Does the organization have a policy or code of conduct to '
-                     'safeguard against the violation and abuse of beneficiaries?'
+        verbose_name='Are these mechanisms formally documented in an organizational policy or code of conduct?'
     )
     ethic_safeguard_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies"
