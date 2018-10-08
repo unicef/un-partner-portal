@@ -42,6 +42,9 @@ RUN chmod -R a+rw /data
 ADD worker-entrypoint.sh /
 RUN chmod +x /worker-entrypoint.sh
 
+ADD entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
 ENV PYTHONUNBUFFERED 1
 WORKDIR /code/
 
@@ -49,3 +52,5 @@ COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/wait-for-it.sh
 
 EXPOSE 8000
+
+CMD /./entrypoint.sh
