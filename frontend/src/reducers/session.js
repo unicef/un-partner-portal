@@ -124,7 +124,7 @@ export const loadUserData = () => (dispatch, getState) => {
       // partner specific fields
       if (role === ROLES.PARTNER) {
         const mainPartner = R.defaultTo(
-          R.head(response.partners),
+          R.find(R.propEq('is_hq', true), response.partners) || R.head(response.partners),
           R.find(R.propEq('id', partnerId), response.partners),
         );
 
