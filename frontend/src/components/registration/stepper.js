@@ -19,13 +19,18 @@ import AlertDialog from '../common/alertDialog';
 import { loadCountries } from '../../reducers/countries';
 import { registerUser } from '../../reducers/session';
 import { loadPartnerConfig } from '../../reducers/partnerProfileConfig';
+import Typography from 'material-ui/Typography';
 
 const messages = {
   error: 'Registration failed',
   declarationInfo: 'You must answer "yes" to all of the declarations in order to proceed.',
   warning: 'Notice',
-  legalInfo: 'You must upload at least one of the following documents: (1) Registration certificate or (2) Governing document or (3) Letter of reference ' +  
-  'from a donor agency, government authority or community association in order to register your organization on UN Partner Portal.',
+  legalInfo: 'You must upload at least one of the following documents: (1) Registration certificate or (2) Governing document or (3) Letter of reference ' +
+    'from a donor agency, government authority or community association in order to register your organization on UN Partner Portal.',
+  duplication: 'Duplicate registration detected. An entity sharing your organization’s name and other vital details is already registered in the UN Partner Portal:',
+  duplicationPart_2: 'Please consult within your organization or contact the UN Partner Portal Help Desk.',
+  userEmail: 'User e-mail:',
+  headOfOrgEmail: 'Head of Organization e-mail:',
 };
 
 class RegistrationStepper extends React.Component {
@@ -34,8 +39,10 @@ class RegistrationStepper extends React.Component {
     this.state = {
       stepIndex: 0,
       lastStep: 4,
+      duplicationFields: '',
       declarationAlert: false,
       legalStatusAlert: false,
+      duplicationAlert: false,
     };
     this.handleNext = this.handleNext.bind(this);
     this.handleNextQuestions = this.handleNextQuestions.bind(this);
@@ -86,6 +93,8 @@ class RegistrationStepper extends React.Component {
   }
 
   handleSubmit(values) {
+    const { userEmail, headOfOrgEmail } = this.props;
+
     let payload = R.assocPath(['json', 'declaration'],
       Object.keys(PLAIN_DECLRATIONS.questions).map((key, index) =>
         ({ answer: 'Yes', question: PLAIN_DECLRATIONS.questions[key] }),
@@ -97,9 +106,11 @@ class RegistrationStepper extends React.Component {
       const errorMsg = R.path(['response', 'data', 'non_field_errors'], error) || messages.error;
 
       if (error.response.data.user) {
-        this.setState({ stepIndex: 4 });
+        this.setState({ stepIndex: 4, duplicationAlert: true, duplicationFields: `${messages.userEmail} ${userEmail}` });
       } else if (error.response.data.partner_head_organization) {
-        this.setState({ stepIndex: 1 });
+        this.setState({ stepIndex: 1, duplicationAlert: true, duplicationFields: `${messages.headOfOrgEmail} ${headOfOrgEmail}` });
+      } else {
+        this.setState({ stepIndex: 1, duplicationAlert: true, duplicationFields: errorMsg });
       }
       throw new SubmissionError({
         json: { ...error.response.data },
@@ -172,6 +183,12 @@ class RegistrationStepper extends React.Component {
           text={messages.legalInfo}
           handleDialogClose={() => this.setState({ legalStatusAlert: false })}
         />
+        <AlertDialog
+          trigger={!!this.state.duplicationAlert}
+          title={messages.warning}
+          text={<Typography style={{ whiteSpace: 'pre-line' }} type="body1">{`${messages.duplication} \n\n ${this.state.duplicationFields} \n\n ${messages.duplicationPart_2}`}</Typography>}
+          handleDialogClose={() => this.setState({ duplicationAlert: false })}
+        />
       </div>
     );
   }
@@ -185,12 +202,16 @@ RegistrationStepper.propTypes = {
   loadPartnerConfig: PropTypes.func,
   loadCountries: PropTypes.func,
   registerUser: PropTypes.func,
+  userEmail: PropTypes.string,
+  headOfOrgEmail: PropTypes.string,
 };
 
 const selector = formValueSelector('registration');
 const connectedRegistrationStepper = connect(
   state => ({
     answers: selector(state, 'questions'),
+    userEmail: selector(state, 'json.user.email'),
+    headOfOrgEmail: selector(state, 'json.partner_head_organization.email'),
     formData: selector(state, 'json'),
   }),
   dispatch => ({
