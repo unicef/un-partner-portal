@@ -374,6 +374,7 @@ class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 
     created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
     evidence_file = CommonFileSerializer(read_only=True)
+    evidence_file_id = serializers.IntegerField(required=False, write_only=True)
 
     class Meta:
         model = PartnerCollaborationEvidence
@@ -381,12 +382,6 @@ class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'editable',
         )
-        extra_kwargs = {
-            'evidence_file_id': {
-                'write_only': True,
-                'required': True,
-            }
-        }
 
 
 class PartnerOtherInfoSerializer(serializers.ModelSerializer):
