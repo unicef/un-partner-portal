@@ -221,7 +221,7 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
 
         response = self.client.post(url, data=duplicate_partner_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(len(response.data['non_field_errors']), 1)
+        self.assertEqual(len(response.data['partner']['non_field_errors']), 1)
 
     def test_allows_to_register_duplicate_partner_in_different_country(self):
         url = reverse('accounts:registration')

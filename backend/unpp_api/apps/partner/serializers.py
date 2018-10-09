@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
+from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 
 from agency.serializers import AgencySerializer
 from common.consts import (
@@ -152,6 +152,13 @@ class PartnerSerializer(serializers.ModelSerializer):
             'org_logo_thumbnail',
             'last_profile_update',
         )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Partner.objects.all(),
+                fields=('legal_name', 'country_code'),
+                message='Partner with this name already registered for country.'
+            )
+        ]
 
 
 class PartnerShortSerializer(serializers.ModelSerializer):

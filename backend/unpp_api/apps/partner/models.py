@@ -81,6 +81,9 @@ class Partner(MigratedTimeStampedModel):
 
     class Meta:
         ordering = ('-created', )
+        unique_together = (
+            'legal_name', 'country_code'
+        )
 
     def __str__(self):
         return "Partner: {} <pk:{}>".format(self.legal_name, self.id)

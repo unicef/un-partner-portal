@@ -37,7 +37,6 @@ from partner.serializers import (
     PartnerRegistrationDocumentSerializer,
     PartnerCollaborationEvidenceSerializer,
 )
-from partner.validators import PartnerRegistrationValidator
 from account.models import User, UserProfile
 
 
@@ -105,11 +104,6 @@ class PartnerRegistrationSerializer(serializers.Serializer):
     recommendation_document = PartnerRecommendationDocumentSerializer(required=False)
 
     declaration = PartnerDeclarationSerializer(many=True, write_only=True)
-
-    class Meta:
-        validators = (
-            PartnerRegistrationValidator(),
-        )
 
     def validate(self, attrs):
         validated_data = super(PartnerRegistrationSerializer, self).validate(attrs)

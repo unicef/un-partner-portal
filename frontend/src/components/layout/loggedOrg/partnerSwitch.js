@@ -88,7 +88,6 @@ class PartnerSwitch extends Component {
   render() {
     const { classes, partners, partnerId, partnerCountry, countries } = this.props;
     const partner = R.find(R.propEq('id', partnerId))(partners);
-    console.log(partner);
     return (
       <div>
         <GridRow alignItems="center">
