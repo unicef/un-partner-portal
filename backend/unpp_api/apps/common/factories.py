@@ -593,6 +593,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Partner
+        django_get_or_create = ('legal_name', 'country_code')
 
 
 class PartnerMemberFactory(factory.django.DjangoModelFactory):
