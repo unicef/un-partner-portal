@@ -228,7 +228,7 @@ class Partner(MigratedTimeStampedModel):
         for field_name in timestamp_fields:
             try:
                 update_timestamps.append(attrgetter(field_name)(self))
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, AttributeError):
                 pass
 
         update_timestamps.extend(self.directors.values_list("modified", flat=True))
