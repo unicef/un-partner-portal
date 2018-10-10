@@ -80,11 +80,11 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
                     valid_ids.append(serializer.save(**save_kwargs).id)
 
-                # user can add and remove on update
-                to_be_removed = related_manager.exclude(id__in=valid_ids)
-                if hasattr(related_manager.model, 'editable'):
-                    to_be_removed.exclude(editable=False)
-                to_be_removed.delete()
+                if valid_ids:
+                    to_be_removed = related_manager.exclude(id__in=valid_ids)
+                    if hasattr(related_manager.model, 'editable'):
+                        to_be_removed.exclude(editable=False)
+                    to_be_removed.delete()
 
 
 class MixinPreventManyCommonFile(object):
