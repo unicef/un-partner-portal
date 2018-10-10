@@ -42,15 +42,19 @@ const initialState = {
 
 export const loadPartnerReportsList = params => (dispatch) => {
   dispatch(reportsPartnerLoadStarted());
-  
+
   return getPartnerReports(params)
     .then((reports) => {
       dispatch(reportsPartnerLoadEnded());
+      reports.results = R.map(item => {
+        item.offices = R.map(office => R.assocPath(['admin_level_1', 'name'], item.legal_name, office), item.offices)
+        return item;
+      }, reports.results);
       dispatch(reportsPartnerLoadSuccess(reports));
-
       dispatch(saveSelectedItems(reports.results.map(item => item.id)));
     })
     .catch((error) => {
+      console.log(error);
       dispatch(reportsPartnerLoadEnded());
       dispatch(reportsPartnerLoadFailure(error));
     });
