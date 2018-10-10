@@ -10,8 +10,7 @@ import SpreadContent from '../common/spreadContent';
 import LocationsMap from '../forms/fields/projectFields/locationField/locationsMap';
 
 const messages = {
-  defaultCountryCode: 'RUS',
-  defaultCountryName: 'Russia',
+  defaultCountryCode: 'US',
 };
 
 const styleSheet = theme => ({
@@ -59,7 +58,7 @@ class PartnerMapping extends Component {
           showMap
           readOnly
           currentCountryCode={country_code || messages.defaultCountryCode}
-          currentCountry={country_code || messages.defaultCountryName}
+          currentCountry={country_code || messages.defaultCountryCode}
           removeAllLocations={() => {}}
         />
       </HeaderList>);
