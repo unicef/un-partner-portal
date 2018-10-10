@@ -132,13 +132,6 @@ class PartnerInfoContainer extends Component {
               >
                 {messages.partnerContact}
               </Button>}
-              {(hasCSOContactPermission || hasCSOProfilePermission) && <Button
-                raised
-                color="accent"
-                onTouchTap={() => this.partnerMappingReport()}
-              >
-                {messages.partnerMappingReport}
-              </Button>}
             </div>}
           {!R.isEmpty(queryParams) && hasCSOMappingPermission && <PartnerMapping
             title={messages.partnerMapping}
