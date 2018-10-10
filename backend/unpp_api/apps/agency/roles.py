@@ -146,7 +146,6 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
         AgencyPermission.RUN_REPORT_CSO_MAPPING,
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
-        AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
         AgencyPermission.ERP_ENTER_VENDOR_NUMBER,
     ]),
     AgencyRole.EDITOR_ADVANCED: frozenset([
