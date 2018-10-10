@@ -24,7 +24,7 @@ const saveCfeiReports = (state, action) => {
 };
 
 const messages = {
-  loadFailed: 'Loading Expression of interests reports failed.',
+  loadFailed: 'Loading Partner Opportunities reports failed.',
 };
 
 const initialState = {
