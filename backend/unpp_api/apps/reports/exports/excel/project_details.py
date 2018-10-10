@@ -32,6 +32,7 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             'Project Name',
             'Date of Publication',
             'Partnership Selection Modality',
+            'Country',
             'Location(s)',
             'Sector(s)',
             'Area(s) of Specialization',
@@ -64,6 +65,9 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             location_names = "\n".join(set([
                 f"{l.admin_level_1.name} ({l.admin_level_1.country_name})" for l in eoi.locations.all()
             ]))
+            country_names = "\n".join(set([
+                l.admin_level_1.country_name for l in eoi.locations.all()
+            ]))
 
             sectors_specializations = eoi.specializations.values('name', 'category__name').distinct()
             sectors = "\n".join(set([s['category__name'] for s in sectors_specializations]))
@@ -86,6 +90,7 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
                 eoi.title,
                 eoi.published_timestamp,
                 eoi.selection_mode,
+                country_names,
                 location_names,
                 sectors,
                 specializations,
