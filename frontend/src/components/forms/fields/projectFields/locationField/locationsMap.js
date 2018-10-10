@@ -85,13 +85,13 @@ class LocationsMapBase extends Component {
   }
 
   initMap(country) {
-    const { removeAllLocations } = this.props;
+    const { countries, removeAllLocations } = this.props;
 
     if (this.state.previousCountry && this.state.previousCountry !== country && !this.props.readOnly) {
       removeAllLocations();
     }
 
-    geocodingClient.forwardGeocode({ query: country, limit: 1, })
+    geocodingClient.forwardGeocode({ query: countries[country], limit: 1, countries: [country] })
       .send()
       .then(response => {
         const match = response.body.features[0];
@@ -222,7 +222,14 @@ LocationsMapBase.propTypes = {
    * function to save error in redux and display snackbar
    */
   postError: PropTypes.func,
+
+  countries: PropTypes.object.isRequired,
 };
+
+
+const mapStateToProps = state => ({
+  countries: state.countries,
+})
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   postError: error => dispatch(errorToBeAdded(
@@ -230,4 +237,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 
-export default connect(null, mapDispatchToProps)(LocationsMapBase);
+export default connect(mapStateToProps, mapDispatchToProps)(LocationsMapBase);
