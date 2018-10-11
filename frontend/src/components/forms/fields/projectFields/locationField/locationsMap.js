@@ -92,7 +92,13 @@ class LocationsMapBase extends Component {
       removeAllLocations();
     }
 
-    geocodingClient.forwardGeocode({ query: countries[country], limit: 1, countries: [country] })
+    let code;
+
+    if (!countries[country]) {
+      code = R.keys(countries)[R.indexOf(country, R.values(countries))]
+    }
+
+    geocodingClient.forwardGeocode({ query: code || country, limit: 1, countries: [code || country] })
       .send()
       .then(response => {
         const match = response.body.features[0];
