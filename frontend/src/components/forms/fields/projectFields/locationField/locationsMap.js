@@ -98,7 +98,7 @@ class LocationsMapBase extends Component {
       code = R.keys(countries)[R.indexOf(country, R.values(countries))]
     }
 
-    geocodingClient.forwardGeocode({ query: code || country, limit: 1, countries: [code || country] })
+    geocodingClient.forwardGeocode({ query: countries[country] || country, limit: 1, countries: [code || country] })
       .send()
       .then(response => {
         const match = response.body.features[0];
