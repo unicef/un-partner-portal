@@ -307,9 +307,9 @@ if LEGACY_DB_HOST and 'test' not in sys.argv:
     # bit of an ugly hack, to stop creating legacy DB when testing
     DATABASES['legacy'] = {
         'ENGINE': 'sqlserver',
-        'NAME': os.getenv('LEGACY_DB_NAME'),
-        'USER': os.getenv('LEGACY_DB_USER'),
-        'PASSWORD': os.getenv('LEGACY_DB_PW'),
+        'NAME': os.getenv('LEGACY_DB_NAME', 'UNPP'),
+        'USER': os.getenv('LEGACY_DB_USER', 'SA'),
+        'PASSWORD': os.getenv('SA_PASSWORD'),
         'HOST': LEGACY_DB_HOST,
         'PORT': int(os.getenv('LEGACY_DB_PORT', 1433)),
     }

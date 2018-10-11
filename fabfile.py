@@ -7,7 +7,7 @@ def ssh(service):
     ssh into running service container
     :param service: ['backend', 'frontend', 'proxy', 'db']
     """
-    assert service in ['backend', 'frontend', 'proxy', 'db'], "%s is unrecognized service"
+    assert service in ['backend', 'frontend', 'proxy', 'db', 'legacy_db'], "%s is unrecognized service"
     local('docker-compose exec %s bash' % service)
 
 

@@ -1,0 +1,46 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: legacydb
+  namespace: {{NAMESPACE}}
+spec:
+  selector:
+    app: legacy-db-container
+  ports:
+    - protocol: TCP
+      port: 1433
+      targetPort: 1433
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: legacydb
+  labels:
+    app: legacydb
+  namespace: {{NAMESPACE}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: legacy-db-container
+  template:
+    metadata:
+      labels:
+        app: legacy-db-container
+    spec:
+      containers:
+        - name: legacydb
+          image: unicef/unpp-db
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: y
+            - name: SA_PASSWORD
+              value: {{SA_PASSWORD}}
+            - name: LEGACY_DB_ARCHIVE_URL
+              value: {{LEGACY_DB_ARCHIVE_URL}}
+            - name: LEGACY_DB_ARCHIVE_PASSWORD
+              value: {{LEGACY_DB_ARCHIVE_PASSWORD}}
+          command: bash -c "apt-get update && apt-get install -y curl && curl $LEGACY_DB_ARCHIVE_URL -O -J -L && openssl enc -d -aes256 -in dump.tar.gz -pass pass:$LEGACY_DB_ARCHIVE_PASSWORD | tar xz && /opt/mssql/bin/sqlservr"

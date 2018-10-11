@@ -44,6 +44,16 @@ services:
     ports:
       - "8081:5432"
 
+  legacy_db:
+    image: microsoft/mssql-server-linux:latest
+    env_file:
+      - .env
+    environment:
+      - ACCEPT_EULA=y
+    ports:
+      - "1433:1433"
+    command: bash -c "apt-get update && apt-get install -y curl && curl $LEGACY_DB_ARCHIVE_URL -O -J -L && openssl enc -d -aes256 -in dump.tar.gz -pass pass:$LEGACY_DB_ARCHIVE_PASSWORD | tar xz && /opt/mssql/bin/sqlservr"
+
   frontend:
     image: unicef/unpp-frontend
     env_file:
