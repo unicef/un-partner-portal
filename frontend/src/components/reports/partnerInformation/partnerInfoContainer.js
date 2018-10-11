@@ -19,7 +19,7 @@ const messages = {
   partnerProfile: 'Export partner profile report',
   partnerContact: 'Export contact information report',
   partnerMappingReport: 'Export partner mapping report',
-  partnerMapping: 'Map of Partner Opportunities',
+  partnerMapping: 'Map of Partners',
 };
 
 class PartnerInfoContainer extends Component {
