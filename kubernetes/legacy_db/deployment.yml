@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: legacydb
-          image: unicef/unpp-db
+          image: microsoft/mssql-server-linux:latest
           ports:
             - containerPort: 1433
           env:
