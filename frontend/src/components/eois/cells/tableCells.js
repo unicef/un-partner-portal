@@ -1,6 +1,7 @@
 import React from 'react';
 import { pluck } from 'ramda';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import EoiSectorCell from './eoiSectorCell';
 import EoiPartnersStatusCell from './eoiPartnersStatusCell';
 import EoiStatusCell from './eoiStatusCell';
@@ -91,5 +92,5 @@ export default type => ({ row, column, value }) => {
       </TableCell>);
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };

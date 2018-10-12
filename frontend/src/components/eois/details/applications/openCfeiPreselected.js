@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { browserHistory as history } from 'react-router';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
 import ApplicationCnIdCell from '../../cells/applicationCnIdCell';
 import SelectableList from '../../../common/list/selectableList';
@@ -107,7 +108,7 @@ class OpenCfeiPreselections extends Component {
       />);
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   render() {

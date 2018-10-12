@@ -52,7 +52,7 @@ const renderCells = ({ row, column, value }) => {
         id={row.id}
       />);
   }
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 renderCells.propTypes = {

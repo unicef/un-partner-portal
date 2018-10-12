@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import CnCell from './cnCell';
 import TitleCell from './titleCell';
 import PartnerApplicationListFilter from './partnerApplicationListFilter';
@@ -34,7 +35,7 @@ const applicationCell = ({ row, column, value }) => {
     return <CountriesCell countries={row.country_code} />;
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 class AgencyMembersContainer extends Component {

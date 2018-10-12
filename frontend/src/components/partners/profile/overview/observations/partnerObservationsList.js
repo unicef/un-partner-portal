@@ -4,7 +4,7 @@ import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { TableCell } from 'material-ui/Table';
-import { Typography } from 'material-ui/';
+import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import PaginatedList from '../../../../common/list/paginatedList';
 import TableWithStateInUrl from '../../../../common/hoc/tableWithStateInUrl';
@@ -133,7 +133,7 @@ class PartnerObservationsList extends Component {
       </TableCell>);
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   render() {

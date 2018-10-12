@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
+import Typography from 'material-ui/Typography';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import VerificationFilter from './verificationFilter';
 import PaginatedList from '../../common/list/paginatedList';
@@ -48,7 +49,7 @@ class VerificationContainer extends Component {
       />);
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   verificationReport() {

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
+import Typography from 'material-ui/Typography';
 import MainContentWrapper from '../../../components/common/mainContentWrapper';
 import HeaderNavigation from '../../../components/common/headerNavigation';
 import AgencyMembersFilter from './usersFilter';
@@ -25,7 +26,7 @@ const tableCells = ({ row, column, hovered, value }) => {
     />);
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 class UsersContainer extends Component {

@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
-import MainContentWrapper from '../../../components/common/mainContentWrapper';
-import HeaderNavigation from '../../../components/common/headerNavigation';
+import Typography from 'material-ui/Typography';
 import PaginatedList from '../../../components/common/list/paginatedList';
 import TableWithStateInUrl from '../../../components/common/hoc/tableWithStateInUrl';
 import { loadMembersList } from '../../../reducers/partnerMembersList';
@@ -36,7 +35,7 @@ class PartnerUsersContainer extends Component {
       return <TableCell>{row.user.email}</TableCell>;
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   render() {

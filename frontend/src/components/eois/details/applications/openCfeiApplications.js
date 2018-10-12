@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { compose, any } from 'ramda';
+import Typography from 'material-ui/Typography';
 import withStyles from 'material-ui/styles/withStyles';
 import { TableCell } from 'material-ui/Table';
 import { browserHistory as history, withRouter } from 'react-router';
@@ -116,7 +117,7 @@ class ApplicationsListContainer extends Component {
       return <OrganizationTypeCell orgType={row.type_org} />;
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   render() {
