@@ -19,7 +19,7 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permission
 
 const messages = {
   exportReport: 'Export report',
-  projectMapping: 'Map of Partner Opportunities',
+  projectMapping: 'Map of Partnership Opportunities',
 };
 
 class CfeiManagementContainer extends Component {
