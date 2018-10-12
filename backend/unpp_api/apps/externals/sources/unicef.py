@@ -9,7 +9,7 @@ import requests
 from rest_framework import status
 
 from common.business_areas import BUSINESS_AREA_TO_CODE, BUSINESS_AREAS
-from defusedxml.ElementTree import fromstring
+from defusedxml.ElementTree import fromstring, tostring
 
 from externals.models import UNICEFVendorData, PartnerVendorNumber
 
@@ -50,7 +50,7 @@ class UNICEFInfoDownloader(object):
                 continue
 
             for data_row in fromstring(response_text).findall('ROW'):
-                logger.debug(f'Inserting {data_row}')
+                logger.debug(f'Inserting {tostring(data_row).decode()}')
                 vendor_number = data_row.find('VENDOR_CODE').text
                 vendor_name = data_row.find('VENDOR_NAME').text
                 cash_transfers_current_year = data_row.find('TOTAL_CASH_TRANSFERRED_CY').text
