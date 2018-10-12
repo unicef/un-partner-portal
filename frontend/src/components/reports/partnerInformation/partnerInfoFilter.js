@@ -274,7 +274,7 @@ const mapStateToProps = (state, ownProps) => {
       registered,
       is_hq,
       has_experience,
-      locations,
+      locations: locations && Number(locations),
     },
   };
 };

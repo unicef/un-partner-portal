@@ -250,7 +250,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       country_code,
       status,
-      locations,
+      locations: locations && Number(locations),
       posted_year,
       display_type,
       specializations: specializationsQ,
