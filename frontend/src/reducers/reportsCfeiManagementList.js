@@ -47,6 +47,11 @@ export const loadCfeiReportsList = params => (dispatch) => {
   return getProjectReports(params)
     .then((reports) => {
       dispatch(reportsCfeiLoadEnded());
+      reports.results = R.map(item => {
+        item.locations = R.map(location =>
+          R.assocPath(['admin_level_1', 'name'], item.displayID, location), item.locations)
+        return item;
+      }, reports.results);
       dispatch(reportsCfeiLoadSuccess(reports));
 
       dispatch(saveSelectedItems(reports.results.map(item => item.id)));
