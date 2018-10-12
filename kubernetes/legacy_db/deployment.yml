@@ -36,7 +36,7 @@ spec:
             - containerPort: 1433
           env:
             - name: ACCEPT_EULA
-              value: y
+              value: "y"
             - name: SA_PASSWORD
               value: {{SA_PASSWORD}}
             - name: LEGACY_DB_ARCHIVE_URL
