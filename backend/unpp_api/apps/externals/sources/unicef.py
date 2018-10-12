@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 from time import sleep
 
@@ -13,6 +14,9 @@ from defusedxml.ElementTree import fromstring
 from externals.models import UNICEFVendorData, PartnerVendorNumber
 
 
+logger = logging.getLogger('console')
+
+
 class UNICEFInfoDownloader(object):
 
     def __init__(self):
@@ -22,25 +26,31 @@ class UNICEFInfoDownloader(object):
         self.session.auth = self.auth
 
     def get_url(self, url, max_retry=1):
+        logger.debug(f'Getting {url}')
         response = self.session.get(url, timeout=60)
         if not response.status_code == status.HTTP_200_OK:
+            logger.debug(f'Response failure {response}')
             if max_retry == 0:
-                return None
+                response.raise_for_status()
             else:
                 sleep(10)
                 return self.get_url(url, max_retry=max_retry - 1)
 
+        logger.debug(f'Response success {response}')
         return response.text
 
     def sync_business_areas(self):
         year = date.today().year
+
         for ba, _ in BUSINESS_AREAS:
             listing_url = f'{self.host}{BUSINESS_AREA_TO_CODE[ba]}'
+
             response_text = self.get_url(listing_url)
             if not response_text:
                 continue
 
             for data_row in fromstring(response_text).findall('ROW'):
+                logger.debug(f'Inserting {data_row}')
                 vendor_number = data_row.find('VENDOR_CODE').text
                 vendor_name = data_row.find('VENDOR_NAME').text
                 cash_transfers_current_year = data_row.find('TOTAL_CASH_TRANSFERRED_CY').text
@@ -56,6 +66,7 @@ class UNICEFInfoDownloader(object):
                         'cash_transfers_this_year': cash_transfers_year_to_date,
                     }
                 )
+                logger.debug('Saved')
 
 
 class UNICEFInfoClient(object):

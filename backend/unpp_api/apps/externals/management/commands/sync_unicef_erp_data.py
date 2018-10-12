@@ -31,4 +31,4 @@ class Command(BaseCommand):
             UNICEFInfoDownloader().sync_business_areas()
             self.stdout.write('Finished UNICEF ERP data sync')
         else:
-            self.stdout.write('Skip sync')
+            self.stdout.write('Not last day of the month, skipping.\nUse --force to run anyway')
