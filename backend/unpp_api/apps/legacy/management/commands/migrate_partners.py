@@ -66,13 +66,24 @@ class Command(BaseCommand):
             legacy_models.PartnerPartner.objects.get(id=source.hq_id)
         ) if source.hq_id else None
 
+        legal_name_postfix = ''
+        other_partners_with_same_name_in_country_count = Partner.objects.filter(
+            legal_name=source.legal_name,
+            country_code=source.country_code,
+        ).exclude(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.id
+        ).count()
+        if other_partners_with_same_name_in_country_count > 0:
+            legal_name_postfix = f' #{other_partners_with_same_name_in_country_count + 1}'
+
         partner, created = Partner.objects.update_or_create(
             migrated_from=Partner.SOURCE_UNHCR,
             migrated_original_id=source.id,
             defaults={
                 'created': source.created,
                 'modified': source.modified,
-                'legal_name': source.legal_name,
+                'legal_name': source.legal_name + legal_name_postfix,
                 'display_type': source.display_type,
                 'country_code': source.country_code,
                 'is_active': source.is_active,
