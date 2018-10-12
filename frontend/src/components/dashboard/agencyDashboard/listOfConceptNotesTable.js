@@ -36,7 +36,7 @@ const renderCells = ({ row, column, value }) => {
         {formatDateForPrint(row.deadline_date)}
       </TableCell>);
   }
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 renderCells.propTypes = {

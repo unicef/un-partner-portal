@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
+import Typography from 'material-ui/Typography';
 import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
 import CfeiManagementFilter from './cfeiManagementFilter';
@@ -46,7 +47,7 @@ class CfeiManagementContainer extends Component {
     } else if (column.name === 'project_locations') {
       return <LocationsCell locations={row.locations} />;
     }
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   projectReport() {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import Save from 'material-ui-icons/Save';
 import PaginatedList from '../../../common/list/paginatedList';
 import TableWithStateInUrl from '../../../common/hoc/tableWithStateInUrl';
@@ -58,7 +59,7 @@ class OpenCfeiRequests extends Component {
       return <TableCell>{value.name}</TableCell>;
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   render() {

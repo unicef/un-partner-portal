@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
+import Typography from 'material-ui/Typography';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import PartnerApplicationsFilter from '../unsolicited/partnerApplicationsUnsolicitedFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
@@ -40,7 +41,7 @@ const applicationCell = ({ row, column, value }) => {
       />);
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 class PartnerApplicationsDirect extends Component {

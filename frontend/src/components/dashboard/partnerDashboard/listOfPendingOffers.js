@@ -43,7 +43,7 @@ const renderCells = ({ row, column, value }) => {
         <EoiSectorCell data={row.specializations} id={row.id} />
       </TableCell>);
   }
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 renderCells.propTypes = {

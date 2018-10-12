@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
 import CustomGridColumn from '../../common/grid/customGridColumn';
+import Typography from 'material-ui/Typography';
 import PartnerApplicationsNotesFilter from './partnerApplicationsNotesFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
 import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
@@ -39,7 +40,7 @@ const applicationCell = ({ row, column, value }) => {
       />);
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 /* eslint-disable react/prefer-stateless-function */
