@@ -11,7 +11,7 @@ import { formatDateForPrint } from '../../helpers/dates';
 
 const styleSheet = (theme) => {
   const paddingSide = theme.spacing.unit * 1.5;
-  
+
   return {
     spinner: {
       position: 'fixed',
@@ -22,7 +22,7 @@ const styleSheet = (theme) => {
       padding: `0px ${paddingSide}px ${paddingSide}px ${paddingSide}px`,
     },
     notificationItem: {
-      padding: `${paddingSide}px ${paddingSide}px ${paddingSide}px ${paddingSide}px`,
+      padding: `${theme.spacing.unit}px ${theme.spacing.unit}px ${theme.spacing.unit}px ${theme.spacing.unit}px`,
     },
     wrapper: {
       alignSelf: 'end',
@@ -58,12 +58,6 @@ const NotificationItem = (props) => {
             >
               {item.notification.name}
             </Typography>
-            <Typography
-              className={classes.description}
-              type="body1"
-            >
-              {item.notification.description}
-            </Typography>
           </div>
           <div className={classes.wrapper}>
             {!item.did_read && !isLoading && <IconButton
@@ -85,8 +79,12 @@ const NotificationItem = (props) => {
               </IconButton>}
           </div>
         </SpreadContent>
+        <Typography
+          dangerouslySetInnerHTML={{ __html: item.notification.html_description }}
+          className={classes.description}
+          type="body1"
+        />
       </Paper>
-
     </div>);
 };
 
