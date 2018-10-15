@@ -6,4 +6,4 @@ class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
 
     def __init__(self, *args, **kwargs):
         super(CustomAzureADBBCOAuth2, self).__init__(*args, **kwargs)
-        self.redirect_uri = f'{settings.FRONTEND_HOST}/api/social/complete/azuread-b2c-oauth2/'
+        self.redirect_uri = f'https://{settings.FRONTEND_HOST}/api/social/complete/azuread-b2c-oauth2/'
