@@ -108,6 +108,12 @@ spec:
                 secretKeyRef:
                   name: elastic-apm-secret-token
                   key: password
+            - name: AZURE_B2C_CLIENT_ID
+              value: "{{AZURE_B2C_CLIENT_ID}}"
+            - name: AZURE_B2C_CLIENT_SECRET
+              value: "{{AZURE_B2C_CLIENT_SECRET}}"
+            - name: AZURE_B2C_POLICY_NAME
+              value: "{{AZURE_B2C_POLICY_NAME}}"
           readinessProbe:
             tcpSocket:
               port: 8000
