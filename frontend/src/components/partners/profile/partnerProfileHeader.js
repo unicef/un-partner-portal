@@ -15,6 +15,7 @@ import {
 } from '../../../reducers/partnerVerifications';
 import VerificationIcon from '../profile/icons/verificationIcon';
 import FlaggingStatus from '../profile/common/flaggingStatus';
+import PotentialMatch from '../profile/icons/potentialMatch';
 import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
@@ -27,6 +28,7 @@ const PartnerTitle = (props) => {
     partner: {
       name = '',
       partnerStatus: { is_verified, flagging_status: flags = {},
+        has_potential_sanction_match,
       } = {},
     } = {},
   } = props;
@@ -43,6 +45,10 @@ const PartnerTitle = (props) => {
       <Grid item>
         <FlaggingStatus flags={flags} />
       </Grid>
+      {has_potential_sanction_match
+        && <Grid item>
+          <PotentialMatch />
+        </Grid>}
     </Grid>);
 };
 
@@ -99,7 +105,7 @@ class PartnerProfileHeader extends Component {
       hasViewObservationPermission,
       hasVerifySeeCommentsPermission,
     } = this.props;
-    
+
     let filterTabs = (hasViewObservationPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);

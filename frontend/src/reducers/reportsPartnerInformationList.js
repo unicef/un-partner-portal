@@ -54,7 +54,6 @@ export const loadPartnerReportsList = params => (dispatch) => {
       dispatch(saveSelectedItems(reports.results.map(item => item.id)));
     })
     .catch((error) => {
-      console.log(error);
       dispatch(reportsPartnerLoadEnded());
       dispatch(reportsPartnerLoadFailure(error));
     });

@@ -9,7 +9,7 @@ import { sendCfeiRequest } from '../../../../reducers/sendCfei';
 
 const messages = {
   title: 'Are you sure you want to send this direct selection/retention to the focal point?',
-  info: 'An e-mail notification that this CFEI is now finalized will be sent to all partners who applied for this CFEI.',
+  info: 'This direct selection/retention will be sent to the focal point for review and publishing. Once sent to the focal point you cannot make edits to the direct selection/retention.',
   send: 'send',
 };
 

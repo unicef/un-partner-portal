@@ -12,18 +12,19 @@ const messages = {
 
 
 const MyResponse = (props) => {
-  const { application, status } = props;
+  const { application, status, cfeiId } = props;
   return (
     <HeaderList
       header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
     >
-      <ResponseForm application={application} status={status} />
+      <ResponseForm cfeiId={cfeiId} application={application} status={status} />
     </HeaderList>
   );
 };
 
 MyResponse.propTypes = {
   status: PropTypes.string,
+  cfeiId: PropTypes.string,
   application: PropTypes.object,
 };
 
@@ -32,6 +33,7 @@ const mapStateToProps = (state, ownProps) => {
   const { status } = cfei;
   return {
     status,
+    cfeiId: ownProps.cfeiId,
   };
 };
 

@@ -28,7 +28,7 @@ const initialState = {
     { name: 'specializations', title: 'Sector' },
     { name: 'submission_date', title: 'Submission Date' },
     { name: 'is_direct', title: 'Chosen for DS/R' },
-    { name: 'application_status', title: 'Application status' },
+    { name: 'application_status', title: 'Application status', width: 220 },
   ],
   loading: false,
   items: [],
