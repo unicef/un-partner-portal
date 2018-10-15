@@ -32,7 +32,7 @@ class Agencies extends Component {
   render() {
     const { fieldName, label, locations, ...other } = this.props;
     let loc = locations;
-console.log(locations)
+
     if (!locations) {
       loc = [];
     }
