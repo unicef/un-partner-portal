@@ -1045,6 +1045,7 @@ class ReviewerAssessmentsSerializer(serializers.ModelSerializer):
 class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
 
     project_title = serializers.CharField(source="eoi.title")
+    project_displayID = serializers.CharField(source="eoi.displayID")
     agency_name = serializers.CharField(source="agency.name")
     country = serializers.SerializerMethodField()
     specializations = serializers.SerializerMethodField()
@@ -1056,6 +1057,7 @@ class ApplicationPartnerOpenSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'project_title',
+            'project_displayID',
             'eoi_id',
             'agency_name',
             'country',
