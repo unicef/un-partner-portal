@@ -20,10 +20,10 @@ import CountriesCell from '../../partners/countriesCell';
 
 /* eslint-disable react/prop-types */
 const applicationCell = ({ row, column, value }) => {
-  if (column.name === 'id') {
+  if (column.name === 'project_displayID') {
     return (<ConceptNoteIDCell
       cfeiId={row.eoi_id}
-      id={row.id}
+      id={row.project_displayID}
       type={PROJECT_TYPES.OPEN}
     />);
   } else if (column.name === 'application_date') {
