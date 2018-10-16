@@ -171,7 +171,9 @@ class EOI(TimeStampedModel):
         return sum(map(lambda x: x.get('weight'), self.assessments_criteria)) == 100 if self.has_weighting else True
 
     def get_absolute_url(self):
-        return get_absolute_frontend_url("/cfei/open/{}/overview".format(self.pk))
+        return get_absolute_frontend_url(
+            f"/cfei/{'open' if self.is_open else 'direct'}/{self.pk}/overview"
+        )
 
     @property
     def completed_reason_display(self):
