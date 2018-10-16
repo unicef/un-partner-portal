@@ -151,7 +151,7 @@ class Partner(MigratedTimeStampedModel):
 
     @property
     def is_verified(self):
-        return getattr(self.verifications.order_by('-created').last(), 'is_verified', None)
+        return getattr(self.verifications.order_by('created').last(), 'is_verified', None)
 
     @property
     def can_be_verified(self):
