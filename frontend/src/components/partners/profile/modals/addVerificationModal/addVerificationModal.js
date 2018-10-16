@@ -16,7 +16,7 @@ const messages = {
   save: 'verify',
   confirmation: 'Confirmation',
   alertTitle: 'Confirm verification',
-  confirm: 'Are you sure you want to send this verification?',
+  confirm: 'Please confirm you want to submit this verification form.',
 };
 
 
