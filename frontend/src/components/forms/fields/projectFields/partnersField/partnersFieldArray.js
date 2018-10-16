@@ -67,7 +67,7 @@ const PartnersFieldArray = (props) => {
 PartnersFieldArray.propTypes = {
   getPartners: PropTypes.func,
   readOnly: PropTypes.bool,
-  partnerName: PropTypes.number,
+  partnerName: PropTypes.string,
 };
 
 
