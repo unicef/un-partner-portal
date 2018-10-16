@@ -142,7 +142,12 @@ class SubmittedCNListAPIView(PartnerIdsMixin, ListAPIView):
     pagination_class = SmallPagination
 
     def get_queryset(self):
-        return Application.objects.filter(partner_id__in=self.get_partner_ids())
+        applications = Application.objects.filter(partner_id__in=self.get_partner_ids())
+        applications = applications.filter(
+            Q(eoi=None) | Q(eoi__is_published=True)
+        )
+
+        return applications
 
 
 class PendingOffersListAPIView(PartnerIdsMixin, ListAPIView):

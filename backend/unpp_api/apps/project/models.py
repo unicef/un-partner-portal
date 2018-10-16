@@ -313,7 +313,7 @@ class Application(TimeStampedModel):
     objects = ApplicationQuerySet.as_manager()
 
     class Meta:
-        ordering = ['id']
+        ordering = ('-id',)
         unique_together = (("eoi", "partner"), )
 
     def __str__(self):
