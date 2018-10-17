@@ -44,6 +44,7 @@ class PartnersContainer extends Component {
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
         info={row.partner_additional}
+        isHq={row.is_hq}
         onClick={() => history.push(`/partner/${row.id}/overview`)}
       />);
     } else if (column.name === 'country_code') {

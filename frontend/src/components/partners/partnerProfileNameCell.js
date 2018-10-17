@@ -47,16 +47,17 @@ const styleSheet = (theme) => {
 };
 
 const PartnerProfileNameCell = (props) => {
-  const { info, onClick } = props;
+  const { info, isHq, onClick } = props;
 
   return (<TableCell>
-    <ItemPartnerAdditionalInfo info={info} onClick={onClick} />
+    <ItemPartnerAdditionalInfo isHq={isHq} info={info} onClick={onClick} />
   </TableCell>
   );
 };
 
 PartnerProfileNameCell.propTypes = {
   info: PropTypes.object.isRequired,
+  isHq: PropTypes.bool,
   onClick: PropTypes.func,
 };
 

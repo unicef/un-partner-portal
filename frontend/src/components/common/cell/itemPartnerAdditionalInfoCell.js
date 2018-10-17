@@ -6,6 +6,10 @@ import VerifiedUser from 'material-ui-icons/VerifiedUser';
 import Flag from 'material-ui-icons/Flag';
 import { withStyles } from 'material-ui/styles';
 
+const messages = {
+  hq: 'HQ',
+}
+
 const styleSheet = (theme) => {
   const paddingIcon = theme.spacing.unit / 2;
 
@@ -35,12 +39,19 @@ const styleSheet = (theme) => {
     iconRed: {
       fill: '#D50000',
     },
+    hq: {
+      fontSize: '10px',
+      marginLeft: `${paddingIcon}px`,
+      padding: '0px 6px 0px 6px',
+      background: theme.palette.secondary[500],
+      color: '#FFF',
+    },
   };
 };
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 const ItemPartnerAdditionalInfoCell = (props) => {
-  const { classes, info, onClick } = props;
+  const { classes, info, isHq, onClick } = props;
   const className = classname({
     [`${classes.iconVerified} ${classes.iconSize}`]: info.is_verified === true,
     [`${classes.iconUnverified} ${classes.iconSize}`]: info.is_verified === false,
@@ -52,6 +63,7 @@ const ItemPartnerAdditionalInfoCell = (props) => {
       <Typography type="body1" color="accent" onClick={onClick}>
         {info.legal_name}
       </Typography>
+      {isHq && <Typography type="body1" className={classes.hq}>{messages.hq}</Typography>}
       <VerifiedUser className={className} />
       {info.flagging_status.yellow > 0 && <Flag className={`${classes.iconYellow} ${classes.iconSize}`} />}
       {info.flagging_status.red > 0 && <Flag className={`${classes.iconRed} ${classes.iconSize}`} />}
@@ -62,6 +74,7 @@ const ItemPartnerAdditionalInfoCell = (props) => {
 ItemPartnerAdditionalInfoCell.propTypes = {
   classes: PropTypes.object.isRequired,
   info: PropTypes.object.isRequired,
+  isHq: PropTypes.bool,
   onClick: PropTypes.func,
 };
 
