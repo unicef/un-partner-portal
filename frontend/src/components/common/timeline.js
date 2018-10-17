@@ -72,7 +72,7 @@ class Timeline extends Component {
               align="center"
               open
               color="orange"
-              position="bottom-center"
+              position="bottom"
               flexSize={calcDistance(postedDate, startDate, clarificationDate) || 0}
             />
             <DatePoint
@@ -81,7 +81,7 @@ class Timeline extends Component {
               date={deadlineDate}
               align="center"
               color="red"
-              position="top-center"
+              position="top"
               flexSize={calcDistance(clarificationDate, startDate, deadlineDate) || 0}
             />
             <DatePoint
@@ -89,7 +89,7 @@ class Timeline extends Component {
               open
               align="center"
               color="blue"
-              position="bottom-center"
+              position="bottom"
               flexSize={calcDistance(deadlineDate, startDate, notificationDate) || 0}
             />
             <DatePoint

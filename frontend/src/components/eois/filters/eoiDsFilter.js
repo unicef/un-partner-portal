@@ -122,7 +122,7 @@ class EoiFilter extends Component {
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         selected_source,
-        focal_points,
+        focal_points: Array.isArray(focal_points) ? focal_points.join(',') : focal_points,
       }),
     });
   }
@@ -277,7 +277,10 @@ const mapStateToProps = (state, ownProps) => {
   const agencyQ = Number(agency);
 
   const specializationsQ = specializations &&
-      R.map(Number, specializations.split(','));
+    R.map(Number, specializations.split(','));
+
+  const focalPointsQ = focal_points &&
+    R.map(Number, focal_points.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
@@ -292,7 +295,7 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency: agencyQ,
       status,
-      focal_points,
+      focal_points: focalPointsQ,
       specializations: specializationsQ,
       selected_source,
     },

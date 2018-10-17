@@ -111,7 +111,7 @@ class EoiFilter extends Component {
         posted_from_date,
         posted_to_date,
         locations,
-        focal_points,
+        focal_points: Array.isArray(focal_points) ? focal_points.join(',') : focal_points,
       }),
     });
   }
@@ -285,6 +285,9 @@ const mapStateToProps = (state, ownProps) => {
   const specializationsQ = specializations &&
     R.map(Number, specializations.split(','));
 
+  const focalPointsQ = focal_points &&
+    R.map(Number, focal_points.split(','));
+
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
@@ -302,7 +305,7 @@ const mapStateToProps = (state, ownProps) => {
       specializations: specializationsQ,
       posted_from_date,
       posted_to_date,
-      focal_points,
+      focal_points: focalPointsQ,
     },
   };
 };
