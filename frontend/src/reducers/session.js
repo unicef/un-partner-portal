@@ -139,7 +139,7 @@ export const loadUserData = () => (dispatch, getState) => {
           telephone: R.path(['office', 'telephone'], mainPartner),
           logo: R.prop('logo', mainPartner),
           permissions: R.prop('permissions', response),
-          logoThumbnail: R.prop('org_logo_thumbnail', mainPartner),
+          logoThumbnail: R.prop('org_logo_thumbnail', mainPartner) || R.prop('logo', mainPartner),
           isProfileComplete: R.path(['partner_additional', 'has_finished'],
             mainPartner),
           lastUpdate: R.prop('last_profile_update', mainPartner),
