@@ -179,6 +179,7 @@ class EoiFilter extends Component {
               <TextFieldForm
                 label={messages.labels.cfeiID}
                 fieldName="displayID"
+                placeholder="Provide CFEI ID"
                 optional
               />
             </Grid>
