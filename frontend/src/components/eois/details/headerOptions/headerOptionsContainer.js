@@ -15,10 +15,11 @@ import { selectCfeiStatus,
   isCfeiCompleted,
   selectCfeiConverted,
   selectCfeiCompletedReasonDisplay,
+  selectPartnerVerified,
 } from '../../../../store';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 import PartnerUcnHeaderOptions from './partnerUcnHeaderOptions';
-import { checkPermission, AGENCY_PERMISSIONS } from '../../../../helpers/permissions';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../../helpers/permissions'; 
 
 const messages = {
   infoDsr: 'This direct selection/retention was sent to the focal point for review and issuance to the selected partner.',
@@ -49,6 +50,7 @@ const HeaderOptionsContainer = (props) => {
     partnerId,
     completedReasonDisplay,
     hasDsrConvertPermission,
+    partnerVerified,
   } = props;
   let options;
   let status = <EoiStatusHeader status={cfeiStatus} />;
@@ -69,7 +71,7 @@ const HeaderOptionsContainer = (props) => {
     options = <PartnerUcnHeaderOptions id={id} />;
   }
   if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.AGENCY && hasDsrConvertPermission) {
-    return !cfeiConverted ? <ConvertToDS partnerId={partnerId} id={id} /> : null;
+    return !cfeiConverted ? <ConvertToDS partnerVerified={partnerVerified} partnerId={partnerId} id={id} /> : null;
   }
 
   if (cfeiStatus === 'Sen') {
@@ -101,6 +103,7 @@ HeaderOptionsContainer.propTypes = {
   type: PropTypes.string,
   cfeiCompleted: PropTypes.bool,
   hasDsrConvertPermission: PropTypes.bool,
+  partnerVerified: PropTypes.bool,
   cfeiConverted: PropTypes.number,
   cfeiStatus: PropTypes.string,
   id: PropTypes.string,
@@ -114,7 +117,8 @@ const mapStateToProps = (state, ownProps) => ({
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
   completedReasonDisplay: selectCfeiCompletedReasonDisplay(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
-  hasDsrConvertPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_PUBLISH, state),
+  partnerVerified: selectPartnerVerified(state, ownProps.id),
+  hasDsrConvertPermission: checkPermission(AGENCY_PERMISSIONS.UCN_CONVERT_TO_DSR, state),
 });
 
 export default connect(
