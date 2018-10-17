@@ -114,7 +114,7 @@ const mapStateToProps = (state, ownProps) => ({
   cfeiStatus: selectCfeiStatus(state, ownProps.id),
   completedReasonDisplay: selectCfeiCompletedReasonDisplay(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
-  hasDsrConvertPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DIRECT_PUBLISH, state),
+  hasDsrConvertPermission: checkPermission(AGENCY_PERMISSIONS.UCN_CONVERT_TO_DSR, state),
 });
 
 export default connect(
