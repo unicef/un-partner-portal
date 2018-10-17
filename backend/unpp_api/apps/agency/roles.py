@@ -142,6 +142,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
 
+        AgencyPermission.UCN_CONVERT_TO_DSR,
+
         AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COUNT,
         AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
@@ -187,6 +189,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_PUBLISH,
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
+
+        AgencyPermission.UCN_CONVERT_TO_DSR,
 
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
 
@@ -269,6 +273,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT,
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
+
+        AgencyPermission.UCN_CONVERT_TO_DSR,
 
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
         AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COUNT,

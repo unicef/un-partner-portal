@@ -773,7 +773,7 @@ class ConvertUnsolicitedAPIView(CreateAPIView):
     permission_classes = (
         HasUNPPPermission(
             agency_permissions=[
-                AgencyPermission.CFEI_DIRECT_PUBLISH,
+                AgencyPermission.UCN_CONVERT_TO_DSR,
             ]
         ),
     )

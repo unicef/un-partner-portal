@@ -1,6 +1,5 @@
 
 class NotificationType(object):
-    # TODO: Investigate usage and replace references + improve naming
     ACTIVE_ACCOUNT_PROFILE_CREATE = 'account_active_profile_create'
     ACTIVE_ACCOUNT_SEND_TO_ORG_HEAD = 'account_active_send_to_org_head'
     DUPLICATE_ORGANIZATION_ACCOUNT = 'account_org_duplicate'
