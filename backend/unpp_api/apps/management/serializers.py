@@ -94,7 +94,7 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
 
 class PartnerOfficeManagementSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source='legal_name')
+    name = serializers.CharField(source='get_country_code_display')
 
     class Meta:
         model = Partner
