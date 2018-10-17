@@ -952,15 +952,13 @@ class EOISendToPublishAPIView(RetrieveAPIView):
 class PublishCFEIAPIView(RetrieveAPIView):
     permission_classes = (
         HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_PUBLISH,
-            ]
+            agency_permissions=[]
         ),
     )
     serializer_class = AgencyProjectSerializer
     queryset = EOI.objects.filter(is_published=False)
 
-    def check_object_permissions(self, request, obj):
+    def check_object_permissions(self, request, obj: EOI):
         super(PublishCFEIAPIView, self).check_object_permissions(request, obj)
         if obj.created_by == request.user or obj.focal_points.filter(id=request.user.id).exists():
             return
@@ -969,6 +967,15 @@ class PublishCFEIAPIView(RetrieveAPIView):
     @transaction.atomic
     def post(self, *args, **kwargs):
         cfei = self.get_object()
+        if cfei.is_open:
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_PUBLISH
+            ], raise_exception=True)
+        else:
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_DIRECT_PUBLISH
+            ], raise_exception=True)
+
         if cfei.deadline_passed:
             raise serializers.ValidationError('Deadline date is set in the past, please update it before publishing.')
 
