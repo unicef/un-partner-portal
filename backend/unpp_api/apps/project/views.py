@@ -458,7 +458,7 @@ class PartnerEOIApplicationDestroyAPIView(DestroyAPIView):
 
     def get_object(self):
         return get_object_or_404(
-            self.get_queryset(), pk=self.kwargs['pk'], partner=self.request.active_partner
+            self.get_queryset(), pk=self.kwargs['pk'], partner_id__in=self.request.user.partner_ids
         )
 
     def perform_destroy(self, instance: Application):
@@ -489,7 +489,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
     def get_queryset(self):
         queryset = super(ApplicationAPIView, self).get_queryset()
         if self.request.active_partner:
-            return queryset.filter(partner=self.request.active_partner)
+            return queryset.filter(partner_id__in=self.request.user.partner_ids)
         elif self.request.agency_member:
             queryset = queryset.filter(Q(is_unsolicited=True, is_published=True) | Q(is_unsolicited=False))
             if not self.request.method == 'GET':
