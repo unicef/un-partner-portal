@@ -16,6 +16,7 @@ import {
 import VerificationIcon from '../profile/icons/verificationIcon';
 import FlaggingStatus from '../profile/common/flaggingStatus';
 import PotentialMatch from '../profile/icons/potentialMatch';
+import HqProfile from '../profile/icons/hqProfile';
 import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
@@ -26,12 +27,14 @@ const messages = {
 const PartnerTitle = (props) => {
   const {
     partner: {
+      isHq = false,
       name = '',
       partnerStatus: { is_verified, flagging_status: flags = {},
         has_potential_sanction_match,
       } = {},
     } = {},
   } = props;
+  console.log(props)
   return (
     <Grid container alignItems="center">
       <Grid item>
@@ -39,6 +42,9 @@ const PartnerTitle = (props) => {
           {name}
         </Typography>
       </Grid>
+      {isHq && <Grid item>
+        <HqProfile />
+      </Grid>}
       <Grid item>
         <VerificationIcon verified={is_verified} />
       </Grid>
