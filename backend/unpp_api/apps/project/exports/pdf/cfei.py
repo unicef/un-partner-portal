@@ -48,32 +48,49 @@ class CFEIPDFExporter:
         self.margin = 24
 
     def get_timeline_table(self):
-        table_rows = [
-            [
-                'Posted',
-                format_date(self.cfei.published_timestamp),
-            ],
-            [
-                'Clarification Request Deadline',
-                format_date(self.cfei.clarification_request_deadline_date),
-            ],
-            [
-                'Application Deadline',
-                format_date(self.cfei.deadline_date),
-            ],
-            [
-                'Notification of Results',
-                format_date(self.cfei.notif_results_date),
-            ],
-            [
-                'Start Date',
-                format_date(self.cfei.start_date),
-            ],
-            [
-                'End Date',
-                format_date(self.cfei.end_date),
-            ],
-        ]
+        if self.cfei.is_open:
+            table_rows = [
+                [
+                    'Posted',
+                    format_date(self.cfei.published_timestamp),
+                ],
+                [
+                    'Clarification Request Deadline',
+                    format_date(self.cfei.clarification_request_deadline_date),
+                ],
+                [
+                    'Application Deadline',
+                    format_date(self.cfei.deadline_date),
+                ],
+                [
+                    'Notification of Results',
+                    format_date(self.cfei.notif_results_date),
+                ],
+                [
+                    'Start Date',
+                    format_date(self.cfei.start_date),
+                ],
+                [
+                    'End Date',
+                    format_date(self.cfei.end_date),
+                ],
+            ]
+        else:
+            table_rows = [
+                [
+                    'Posted',
+                    format_date(self.cfei.published_timestamp),
+                ],
+                [
+                    'Start Date',
+                    format_date(self.cfei.start_date),
+                ],
+                [
+                    'End Date',
+                    format_date(self.cfei.end_date),
+                ],
+            ]
+
         table = Table(table_rows, colWidths='*')
 
         table.setStyle(TableStyle([
@@ -267,11 +284,12 @@ class CFEIPDFExporter:
                 Spacer(1, self.margin / 2)
             ]))
 
-        cn_template = self.cfei.agency.profile.eoi_template
-        main_content.append(ListItem([
-            Paragraph('Concept Note Template', style=self.style_h4),
-            Paragraph(cn_template.url if cn_template else '-', style=self.style_normal),
-        ]))
+        if self.cfei.is_open:
+            cn_template = self.cfei.agency.profile.eoi_template
+            main_content.append(ListItem([
+                Paragraph('Concept Note Template', style=self.style_h4),
+                Paragraph(cn_template.url if cn_template else '-', style=self.style_normal),
+            ]))
 
         paragraphs.append(ListFlowable(main_content))
         document.build(paragraphs)

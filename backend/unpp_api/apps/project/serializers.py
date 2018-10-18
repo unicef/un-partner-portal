@@ -79,7 +79,6 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
             'deadline_date',
-            'deadline_date',
             'status',
             'completed_date',
             'focal_points',
