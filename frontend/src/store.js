@@ -472,6 +472,9 @@ export const selectNormalizedCompletionReasons = state =>
 export const selectNormalizedFlagCategoryChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['flag-category-choices'], 'value');
 
+export const selectAllFlagCategoryChoices = state =>
+    mapValuesForSelectionField(state.partnerProfileConfig['all-flag-category-choices'], 'value');
+
 export const selectNormalizedFlagTypeChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['flag-type-choices'], 'value');
 

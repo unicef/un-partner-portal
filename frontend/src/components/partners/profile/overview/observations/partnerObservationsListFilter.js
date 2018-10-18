@@ -9,7 +9,7 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import SelectForm from '../../../../forms/selectForm';
 import CheckboxForm from '../../../../forms/checkboxForm';
-import { selectNormalizedFlagCategoryChoices, selectNormalizedFlagTypes } from '../../../../../store';
+import { selectAllFlagCategoryChoices, selectNormalizedFlagTypes } from '../../../../../store';
 import resetChanges from '../../../../eois/filters/eoiHelper';
 import { FLAGS } from '../../../../../helpers/constants';
 import ObservationIcon from '../../icons/observationIcon';
@@ -204,7 +204,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     observationsType: selectNormalizedFlagTypes(state),
-    riskCategory: selectNormalizedFlagCategoryChoices(state),
+    riskCategory: selectAllFlagCategoryChoices(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     initialValues: {

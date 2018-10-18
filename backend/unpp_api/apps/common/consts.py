@@ -242,9 +242,9 @@ BUDGET_CHOICES = Choices(
 )
 
 FLAG_TYPES = Choices(
-    ('FL1_Obs', 'observation', 'Observation'),
-    ('FL2_Yel', 'yellow', 'Yellow Flag'),
-    ('FL3_Esc', 'escalated', 'Escalated Flag'),
+    ('FL1_Obs', 'observation', 'Not Risk Related'),
+    ('FL2_Yel', 'yellow', 'Risk Flag'),
+    ('FL3_Esc', 'escalated', 'Risk Flag Escalated to UN HQ Editor'),
     ('FL4_Red', 'red', 'Red Flag'),
 )
 
@@ -259,7 +259,7 @@ USER_CREATED_FLAG_CATEGORIES = Choices(
 )
 
 INTERNAL_FLAG_CATEGORIES = Choices(
-    ('sanctions_match', 'Sanctions List Match'),
+    ('C90_sanctions_match', 'sanctions_match', 'Sanctions Match'),
 )
 
 FLAG_CATEGORIES = USER_CREATED_FLAG_CATEGORIES + INTERNAL_FLAG_CATEGORIES

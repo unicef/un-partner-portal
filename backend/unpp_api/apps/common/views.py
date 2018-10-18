@@ -53,6 +53,7 @@ from common.consts import (
     OTHER_AGENCIES_DSR_COMPLETED_REASONS,
     CFEI_TYPES,
     CFEI_STATUSES,
+    FLAG_CATEGORIES,
 )
 from partner.roles import PartnerRole
 
@@ -139,6 +140,7 @@ class GeneralConfigAPIView(APIView):
             "flag-type-choices": flag_type_choices,
             "flag-types": FLAG_TYPES,
             "flag-category-choices": USER_CREATED_FLAG_CATEGORIES,
+            "all-flag-category-choices": FLAG_CATEGORIES,
             "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
             "cfei-types": CFEI_TYPES,
             "cfei-statuses": CFEI_STATUSES,
