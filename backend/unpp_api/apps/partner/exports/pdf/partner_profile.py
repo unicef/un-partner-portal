@@ -632,8 +632,7 @@ class PartnerProfilePDFExporter:
                 CustomParagraph(self.partner.profile.financial_control_system_desc, self.style_normal),
                 CustomParagraph('Internal Controls', self.style_h3),
                 CustomParagraph(
-                    'Policy Area - Does the organization have formal documented policies '
-                    'applicable to all operations that cover the following areas?',
+                    'Does the organization have segregation of duties in the following areas of responsibility?',
                     self.style_h4
                 ),
                 self.get_internal_controls_table(),
@@ -644,8 +643,7 @@ class PartnerProfilePDFExporter:
                 ),
                 CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.experienced_staff], self.style_normal),
                 CustomParagraph(
-                    'Policy Area - Does the organization have formal documented policies applicable '
-                    'to all operations that cover the following areas?',
+                    'Does the organization have documented policies in the following subject areas?',
                     self.style_h4
                 ),
                 self.get_policy_areas_table(),
