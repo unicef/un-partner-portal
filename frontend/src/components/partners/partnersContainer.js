@@ -17,12 +17,19 @@ import { loadPartnersList } from '../../reducers/agencyPartnersList';
 import PartnerProfileCountryCell from './partnerProfileCountryCell';
 import PartnerProfileExperienceCell from './partnerProfileExperienceCell';
 import { isQueryChanged } from '../../helpers/apiHelper';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../helpers/permissions';
 
 const messages = {
   header: 'Partners',
 };
 
 class PartnersContainer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.partnerCell = this.partnerCell.bind(this);
+  }
+
   componentWillMount() {
     const { query } = this.props;
     this.props.loadPartners(query);
@@ -41,9 +48,12 @@ class PartnersContainer extends Component {
 
   /* eslint-disable class-methods-use-this */
   partnerCell({ row, column, value }) {
+    const { hasPermissionViewFlagCount } = this.props;
+
     if (column.name === 'name') {
       return (<PartnerProfileNameCell
         info={row.partner_additional}
+        permission={hasPermissionViewFlagCount}
         isHq={row.is_hq}
         onClick={() => history.push(`/partner/${row.id}/overview`)}
       />);
@@ -94,6 +104,7 @@ PartnersContainer.propTypes = {
   loadPartners: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   query: PropTypes.object,
+  hasPermissionViewFlagCount: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -102,6 +113,8 @@ const mapStateToProps = (state, ownProps) => ({
   columns: state.agencyPartnersList.data.columns,
   loading: state.agencyPartnersList.status.loading,
   query: ownProps.location.query,
+  hasPermissionViewFlagCount:
+    checkPermission(AGENCY_PERMISSIONS.VIEW_PROFILE_OBSERVATION_FLAG_COUNT, state),
 });
 
 const mapDispatch = dispatch => ({

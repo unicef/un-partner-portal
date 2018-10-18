@@ -51,7 +51,7 @@ const styleSheet = (theme) => {
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 const ItemPartnerAdditionalInfoCell = (props) => {
-  const { classes, info, isHq, onClick } = props;
+  const { classes, info, isHq, permission, onClick } = props;
   const className = classname({
     [`${classes.iconVerified} ${classes.iconSize}`]: info.is_verified === true,
     [`${classes.iconUnverified} ${classes.iconSize}`]: info.is_verified === false,
@@ -65,8 +65,8 @@ const ItemPartnerAdditionalInfoCell = (props) => {
       </Typography>
       {isHq && <Typography type="body1" className={classes.hq}>{messages.hq}</Typography>}
       <VerifiedUser className={className} />
-      {info.flagging_status.yellow > 0 && <Flag className={`${classes.iconYellow} ${classes.iconSize}`} />}
-      {info.flagging_status.red > 0 && <Flag className={`${classes.iconRed} ${classes.iconSize}`} />}
+      {permission && info.flagging_status.yellow > 0 && <Flag className={`${classes.iconYellow} ${classes.iconSize}`} />}
+      {permission && info.flagging_status.red > 0 && <Flag className={`${classes.iconRed} ${classes.iconSize}`} />}
     </div>
   );
 };
@@ -75,6 +75,7 @@ ItemPartnerAdditionalInfoCell.propTypes = {
   classes: PropTypes.object.isRequired,
   info: PropTypes.object.isRequired,
   isHq: PropTypes.bool,
+  permission: PropTypes.bool,
   onClick: PropTypes.func,
 };
 

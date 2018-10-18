@@ -34,7 +34,6 @@ const PartnerTitle = (props) => {
       } = {},
     } = {},
   } = props;
-  console.log(props)
   return (
     <Grid container alignItems="center">
       <Grid item>
