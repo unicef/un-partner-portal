@@ -919,7 +919,9 @@ class PartnerCollaborationPartnership(TimeStampedModel):
         'agency.Agency', related_name="collaborations_partnership", blank=True, null=True
     )
     description = models.CharField(max_length=5000, blank=True, null=True)
-    partner_number = models.CharField(max_length=200, blank=True, null=True)
+    partner_number = models.CharField(
+        max_length=200, blank=True, null=True, verbose_name='Please provide your Vendor/Partner Number (If applicable)'
+    )
 
     class Meta:
         ordering = ('id', )

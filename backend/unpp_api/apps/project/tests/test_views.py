@@ -868,7 +868,17 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['review_summary_comment'], payload['review_summary_comment'])
 
         payload = {
-            'review_summary_comment': "comment",
+            'review_summary_comment': "comment2",
+            'review_summary_attachment': None
+        }
+        response = self.client.patch(url, data=payload)
+        self.assertResponseStatusIs(response)
+        self.assertEquals(
+            response.data['review_summary_comment'], payload['review_summary_comment']
+        )
+
+        payload = {
+            'review_summary_comment': "comment3",
             'review_summary_attachment': file_id
         }
         response = self.client.patch(url, data=payload)
