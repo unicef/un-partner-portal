@@ -325,3 +325,27 @@ if LEGACY_DB_HOST and 'test' not in sys.argv:
 
 
 GIT_VERSION = os.getenv('GIT_VERSION', 'UNKNOWN')
+
+REDIS_INSTANCE = os.getenv('REDIS_INSTANCE')
+
+if REDIS_INSTANCE:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': f'redis://{REDIS_INSTANCE}/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+            'TIMEOUT': 3600
+        }
+    }
+    DJANGO_REDIS_IGNORE_EXCEPTIONS = not DEBUG
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'common.cache_backends.DummyRedisCache',
+            'LOCATION': 'unpp'
+        }
+    }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"

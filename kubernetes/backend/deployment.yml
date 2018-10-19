@@ -67,6 +67,8 @@ spec:
               value: {{POSTGRES_USER}}
             - name: POSTGRES_HOST
               value: {{POSTGRES_HOST}}
+            - name: REDIS_INSTANCE
+              value: {{REDIS_INSTANCE}}
             - name: DJANGO_ALLOWED_HOST
               value: {{DJANGO_ALLOWED_HOST}}
             - name: EMAIL_HOST

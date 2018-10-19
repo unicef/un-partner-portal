@@ -18,10 +18,16 @@ services:
     volumes_from:
       - backend
 
+  redis:
+    restart: always
+    image: redis:4.0.11-alpine3.8
+
   backend:
     image: unicef/unpp-backend
     env_file:
       - .env
+    environment:
+      - REDIS_INSTANCE=redis:6379
     build:
       context: ./backend
       dockerfile: ./Dockerfile
@@ -33,6 +39,7 @@ services:
       - '/data'
     depends_on:
       - db
+      - redis
 
   db:
     image: unicef/unpp-db
