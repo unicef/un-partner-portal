@@ -1244,12 +1244,13 @@ class ConvertUnsolicitedSerializer(serializers.Serializer):
 
 class ReviewSummarySerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
 
-    review_summary_attachment = CommonFileSerializer()
+    review_summary_attachment = CommonFileSerializer(required=False, allow_null=True)
 
     class Meta:
         model = EOI
         fields = (
-            'review_summary_comment', 'review_summary_attachment'
+            'review_summary_comment',
+            'review_summary_attachment',
         )
 
     prevent_keys = ['review_summary_attachment']

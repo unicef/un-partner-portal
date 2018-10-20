@@ -136,6 +136,8 @@ class PartnerSerializer(serializers.ModelSerializer):
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
     country_display = serializers.CharField(source='get_country_code_display', read_only=True)
+    location_of_office = PointSerializer(read_only=True)
+    location_field_offices = PointSerializer(read_only=True, many=True)
 
     class Meta:
         model = Partner
@@ -151,6 +153,8 @@ class PartnerSerializer(serializers.ModelSerializer):
             'partner_additional',
             'org_logo_thumbnail',
             'last_profile_update',
+            'location_of_office',
+            'location_field_offices',
         )
         validators = [
             UniqueTogetherValidator(
