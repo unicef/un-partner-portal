@@ -8,7 +8,8 @@ import ConvertToDirectSelectionModal from '../modals/convertToDirectSelection/co
 
 const messages = {
   label: 'Convert to Direct Selection/Retention',
-  tooltipInfo: 'This UCN cannot be converted as partner does not have a \'verification passed\' status. The partner must be verified in order to proceed.',
+  verified: 'This UCN cannot be converted as partner does not have a \'verification passed\' status. The partner must be verified in order to proceed.',
+  red: 'This UCN cannot be converted as partner has red flag.',
 };
 
 const ConvertToDS = (props) => {
@@ -18,15 +19,17 @@ const ConvertToDS = (props) => {
     handleDialogOpen,
     dialogOpen,
     partnerVerified,
+    flags,
   } = props;
 
+  const infoText = !partnerVerified && messages.verified || flags.red > 0 && messages.red;
   return (
     <Grid item>
-      {!partnerVerified
+      {(!partnerVerified || flags.red > 0)
         ? <ButtonWithTooltipEnabled
           name="publish"
           text={messages.label}
-          tooltipText={messages.tooltipInfo}
+          tooltipText={infoText}
           disabled
         />
         : <Button
@@ -48,6 +51,7 @@ ConvertToDS.propTypes = {
   id: PropTypes.string,
   dialogOpen: PropTypes.bool,
   partnerVerified: PropTypes.bool,
+  flags: PropTypes.object,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
 };

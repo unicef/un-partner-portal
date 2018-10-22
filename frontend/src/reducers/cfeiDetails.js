@@ -118,6 +118,7 @@ const saveUCN = (state, action) => {
     reviewers: [],
     focal_points: [],
     partner_verified: R.path(['partner', 'partner_additional', 'is_verified'], ucn),
+    partner_flags: R.path(['partner', 'partner_additional', 'flagging_status'], ucn),
     partner_id: R.path(['partner', 'id'], ucn),
     partner_name: R.path(['partner', 'legal_name'], ucn),
     display_type: R.path(['partner', 'display_type'], ucn),
@@ -163,6 +164,11 @@ export function selectCfeiConverted(state, id) {
 export function selectPartnerVerified(state, id) {
   const { [id]: { partner_verified = null } = {} } = state;
   return partner_verified;
+}
+
+export function selectPartnerFlagStatus(state, id) {
+  const { [id]: { partner_flags = null } = {} } = state;
+  return partner_flags;
 }
 
 export function selectCfeiCompletedReason(state, id) {

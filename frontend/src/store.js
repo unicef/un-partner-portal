@@ -378,6 +378,9 @@ export const isCfeiCompleted = (state, id) =>
 export const selectPartnerVerified = (state, id) =>
   cfeiDetailsSelector.selectPartnerVerified(state.cfeiDetails.data, id);
 
+export const selectPartnerFlagStatus = (state, id) =>
+  cfeiDetailsSelector.selectPartnerFlagStatus(state.cfeiDetails.data, id);
+
 export const isUserFinishedReview = (state, id) =>
   cfeiDetailsSelector.isUserFinishedReview(state.cfeiDetails.data, id);
 
@@ -473,7 +476,7 @@ export const selectNormalizedFlagCategoryChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['flag-category-choices'], 'value');
 
 export const selectAllFlagCategoryChoices = state =>
-    mapValuesForSelectionField(state.partnerProfileConfig['all-flag-category-choices'], 'value');
+  mapValuesForSelectionField(state.partnerProfileConfig['all-flag-category-choices'], 'value');
 
 export const selectNormalizedFlagTypeChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['flag-type-choices'], 'value');

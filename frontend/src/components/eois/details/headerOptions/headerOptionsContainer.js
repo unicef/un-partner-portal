@@ -16,6 +16,7 @@ import { selectCfeiStatus,
   selectCfeiConverted,
   selectCfeiCompletedReasonDisplay,
   selectPartnerVerified,
+  selectPartnerFlagStatus,
 } from '../../../../store';
 import ConvertToDS from '../../buttons/convertToDirectSelection';
 import PartnerUcnHeaderOptions from './partnerUcnHeaderOptions';
@@ -51,6 +52,7 @@ const HeaderOptionsContainer = (props) => {
     completedReasonDisplay,
     hasDsrConvertPermission,
     partnerVerified,
+    partnerFlags,
   } = props;
   let options;
   let status = <EoiStatusHeader status={cfeiStatus} />;
@@ -71,7 +73,7 @@ const HeaderOptionsContainer = (props) => {
     options = <PartnerUcnHeaderOptions id={id} />;
   }
   if (type === PROJECT_TYPES.UNSOLICITED && role === ROLES.AGENCY && hasDsrConvertPermission) {
-    return !cfeiConverted ? <ConvertToDS partnerVerified={partnerVerified} partnerId={partnerId} id={id} /> : null;
+    return !cfeiConverted ? <ConvertToDS flags={partnerFlags} partnerVerified={partnerVerified} partnerId={partnerId} id={id} /> : null;
   }
 
   if (cfeiStatus === 'Sen') {
@@ -108,6 +110,7 @@ HeaderOptionsContainer.propTypes = {
   cfeiStatus: PropTypes.string,
   id: PropTypes.string,
   partnerId: PropTypes.string,
+  partnerFlags: PropTypes.object,
   completedReasonDisplay: PropTypes.string,
 };
 
@@ -118,6 +121,7 @@ const mapStateToProps = (state, ownProps) => ({
   completedReasonDisplay: selectCfeiCompletedReasonDisplay(state, ownProps.id),
   cfeiConverted: selectCfeiConverted(state, ownProps.id),
   partnerVerified: selectPartnerVerified(state, ownProps.id),
+  partnerFlags: selectPartnerFlagStatus(state, ownProps.id),
   hasDsrConvertPermission: checkPermission(AGENCY_PERMISSIONS.UCN_CONVERT_TO_DSR, state),
 });
 
