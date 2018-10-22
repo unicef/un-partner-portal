@@ -6,7 +6,8 @@ from rest_framework.generics import (
     CreateAPIView,
     RetrieveAPIView,
     RetrieveUpdateAPIView,
-    get_object_or_404)
+    get_object_or_404,
+)
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
