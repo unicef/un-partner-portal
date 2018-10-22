@@ -105,6 +105,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
         AgencyPermission.RUN_REPORT_CSO_MAPPING,
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COUNT,
     ]),
     AgencyRole.EDITOR_BASIC: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
