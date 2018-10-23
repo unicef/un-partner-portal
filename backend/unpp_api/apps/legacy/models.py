@@ -439,31 +439,13 @@ class PartnerPartnerreview(models.Model):
         db_table = 'partner_partnerreview'
 
 
-class ZAccountingStandards(models.Model):
-    accountingstandard = models.TextField(db_column='AccountingStandard', blank=True, null=True)
-    unpp_value = models.CharField(db_column='UNPP value', max_length=255, blank=True, null=True)
+class PartnerPartnerVendorNumber(models.Model):
+
+    created = models.DateTimeField()
+    modified = models.DateTimeField()
+    partner_id = models.IntegerField()
+    number = models.TextField(max_length=1024)
 
     class Meta:
         managed = False
-        db_table = 'z_accounting_standards'
-
-
-class ZCountries(models.Model):
-    iso2_code = models.CharField(db_column='ISO2_Code', max_length=50, blank=True, null=True)
-    name = models.CharField(db_column='Name', max_length=550, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'z_countries'
-
-
-class ZRefdata(models.Model):
-    type = models.CharField(max_length=50, blank=True, null=True)
-    code = models.CharField(max_length=3, blank=True, null=True)
-    name_short = models.CharField(max_length=50, blank=True, null=True)
-    name_long = models.CharField(max_length=255, blank=True, null=True)
-    unhcr_id = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'z_refdata'
+        db_table = 'externals_partnervendornumber'

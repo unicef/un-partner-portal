@@ -6,6 +6,7 @@ from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
+from agency.agencies import UNHCR
 from common.consts import BUDGET_CHOICES
 from common.factories import get_new_common_file
 from legacy import models as legacy_models
@@ -19,7 +20,10 @@ from partner.models import (
     PartnerMailingAddress,
     PartnerProfile,
     PartnerRegistrationDocument,
+    PartnerCollaborationPartnership,
+    PartnerMandateMission,
 )
+from externals.models import PartnerVendorNumber
 
 
 def clean_value(value):
@@ -40,12 +44,10 @@ class Command(BaseCommand):
         legacy_models.PartnerPartnerLocationFieldOffices,
         legacy_models.PartnerPartnerauditreport,
         legacy_models.PartnerPartnercapacityassessment,
-        legacy_models.PartnerPartnercollaborationpartnership,
         legacy_models.PartnerPartnerdirector,
         legacy_models.PartnerPartnerexperience,
         legacy_models.PartnerPartnerheadorganization,
         legacy_models.PartnerPartnerinternalcontrol,
-        legacy_models.PartnerPartnermandatemission,
         legacy_models.PartnerPartnermember,
         legacy_models.PartnerPartnerotherinfo,
         legacy_models.PartnerPartnerpolicyarea,
@@ -56,9 +58,16 @@ class Command(BaseCommand):
 
     def check_empty_models(self):
         all_models = apps.get_app_config('legacy').get_models()
+        non_empty_models = []
         for legacy_model in all_models:
             if legacy_model.objects.exists() and legacy_model in self.models_assumed_empty:
-                self.stderr.write(f'Model {legacy_model} assumed empty has existing entries!')
+                non_empty_models.append(legacy_model)
+
+        if non_empty_models:
+            raise Exception(
+                f'Models:\n{non_empty_models}\nassumed empty have existing entries! '
+                f'Update migration code to handle those!'
+            )
 
     def migrate_partner(self, source: legacy_models.PartnerPartner):
         self.stdout.write(f'Migrating {source.pk} - {source.legal_name}')
@@ -295,7 +304,60 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_vendor_numbers(self, source: legacy_models.PartnerPartnerVendorNumber):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerVendorNumber {source.pk} for {partner}')
+
+        PartnerVendorNumber.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'agency': UNHCR.model_instance,
+                'number': source.number,
+            }
+        )
+
+    def migrate_collaborations_partnerships(self, source: legacy_models.PartnerPartnercollaborationpartnership):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnercollaborationpartnership {source.pk} for {partner}')
+
+        PartnerCollaborationPartnership.objects.update_or_create(
+            partner=partner,
+            created_by=self.dummy_user,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'agency': UNHCR.model_instance,
+                'description': source.description,
+            }
+        )
+
+    def migrate_mandate_mission(self, source: legacy_models.PartnerPartnermandatemission):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnermandatemission {source.pk} for {partner}')
+
+        PartnerMandateMission.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'background_and_rationale': source.background_and_rationale,
+                'mandate_and_mission': source.mandate_and_mission,
+            }
+        )
+
     def handle(self, *args, **options):
+        self.stdout.write('Start data mgiration')
         self.check_empty_models()
         # Need this for models that require a creator
         self.dummy_user, _ = get_user_model().objects.update_or_create(
@@ -326,3 +388,12 @@ class Command(BaseCommand):
 
         for profile in legacy_models.PartnerPartnerprofile.objects.all():
             self.migrate_profile(profile)
+
+        for vendor_number in legacy_models.PartnerPartnerVendorNumber.objects.all():
+            self.migrate_vendor_numbers(vendor_number)
+
+        for collaboration_partnership in legacy_models.PartnerPartnercollaborationpartnership.objects.all():
+            self.migrate_collaborations_partnerships(collaboration_partnership)
+
+        for mandate_mission in legacy_models.PartnerPartnermandatemission.objects.all():
+            self.migrate_mandate_mission(mandate_mission)

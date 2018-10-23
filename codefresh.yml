@@ -118,22 +118,22 @@ steps:
                     - develop
                     - master
 
-#    deploy_legacydb:
-#        title: Deploying Legacy DB
-#        image: codefresh/cf-deploy-kubernetes
-#        tag: latest
-#        working_directory: ${{main_clone}}
-#        commands:
-#          - /cf-deploy-kubernetes ./kubernetes/legacy_db/deployment.yml
-#        environment:
-#          - KUBECONTEXT=${{KUBECONTEXT}}
-#          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
-#          - KUBERNETES_DEPLOYMENT_TIMEOUT=500
-#        when:
-#          branch:
-#            only:
-#              - develop
-#              - master
+    deploy_legacydb:
+        title: Deploying Legacy DB
+        image: codefresh/cf-deploy-kubernetes
+        tag: latest
+        working_directory: ${{main_clone}}
+        commands:
+          - /cf-deploy-kubernetes ./kubernetes/legacy_db/deployment.yml
+        environment:
+          - KUBECONTEXT=${{KUBECONTEXT}}
+          - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+          - KUBERNETES_DEPLOYMENT_TIMEOUT=500
+        when:
+          branch:
+            only:
+              - develop
+              - master
 
     deploy_redis:
         title: Deploying Redis
