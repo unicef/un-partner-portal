@@ -232,6 +232,17 @@ def send_partner_marked_for_deletion_email(partner: Partner):
     msg.send()
 
 
+def send_project_draft_sent_for_review_notification(project):
+    if project.is_open:
+        notification_type = NotificationType.CFEI_DRAFT_SENT_FOR_REVIEW
+    else:
+        notification_type = NotificationType.DSR_DRAFT_SENT_FOR_REVIEW
+
+    send_notification(notification_type, project, project.focal_points.all(), context={
+        'eoi': project,
+    })
+
+
 def send_new_escalated_flag_email(partner_flag: PartnerFlag):
     base_users_queryset = get_user_model().objects.filter(
         agency_members__role__in=ESCALATED_FLAG_RESOLVER_ROLE_NAMES,

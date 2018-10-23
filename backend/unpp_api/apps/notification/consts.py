@@ -22,6 +22,7 @@ class NotificationType(object):
     DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION = 'superadmin_new_cso_for_deletion'
     NEW_ESCALATED_FLAG = 'new_escalated_flag'
     CFEI_DRAFT_SENT_FOR_REVIEW = 'cfei_draft_sent_for_review'
+    DSR_DRAFT_SENT_FOR_REVIEW = 'dsr_draft_sent_for_review'
     CFEI_SENT_FOR_DECISION_MAKING = 'cfei_sent_for_decision_making'
     CFEI_CLARIFICATION_DEADLINE_PASSED = 'cfei_clarification_deadline_passed'
 
@@ -121,6 +122,10 @@ NOTIFICATION_DATA = {
     NotificationType.CFEI_DRAFT_SENT_FOR_REVIEW: {
         'template_name': 'cfei_draft_sent_for_review',
         'subject': 'CFEI sent for review'
+    },
+    NotificationType.DSR_DRAFT_SENT_FOR_REVIEW: {
+        'template_name': 'cfei_draft_sent_for_review',
+        'subject': 'DSR sent for review'
     },
     NotificationType.CFEI_SENT_FOR_DECISION_MAKING: {
         'template_name': 'cfei_sent_for_decision_making',
