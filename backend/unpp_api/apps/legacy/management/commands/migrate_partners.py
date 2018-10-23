@@ -170,10 +170,10 @@ class Command(BaseCommand):
 
         PartnerBudget.objects.update_or_create(
             partner=partner,
+            year=source.year,
             defaults={
                 'created': source.created,
                 'modified': source.modified,
-                'year': source.year,
                 'budget': source.budget,
             }
         )
