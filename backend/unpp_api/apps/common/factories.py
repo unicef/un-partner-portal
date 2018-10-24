@@ -329,11 +329,13 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def collaborations_partnership(self, create, extracted, **kwargs):
-        PartnerCollaborationPartnership.objects.create(
+        PartnerCollaborationPartnership.objects.get_or_create(
             partner=self,
-            created_by=get_partner_member(),
             agency=get_random_agency(),
-            description="description"
+            defaults={
+                'created_by': get_partner_member(),
+                'description': 'description',
+            }
         )
 
     @factory.post_generation

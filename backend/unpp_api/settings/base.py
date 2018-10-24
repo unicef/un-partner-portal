@@ -226,7 +226,7 @@ REST_FRAMEWORK = {
 }
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer',
-    'USER_DETAILS_SERIALIZER': 'account.serializers.RegisterSimpleAccountSerializer',
+    'USER_DETAILS_SERIALIZER': 'account.serializers.SimpleAccountSerializer',
     'PASSWORD_RESET_SERIALIZER': 'account.serializers.CustomPasswordResetSerializer',
 }
 
@@ -238,6 +238,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
+LOG_LEVEL = 'DEBUG' if DEBUG and 'test' not in sys.argv else 'INFO'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -256,7 +257,7 @@ LOGGING = {
     },
     'handlers': {
         'default': {
-            'level': 'DEBUG',
+            'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
         },
