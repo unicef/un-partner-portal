@@ -327,6 +327,8 @@ class Command(BaseCommand):
             migrated_original_id=source.partner_id,
         )
         self.stdout.write(f'Migrating PartnerPartnercollaborationpartnership {source.pk} for {partner}')
+        partner.profile.any_partnered_with_un = True
+        partner.profile.save()
 
         PartnerCollaborationPartnership.objects.update_or_create(
             partner=partner,
