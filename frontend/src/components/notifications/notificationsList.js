@@ -88,7 +88,7 @@ class NotificationsList extends Component {
   }
 
   render() {
-    const { classes, loading, items, itemsPatch, next } = this.props;
+    const { classes, loading, items, itemsPatch, next, userId } = this.props;
 
     return (
       <Paper className={classes.paper}>
@@ -113,7 +113,7 @@ class NotificationsList extends Component {
         <Loader loading={loading} />
         <div className={classes.root}>
           {items.map(item =>
-            (<NotificationItem
+            (item.recipient === userId && <NotificationItem
               key={item.id}
               item={item}
               itemPatch={itemsPatch[item.notification.id]}
@@ -136,6 +136,7 @@ NotificationsList.propTypes = {
   classes: PropTypes.object,
   items: PropTypes.array,
   next: PropTypes.string,
+  userId: PropTypes.number,
   itemsPatch: PropTypes.object,
   loadNotifications: PropTypes.func,
   markNotification: PropTypes.func,
@@ -144,6 +145,7 @@ NotificationsList.propTypes = {
 };
 
 const mapState = state => ({
+  userId: state.session.userId,
   items: state.notificationsList.items,
   itemsPatch: state.notificationsList.itemsPatch,
   next: state.notificationsList.next,
