@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Q
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
@@ -12,7 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
 from agency.permissions import AgencyPermission
-from common.permissions import HasUNPPPermission
+from common.permissions import HasUNPPPermission, current_user_has_permission
 from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins.serializers import PatchOneFieldErrorMixin
 from partner.exports.pdf.partner_profile import PartnerProfilePDFExporter
@@ -54,7 +55,7 @@ class OrganizationProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
     queryset = Partner.objects.all()
 
 
-class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
+class PartnerProfileAPIView(RetrieveAPIView):
 
     permission_classes = (
         HasUNPPPermission(
@@ -71,6 +72,12 @@ class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
         if request.GET.get('export', '').lower() == 'pdf':
             return PartnerProfilePDFExporter(self.get_object()).get_as_response()
         return super(PartnerProfileAPIView, self).retrieve(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = super(PartnerProfileAPIView, self).get_queryset()
+        return queryset.filter(
+            Q(id__in=self.request.user.partner_ids) | Q(children__id__in=self.request.user.partner_ids)
+        )
 
 
 class PartnerProfileSummaryAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
