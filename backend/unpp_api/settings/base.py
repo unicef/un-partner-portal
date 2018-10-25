@@ -6,6 +6,8 @@ import sys
 ####
 # Change per project
 ####
+from django.urls import reverse_lazy
+
 PROJECT_NAME = 'unpp_api'
 # project root and add "apps" to the path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -190,7 +192,7 @@ KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
 SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+SOCIAL_AUTH_SANITIZE_REDIRECTS = True
 POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
 
 TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
@@ -198,7 +200,7 @@ SCOPE = ['openid', 'email']
 IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/dashboard"
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('accounts:social-logged-in')
 SOCIAL_AUTH_PIPELINE = (
     'common.authentication.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -210,9 +212,6 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'common.authentication.user_details',
 )
-
-# TODO: Re-enable this back once we figure out all email domain names to whitelist from partners
-# SOCIAL_AUTH_WHITELISTED_DOMAINS = ['unicef.org', 'google.com']
 
 TEST_RUNNER = os.getenv('DJANGO_TEST_RUNNER', 'django.test.runner.DiscoverRunner')
 NOSE_ARGS = ['--with-timer', '--nocapture', '--nologcapture']
