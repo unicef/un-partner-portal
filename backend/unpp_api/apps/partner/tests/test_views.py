@@ -555,7 +555,7 @@ class TestPartnerPDFExport(BaseAPITestCase):
         PartnerFactory,
     ]
 
-    def test_download_pdf(self):
+    def test_download_partner_profile_pdf(self):
         partner = Partner.objects.first()
         url = reverse('partners:partner-profile', kwargs={'pk': partner.pk}) + '?export=pdf'
         response = self.client.get(url)

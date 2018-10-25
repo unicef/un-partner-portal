@@ -13,7 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
 from agency.permissions import AgencyPermission
-from common.permissions import HasUNPPPermission, current_user_has_permission
+from common.permissions import HasUNPPPermission
 from common.pagination import SmallPagination, TinyResultSetPagination
 from common.mixins.serializers import PatchOneFieldErrorMixin
 from partner.exports.pdf.partner_profile import PartnerProfilePDFExporter
@@ -75,9 +75,11 @@ class PartnerProfileAPIView(RetrieveAPIView):
 
     def get_queryset(self):
         queryset = super(PartnerProfileAPIView, self).get_queryset()
-        return queryset.filter(
-            Q(id__in=self.request.user.partner_ids) | Q(children__id__in=self.request.user.partner_ids)
-        )
+        if self.request.active_partner:
+            queryset = queryset.filter(
+                Q(id__in=self.request.user.partner_ids) | Q(children__id__in=self.request.user.partner_ids)
+            )
+        return queryset
 
 
 class PartnerProfileSummaryAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
