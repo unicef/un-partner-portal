@@ -139,8 +139,6 @@ class Command(BaseCommand):
         self.stdout.write(f'Migrating PartnerAuthorisedOfficer {source.pk} for {partner}')
 
         defaults = {
-            'created': source.created,
-            'modified': source.modified,
             'fullname': clean_value(source.fullname),
             'job_title': clean_value(source.job_title),
             'telephone': clean_value(source.telephone),
@@ -152,8 +150,14 @@ class Command(BaseCommand):
             self.stderr.write('Empty PartnerAuthorisedOfficer data, skipping...')
             return
 
+        defaults['created'] = source.created
+        defaults['modified'] = source.modified
+        defaults['created_by'] = self.dummy_user
+
         PartnerAuthorisedOfficer.objects.update_or_create(
             partner=partner,
+            telephone=defaults.pop('telephone'),
+            email=defaults.pop('email'),
             defaults=defaults
         )
 
