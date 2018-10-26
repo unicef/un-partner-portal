@@ -13,5 +13,6 @@ bind = ':8000'
 loglevel = 'debug' if IS_DEV else 'info'
 capture_output = IS_DEV
 workers = 1
+threads = 4
 syslog = True
 disable_redirect_access_to_syslog = IS_DEV
