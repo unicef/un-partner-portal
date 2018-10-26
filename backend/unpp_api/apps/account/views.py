@@ -59,7 +59,7 @@ class UserProfileRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 class SocialAuthLoggedInUserView(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
-        protocol = 'https' if self.request.is_secure() else 'http'
+        protocol = 'http' if settings.DEBUG else 'https'
         token = default_create_token(TokenModel, self.request.user, None)
 
         return f'{protocol}://{settings.FRONTEND_HOST}/login/{token}'
