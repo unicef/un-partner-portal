@@ -410,7 +410,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         url = reverse('partners:project-implementation', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
 
         payload = response.data
         del payload['publish_annual_reports']
@@ -421,6 +421,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         del payload['last_report']
         del payload['audit_reports'][0]['most_recent_audit_report']
         del payload['audit_reports'][1]['most_recent_audit_report']
+
         text = 'test'
         payload['financial_control_system_desc'] = text
         payload['management_approach_desc'] = text
@@ -436,7 +437,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         response = self.client.patch(url, data=payload, format='json')
 
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['financial_control_system_desc'], text)
         self.assertEquals(response.data['management_approach_desc'], text)
         self.assertEquals(response.data['comment'], text)
