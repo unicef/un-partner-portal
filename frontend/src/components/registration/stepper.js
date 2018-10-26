@@ -157,14 +157,6 @@ class RegistrationStepper extends React.Component {
             </StepContent>
           </Step>
           <Step>
-            <StepLabel>Provide e-mail and create password</StepLabel>
-            <StepContent>
-              <RegistrationStep onSubmit={this.handleNext} handlePrev={this.handlePrev}>
-                <Account />
-              </RegistrationStep>
-            </StepContent>
-          </Step>
-          <Step>
             <StepLabel>Terms of Use and Privacy Policy</StepLabel>
             <StepContent>
               <RegistrationStep onSubmit={this.handleSubmit} handlePrev={this.handlePrev} last />
