@@ -1489,7 +1489,7 @@ class TestEOIPDFExport(BaseAPITestCase):
         OpenEOIFactory,
     ]
 
-    def test_download_pdf(self):
+    def test_download_project_pdf(self):
         eoi = EOI.objects.first()
         url = reverse('projects:eoi-detail', kwargs={'pk': eoi.pk}) + '?export=pdf'
         response = self.client.get(url)

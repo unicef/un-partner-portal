@@ -1,9 +1,7 @@
-FROM nginx:1.15.3
+FROM nginx:1.15.5-alpine
 
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends apt-utils && \
-    apt-get install --assume-yes python-pip python-dev python-setuptools build-essential cron
+RUN apk update
+RUN apk add --upgrade --no-cache py-pip bash
 RUN pip install j2cli
 
 ADD nginx.conf.j2 /

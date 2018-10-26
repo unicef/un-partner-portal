@@ -22,6 +22,8 @@ from partner.models import (
     PartnerRegistrationDocument,
     PartnerCollaborationPartnership,
     PartnerMandateMission,
+    PartnerInternalControl,
+    PartnerPolicyArea,
 )
 from externals.models import PartnerVendorNumber
 
@@ -47,10 +49,8 @@ class Command(BaseCommand):
         legacy_models.PartnerPartnerdirector,
         legacy_models.PartnerPartnerexperience,
         legacy_models.PartnerPartnerheadorganization,
-        legacy_models.PartnerPartnerinternalcontrol,
         legacy_models.PartnerPartnermember,
         legacy_models.PartnerPartnerotherinfo,
-        legacy_models.PartnerPartnerpolicyarea,
         legacy_models.PartnerPartnerreporting,
         legacy_models.PartnerPartnerreview,
     }
@@ -362,6 +362,42 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_internal_control(self, source: legacy_models.PartnerPartnerinternalcontrol):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerinternalcontrol {source.pk} for {partner}')
+
+        PartnerInternalControl.objects.update_or_create(
+            partner=partner,
+            functional_responsibility=source.functional_responsibility,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'segregation_duties': source.segregation_duties,
+                'comment': source.comment,
+            }
+        )
+
+    def migrate_policy_area(self, source: legacy_models.PartnerPartnerpolicyarea):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerpolicyarea {source.pk} for {partner}')
+
+        PartnerPolicyArea.objects.update_or_create(
+            partner=partner,
+            area=source.area,
+            defaults={
+                'created_by': self.dummy_user,
+                'created': source.created,
+                'modified': source.modified,
+                'document_policies': source.document_policies,
+            }
+        )
+
     def handle(self, *args, **options):
         self.stdout.write('Start data mgiration')
         self.check_empty_models()
@@ -403,3 +439,9 @@ class Command(BaseCommand):
 
         for mandate_mission in legacy_models.PartnerPartnermandatemission.objects.all():
             self.migrate_mandate_mission(mandate_mission)
+
+        for internal_control in legacy_models.PartnerPartnerinternalcontrol.objects.all():
+            self.migrate_internal_control(internal_control)
+
+        for policy_area in legacy_models.PartnerPartnerpolicyarea.objects.all():
+            self.migrate_policy_area(policy_area)
