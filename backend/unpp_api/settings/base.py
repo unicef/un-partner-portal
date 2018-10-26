@@ -91,7 +91,7 @@ if POSTGRES_SSL_MODE == 'on':
     DATABASES['default'].update({'OPTIONS': {"sslmode": 'require'}})
 
 MIDDLEWARE = [
-    'elasticapm.contrib.django.middleware.TracingMiddleware',
+    # 'elasticapm.contrib.django.middleware.TracingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
