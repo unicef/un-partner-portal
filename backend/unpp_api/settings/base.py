@@ -91,7 +91,7 @@ if POSTGRES_SSL_MODE == 'on':
     DATABASES['default'].update({'OPTIONS': {"sslmode": 'require'}})
 
 MIDDLEWARE = [
-    # 'elasticapm.contrib.django.middleware.TracingMiddleware',
+    'elasticapm.contrib.django.middleware.TracingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -305,6 +305,10 @@ LOGGING = {
 # ELASTIC_APM_APP_NAME=<app-name> # set app name visible on dashboard
 # ELASTIC_APM_SECRET_TOKEN=<app-token> #secret token - needs to be exact same as on apm-server
 # ELASTIC_APM_SERVER_URL=http://elastic.tivixlabs.com:8200 # apm-server url
+
+ELASTIC_APM = {
+   'DEBUG': True,  # True to disable Elastic logging, False to Enable
+}
 
 UNHCR_API_HOST = os.getenv('UNHCR_API_HOST')
 UNHCR_API_USERNAME = os.getenv('UNHCR_API_USERNAME')
