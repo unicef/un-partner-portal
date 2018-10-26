@@ -62,4 +62,4 @@ class SocialAuthLoggedInUserView(LoginRequiredMixin, RedirectView):
         protocol = 'https' if self.request.is_secure() else 'http'
         token = default_create_token(TokenModel, self.request.user, None)
 
-        return f'{protocol}://{settings.FRONTEND_HOST}/login/token?key={token}'
+        return f'{protocol}://{settings.FRONTEND_HOST}/login/{token}'
