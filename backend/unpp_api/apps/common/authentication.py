@@ -1,8 +1,13 @@
+import logging
+
 from social_core.pipeline import social_auth
 
 from django.conf import settings
 from social_core.backends.azuread_b2c import AzureADB2COAuth2
 from social_core.pipeline import user as social_core_user
+
+
+logger = logging.getLogger('console')
 
 
 class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
@@ -27,6 +32,7 @@ def user_details(strategy, details, user=None, *args, **kwargs):
     # # see what the property to map by is here
     # updates_available = False
 
+    logger.debug(f'For {user} got details:\n{details}')
     if user:
         # user_groups = [group.name for group in user.groups.all()]
         # business_area_code = details.get("business_area_code", 'defaultBA1235')
