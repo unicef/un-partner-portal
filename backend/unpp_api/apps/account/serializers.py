@@ -38,9 +38,10 @@ from partner.serializers import (
     PartnerCollaborationEvidenceSerializer,
 )
 from account.models import User, UserProfile
+from sanctionslist.scans import sanctions_scan_partner
 
 
-class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
+class SimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
     fullname = serializers.CharField(required=False)
@@ -60,7 +61,7 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def save(self):
-        user = super(RegisterSimpleAccountSerializer, self).save()
+        user = super(SimpleAccountSerializer, self).save()
         if 'password' in self.validated_data:
             user.set_password(self.validated_data['password'])
             user.save()
@@ -92,7 +93,7 @@ class PartnerDeclarationSerializer(serializers.Serializer):
 
 class PartnerRegistrationSerializer(serializers.Serializer):
 
-    user = RegisterSimpleAccountSerializer()
+    user = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
 
     partner = PartnerSerializer()
     partner_profile = PartnerProfileSerializer()
@@ -163,9 +164,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        user_serializer = RegisterSimpleAccountSerializer(data=validated_data.pop('user'))
-        user_serializer.is_valid()
-        user = user_serializer.save()
+        user = validated_data.pop('user')
 
         self.partner = Partner.objects.create(**validated_data['partner'])
         self.save_documents(validated_data, user)
@@ -196,7 +195,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
         partner_member = validated_data['partner_member']
         partner_member['partner_id'] = self.partner.id
-        partner_member['user'] = user_serializer.instance
+        partner_member['user'] = user
         partner_member['role'] = PartnerRole.ADMIN.name
         self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
 
@@ -209,9 +208,10 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             ).get_as_common_file()
         )
 
+        sanctions_scan_partner(self.partner)
+
         return {
             "partner": PartnerSerializer(instance=self.partner).data,
-            "user": user_serializer.data,
             "partner_profile": PartnerProfileSerializer(instance=self.partner.profile).data,
             "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(instance=self.partner.org_head).data,
             "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
