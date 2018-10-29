@@ -19,7 +19,7 @@ def _users_valid_for_agency(cfei, user_ids):
 
 def update_cfei_focal_points(eoi, user_ids):
     try:
-        user_ids = list(map(int, user_ids))
+        user_ids = set(map(int, user_ids))
     except (TypeError, ValueError):
         return
 
@@ -38,7 +38,7 @@ def update_cfei_focal_points(eoi, user_ids):
     user_count = User.objects.filter(
         agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES, id__in=user_ids
     ).order_by().distinct('id').count()
-    if not user_count == len(set(user_ids)):
+    if not user_count == len(user_ids):
         raise serializers.ValidationError(
             'Some of the indicated focal point user(s) do not have necessary permissions'
         )
@@ -49,7 +49,7 @@ def update_cfei_focal_points(eoi, user_ids):
 
 def update_cfei_reviewers(eoi, user_ids):
     try:
-        user_ids = list(map(int, user_ids))
+        user_ids = set(map(int, user_ids))
     except (TypeError, ValueError):
         return
 
@@ -83,7 +83,7 @@ def update_cfei_reviewers(eoi, user_ids):
     user_count = User.objects.filter(
         agency_members__role__in=VALID_REVIEWER_ROLE_NAMES, id__in=user_ids
     ).order_by().distinct('id').count()
-    if not user_count == len(set(user_ids)):
+    if not user_count == len(user_ids):
         raise serializers.ValidationError(
             'Some of the indicated reviewer user(s) do not have necessary permissions'
         )
