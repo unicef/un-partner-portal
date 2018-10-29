@@ -8,7 +8,7 @@ import { TableCell } from 'material-ui/Table';
 const types = [
   { type: 'Open Selection', path: 'open' },
   { type: 'Unsolicited Concept Note', path: 'unsolicited' },
-  { type: 'Direct Selection/Retention', path: 'direct' },
+  { type: 'Direct Selection / Retention', path: 'direct' },
 ];
 
 const pathType = type => R.filter(item => item.type === type, types);
@@ -31,16 +31,22 @@ const path = (type, cnId, eoiId) => {
 
 const CnCell = (props) => {
   const { cnId, eoiId, type } = props;
+  const source = pathType(type)[0];
 
   return (
     <TableCell>
-      <Typography
-        component={Link}
-        color="accent"
-        to={path(type, cnId, eoiId)}
-      >
-        {cnId}
-      </Typography>
+      {((source && source.path === 'open') ||
+        (source && source.path === 'unsolicited'))
+        ? <Typography
+          component={Link}
+          color="accent"
+          to={path(type, cnId, eoiId)}
+        >
+          {cnId}
+        </Typography>
+        : <Typography>
+          {'-'}
+        </Typography>}
     </TableCell>
   );
 };
