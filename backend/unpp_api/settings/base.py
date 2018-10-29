@@ -91,7 +91,6 @@ if POSTGRES_SSL_MODE == 'on':
     DATABASES['default'].update({'OPTIONS': {"sslmode": 'require'}})
 
 MIDDLEWARE = [
-    'elasticapm.contrib.django.middleware.TracingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -122,7 +121,6 @@ TEMPLATES = [
 ]
 
 INSTALLED_APPS = [
-    'elasticapm.contrib.django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.humanize',
@@ -260,10 +258,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
         },
-        'elasticapm': {
-            'level': 'ERROR',
-            'class': 'elasticapm.contrib.django.handlers.LoggingHandler',
-        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
@@ -291,23 +285,7 @@ LOGGING = {
             'handlers': ['default'],
             'propagate': False,
         },
-        'elasticapm.errors': {
-            'level': 'ERROR',
-            'handlers': ['default'],
-            'propagate': False,
-        },
     }
-}
-
-# apm related - it's enough to set those as env variables, here just for documentation
-# by default logging and apm is off, so below envs needs to be set per environment
-
-# ELASTIC_APM_APP_NAME=<app-name> # set app name visible on dashboard
-# ELASTIC_APM_SECRET_TOKEN=<app-token> #secret token - needs to be exact same as on apm-server
-# ELASTIC_APM_SERVER_URL=http://elastic.tivixlabs.com:8200 # apm-server url
-
-ELASTIC_APM = {
-   'DEBUG': True,  # True to disable Elastic logging, False to Enable
 }
 
 UNHCR_API_HOST = os.getenv('UNHCR_API_HOST')

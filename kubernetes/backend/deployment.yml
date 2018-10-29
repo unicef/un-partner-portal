@@ -79,12 +79,6 @@ spec:
               value: "{{EMAIL_HOST_USER}}"
             - name: MAP_BOX_KEY
               value: {{MAP_BOX_KEY}}
-            - name: ELASTIC_APM_DEBUG
-              value: "{{ELASTIC_APM_DEBUG}}"
-            - name: ELASTIC_APM_SERVER_URL
-              value: "{{ELASTIC_APM_SERVER_URL}}"
-            - name: ELASTIC_APM_SERVICE_NAME
-              value: "{{ELASTIC_APM_SERVICE_NAME}}"
             - name: UNHCR_API_HOST
               value: "{{UNHCR_API_HOST}}"
             - name: UNHCR_API_USERNAME
@@ -105,11 +99,6 @@ spec:
               value: "{{SA_PASSWORD}}"
             - name: LEGACY_DB_HOST
               value: "{{LEGACY_DB_HOST}}"
-            - name: ELASTIC_APM_SECRET_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: elastic-apm-secret-token
-                  key: password
             - name: AZURE_B2C_CLIENT_ID
               value: "{{AZURE_B2C_CLIENT_ID}}"
             - name: AZURE_B2C_CLIENT_SECRET

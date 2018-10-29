@@ -17,20 +17,26 @@ from common.database_fields import FixedTextField
 
 class UserManager(BaseUserManager):
 
-    def _create_user(self, fullname, email, password,
-                     is_staff, is_superuser, **extra_fields):
+    def _create_user(self, fullname, email, password, is_staff, is_superuser, **kwargs):
         now = timezone.now()
         email = self.normalize_email(email)
         user = self.model(fullname=fullname, email=email,
                           is_staff=is_staff, is_active=True,
                           is_superuser=is_superuser, last_login=now,
-                          date_joined=now, **extra_fields)
+                          date_joined=now, **kwargs)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, fullname, email, password=None, **extra_fields):
-        return self._create_user(fullname, email, password, False, False, **extra_fields)
+    def create_user(self, **kwargs):
+        return self._create_user(
+            kwargs.get('fullname'),
+            kwargs.get('email'),
+            kwargs.get('password'),
+            False,
+            False,
+            **kwargs
+        )
 
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
