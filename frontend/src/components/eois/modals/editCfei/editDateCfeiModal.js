@@ -5,7 +5,7 @@ import { submit } from 'redux-form';
 import ControlledModal from '../../../common/modals/controlledModal';
 import Loader from '../../../common/loader';
 import { updateCfei } from '../../../../reducers/newCfei'; 
-import EditFocalPointForm from './editFocalPointForm';
+import EditFocalPointForm from './editDateCfeiForm';
 
 const messages = {
   title: {
