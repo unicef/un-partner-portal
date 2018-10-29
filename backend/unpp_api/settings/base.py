@@ -210,7 +210,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'common.authentication.user_details',
 )
-SOCIAL_AUTH_CUSTOMAZUREADBBCOAUTH2_USER_FIELDS = [
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_USER_FIELDS = [
     'email', 'fullname'
 ]
 
