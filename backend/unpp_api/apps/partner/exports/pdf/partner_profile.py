@@ -315,7 +315,7 @@ class PartnerProfilePDFExporter:
         table_rows = [
             [
                 'Country',
-                ', '.join([COUNTRIES_DISPLAY[code] for code in self.partner.country_presence]),
+                '; '.join([p.admin_level_1.name for p in self.partner.location_field_offices.all()]),
             ],
             [
                 'Number of staff in country',
