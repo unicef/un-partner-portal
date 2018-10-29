@@ -23,6 +23,7 @@ def social_details(backend, details, response, *args, **kwargs):
 
     if not r['details'].get('email'):
         r['details']['email'] = response.get('email')
+    logger.debug(f'social_details response:\n{r}')
 
     return r
 
@@ -32,7 +33,6 @@ def user_details(strategy, details, user=None, *args, **kwargs):
     # # see what the property to map by is here
     # updates_available = False
 
-    logger.debug(f'For {user} got details:\n{details}')
     if user:
         # user_groups = [group.name for group in user.groups.all()]
         # business_area_code = details.get("business_area_code", 'defaultBA1235')
