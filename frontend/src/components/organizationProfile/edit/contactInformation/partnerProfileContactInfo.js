@@ -32,10 +32,6 @@ const STEPS = readOnly =>
       component: <PartnerProfileContactInfoOfficials readOnly={readOnly} />,
       label: 'Key Personnel',
       name: 'authorised_officials',
-      infoText: 'Authorised officer: a member of the organization who has been formally ' +
-      'empowered by that organization to conduct affairs on its behalf, and who has the ' +
-      'authority to enter the organization into legal agreements with the UN and others. An ' +
-      'organization may have one or more authorized officers.',
     },
     {
       component: <PartnerProfileContactInfoConnectivity readOnly={readOnly} />,
