@@ -7,7 +7,6 @@ from cached_property import threaded_cached_property
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save
-from django.utils import timezone
 
 from model_utils.models import TimeStampedModel
 
@@ -18,21 +17,24 @@ from common.database_fields import FixedTextField
 class UserManager(BaseUserManager):
 
     def _create_user(self, fullname, email, password, is_staff, is_superuser, **kwargs):
-        now = timezone.now()
         email = self.normalize_email(email)
-        user = self.model(fullname=fullname, email=email,
-                          is_staff=is_staff, is_active=True,
-                          is_superuser=is_superuser, last_login=now,
-                          date_joined=now, **kwargs)
+        user = self.model(
+            fullname=fullname,
+            email=email,
+            is_staff=is_staff,
+            is_active=True,
+            is_superuser=is_superuser,
+            **kwargs
+        )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_user(self, **kwargs):
         return self._create_user(
-            kwargs.get('fullname'),
-            kwargs.get('email'),
-            kwargs.get('password'),
+            kwargs.pop('fullname', None),
+            kwargs.pop('email', None),
+            kwargs.pop('password', None),
             False,
             False,
             **kwargs

@@ -210,6 +210,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'common.authentication.user_details',
 )
+SOCIAL_AUTH_CUSTOMAZUREADBBCOAUTH2_USER_FIELDS = [
+    'email', 'fullname'
+]
 
 TEST_RUNNER = os.getenv('DJANGO_TEST_RUNNER', 'django.test.runner.DiscoverRunner')
 NOSE_ARGS = ['--with-timer', '--nocapture', '--nologcapture']
