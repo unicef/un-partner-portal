@@ -52,7 +52,7 @@ steps:
                 image: ${{build_backend}}
                 depends_on:
                     - backend
-                command: 'bash -c "/usr/local/bin/wait-for-it.sh backend:8000 -t 180 && python /code/manage.py test --parallel && flake8 /code/backend"'
+                command: 'bash -c "/usr/local/bin/wait-for-it.sh backend:8000 -t 240 && python /code/manage.py test --parallel && flake8 /code/backend"'
                 environment:
                     - ENV=dev
                     - POSTGRES_DB=postgres
