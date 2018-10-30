@@ -104,9 +104,6 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
         self.assertEquals(
             response.data['partner_head_organization']['email'], payload['partner_head_organization']['email']
         )
-        self.assertEquals(
-            response.data['partner_member']['title'], payload['partner_member']['title']
-        )
         partner_id = response.data['partner']['id']
 
         partner = Partner.objects.get(id=partner_id)

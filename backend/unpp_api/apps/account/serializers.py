@@ -98,7 +98,6 @@ class PartnerRegistrationSerializer(serializers.Serializer):
     partner = PartnerSerializer()
     partner_profile = PartnerProfileSerializer()
     partner_head_organization = PartnerHeadOrganizationRegisterSerializer()
-    partner_member = PartnerMemberSerializer()
 
     governing_document = PartnerGoverningDocumentSerializer(required=False)
     registration_document = PartnerRegistrationDocumentSerializer(required=False)
@@ -193,11 +192,14 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             budgets.append(PartnerBudget(partner=self.partner, year=year))
         PartnerBudget.objects.bulk_create(budgets)
 
-        partner_member = validated_data['partner_member']
-        partner_member['partner_id'] = self.partner.id
-        partner_member['user'] = user
-        partner_member['role'] = PartnerRole.ADMIN.name
-        self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
+        partner_member, _ = PartnerMember.objects.get_or_create(
+            partner=self.partner,
+            user=user,
+            defaults={
+                'role': PartnerRole.ADMIN.name,
+                'title': 'Administrator'
+            }
+        )
 
         self.partner.save()
         self.partner = Partner.objects.get(pk=self.partner.pk)
@@ -214,7 +216,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
             "partner": PartnerSerializer(instance=self.partner).data,
             "partner_profile": PartnerProfileSerializer(instance=self.partner.profile).data,
             "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(instance=self.partner.org_head).data,
-            "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
+            "partner_member": PartnerMemberSerializer(instance=partner_member).data,
         }
 
 
