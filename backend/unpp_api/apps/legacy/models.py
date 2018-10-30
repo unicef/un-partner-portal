@@ -449,3 +449,18 @@ class PartnerPartnerVendorNumber(models.Model):
     class Meta:
         managed = False
         db_table = 'externals_partnervendornumber'
+
+
+class PartnerUser(models.Model):
+
+    UserID = models.IntegerField(primary_key=True)
+    Username = models.EmailField()
+    Role = models.IntegerField()
+    ValidFrom = models.DateTimeField()
+    ProfileID = models.IntegerField()
+    FirstName = models.TextField()
+    LastName = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'User'

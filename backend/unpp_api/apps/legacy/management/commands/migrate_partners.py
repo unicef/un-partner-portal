@@ -24,6 +24,9 @@ from partner.models import (
     PartnerMandateMission,
     PartnerInternalControl,
     PartnerPolicyArea,
+    PartnerAuditReport,
+    PartnerExperience,
+    PartnerMember,
 )
 from externals.models import PartnerVendorNumber
 
@@ -44,10 +47,8 @@ class Command(BaseCommand):
         legacy_models.AgencyAgencyprofile,
         legacy_models.AgencyOtheragency,
         legacy_models.PartnerPartnerLocationFieldOffices,
-        legacy_models.PartnerPartnerauditreport,
         legacy_models.PartnerPartnercapacityassessment,
         legacy_models.PartnerPartnerdirector,
-        legacy_models.PartnerPartnerexperience,
         legacy_models.PartnerPartnerheadorganization,
         legacy_models.PartnerPartnermember,
         legacy_models.PartnerPartnerotherinfo,
@@ -398,6 +399,71 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_audit_reports(self, source: legacy_models.PartnerPartnerauditreport):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerauditreport {source.pk} for {partner}')
+
+        PartnerAuditReport.objects.update_or_create(
+            partner=partner,
+            created=source.created,
+            defaults={
+                'created_by': self.dummy_user,
+                'modified': source.modified,
+                'org_audit': source.org_audit,
+                'link_report': source.link_report,
+            }
+        )
+
+    def migrate_experience(self, source: legacy_models.PartnerPartnerexperience):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerexperience {source.pk} for {partner}')
+
+        PartnerExperience.objects.update_or_create(
+            partner=partner,
+            created=source.created,
+            defaults={
+                'created_by': self.dummy_user,
+                'modified': source.modified,
+                'years': source.years,
+                'specialization_id': source.specialization_id,
+            }
+        )
+
+    def migrate_user(self, source: legacy_models.PartnerUser):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.ProfileID,
+        )
+        self.stdout.write(f'Migrating PartnerUser {source.UserID} for {partner}')
+
+        user, _ = get_user_model().objects.get_or_create(
+            email=source.Username,
+            defaults={
+                'fullname': f'{source.FirstName} {source.LastName}' if source.FirstName else 'N/A',
+                'date_joined': source.ValidFrom,
+            }
+        )
+        user.set_unusable_password()
+        user.save()
+
+        PartnerMember.objects.get_or_create(
+            user=user,
+            partner=partner,
+            defaults={
+                'title': 'Member'
+            }
+        )
+
+    def _migrate_model(self, migrate_function, model):
+        for obj in model.objects.all():
+            migrate_function(obj)
+
     def handle(self, *args, **options):
         self.stdout.write('Start data mgiration')
         self.check_empty_models()
@@ -410,38 +476,20 @@ class Command(BaseCommand):
             }
         )
 
-        for external_partner in legacy_models.PartnerPartner.objects.all():
-            self.migrate_partner(external_partner)
-
-        for audit_assessment in legacy_models.PartnerPartnerauditassessment.objects.all():
-            self.migrate_audit(audit_assessment)
-
-        for authorised_officer in legacy_models.PartnerPartnerauthorisedofficer.objects.all():
-            self.migrate_authorised_officer(authorised_officer)
-
-        for budget_info in legacy_models.PartnerPartnerbudget.objects.all():
-            self.migrate_budget_info(budget_info)
-
-        for collaboration_evidence in legacy_models.PartnerPartnercollaborationevidence.objects.all():
-            self.migrate_collaboration_evidence(collaboration_evidence)
-
-        for mailing_address in legacy_models.PartnerPartnermailingaddress.objects.all():
-            self.migrate_mailing_address(mailing_address)
-
-        for profile in legacy_models.PartnerPartnerprofile.objects.all():
-            self.migrate_profile(profile)
-
-        for vendor_number in legacy_models.PartnerPartnerVendorNumber.objects.all():
-            self.migrate_vendor_numbers(vendor_number)
-
-        for collaboration_partnership in legacy_models.PartnerPartnercollaborationpartnership.objects.all():
-            self.migrate_collaborations_partnerships(collaboration_partnership)
-
-        for mandate_mission in legacy_models.PartnerPartnermandatemission.objects.all():
-            self.migrate_mandate_mission(mandate_mission)
-
-        for internal_control in legacy_models.PartnerPartnerinternalcontrol.objects.all():
-            self.migrate_internal_control(internal_control)
-
-        for policy_area in legacy_models.PartnerPartnerpolicyarea.objects.all():
-            self.migrate_policy_area(policy_area)
+        self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
+        self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
+        self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
+        self._migrate_model(self.migrate_budget_info, legacy_models.PartnerPartnerbudget)
+        self._migrate_model(self.migrate_collaboration_evidence, legacy_models.PartnerPartnercollaborationevidence)
+        self._migrate_model(self.migrate_mailing_address, legacy_models.PartnerPartnermailingaddress)
+        self._migrate_model(self.migrate_profile, legacy_models.PartnerPartnerprofile)
+        self._migrate_model(self.migrate_vendor_numbers, legacy_models.PartnerPartnerVendorNumber)
+        self._migrate_model(
+            self.migrate_collaborations_partnerships, legacy_models.PartnerPartnercollaborationpartnership
+        )
+        self._migrate_model(self.migrate_mandate_mission, legacy_models.PartnerPartnermandatemission)
+        self._migrate_model(self.migrate_internal_control, legacy_models.PartnerPartnerinternalcontrol)
+        self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
+        self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
+        self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
+        self._migrate_model(self.migrate_user, legacy_models.PartnerUser)
