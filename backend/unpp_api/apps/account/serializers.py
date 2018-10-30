@@ -213,6 +213,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         from partner.serializers import PartnerMemberSerializer
         return {
             "partner": PartnerSerializer(instance=self.partner).data,
+            "user": SimpleAccountSerializer(instance=user).data,
             "partner_profile": PartnerProfileSerializer(instance=self.partner.profile).data,
             "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(instance=self.partner.org_head).data,
             "partner_member": PartnerMemberSerializer(instance=partner_member).data,
