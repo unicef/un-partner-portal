@@ -27,7 +27,7 @@ from partner.models import (
     PartnerAuditReport,
     PartnerExperience,
     PartnerMember,
-)
+    PartnerOtherInfo, PartnerReporting)
 from externals.models import PartnerVendorNumber
 
 
@@ -51,8 +51,6 @@ class Command(BaseCommand):
         legacy_models.PartnerPartnerdirector,
         legacy_models.PartnerPartnerheadorganization,
         legacy_models.PartnerPartnermember,
-        legacy_models.PartnerPartnerotherinfo,
-        legacy_models.PartnerPartnerreporting,
         legacy_models.PartnerPartnerreview,
     }
     dummy_user = None
@@ -460,6 +458,44 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_other_info(self, source: legacy_models.PartnerPartnerotherinfo):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerotherinfo {source.pk} for {partner}')
+
+        # TODO: Files
+        PartnerOtherInfo.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created_by': self.dummy_user,
+                'created': source.created,
+                'modified': source.modified,
+                'info_to_share': source.info_to_share,
+            }
+        )
+
+    def migrate_reporting(self, source: legacy_models.PartnerPartnerreporting):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerreporting {source.pk} for {partner}')
+
+        # TODO: Files
+        PartnerReporting.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'key_result': source.key_result,
+                'publish_annual_reports': source.publish_annual_reports,
+                'last_report': source.last_report,
+                'link_report': source.link_report or None,
+            }
+        )
+
     def _migrate_model(self, migrate_function, model):
         for obj in model.objects.all():
             migrate_function(obj)
@@ -492,4 +528,7 @@ class Command(BaseCommand):
         self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
         self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
         self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
+        self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
+        self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
+
         self._migrate_model(self.migrate_user, legacy_models.PartnerUser)
