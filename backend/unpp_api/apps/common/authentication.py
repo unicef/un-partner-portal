@@ -1,8 +1,13 @@
+import logging
+
 from social_core.pipeline import social_auth
 
 from django.conf import settings
 from social_core.backends.azuread_b2c import AzureADB2COAuth2
 from social_core.pipeline import user as social_core_user
+
+
+logger = logging.getLogger('console')
 
 
 class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
@@ -18,6 +23,7 @@ def social_details(backend, details, response, *args, **kwargs):
 
     if not r['details'].get('email'):
         r['details']['email'] = response.get('email')
+    logger.debug(f'social_details response:\n{r}')
 
     return r
 

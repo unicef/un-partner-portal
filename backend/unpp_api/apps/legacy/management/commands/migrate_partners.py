@@ -6,6 +6,7 @@ from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
+from agency.agencies import UNHCR
 from common.consts import BUDGET_CHOICES
 from common.factories import get_new_common_file
 from legacy import models as legacy_models
@@ -19,7 +20,15 @@ from partner.models import (
     PartnerMailingAddress,
     PartnerProfile,
     PartnerRegistrationDocument,
-)
+    PartnerCollaborationPartnership,
+    PartnerMandateMission,
+    PartnerInternalControl,
+    PartnerPolicyArea,
+    PartnerAuditReport,
+    PartnerExperience,
+    PartnerMember,
+    PartnerOtherInfo, PartnerReporting)
+from externals.models import PartnerVendorNumber
 
 
 def clean_value(value):
@@ -38,27 +47,26 @@ class Command(BaseCommand):
         legacy_models.AgencyAgencyprofile,
         legacy_models.AgencyOtheragency,
         legacy_models.PartnerPartnerLocationFieldOffices,
-        legacy_models.PartnerPartnerauditreport,
         legacy_models.PartnerPartnercapacityassessment,
-        legacy_models.PartnerPartnercollaborationpartnership,
         legacy_models.PartnerPartnerdirector,
-        legacy_models.PartnerPartnerexperience,
         legacy_models.PartnerPartnerheadorganization,
-        legacy_models.PartnerPartnerinternalcontrol,
-        legacy_models.PartnerPartnermandatemission,
         legacy_models.PartnerPartnermember,
-        legacy_models.PartnerPartnerotherinfo,
-        legacy_models.PartnerPartnerpolicyarea,
-        legacy_models.PartnerPartnerreporting,
         legacy_models.PartnerPartnerreview,
     }
     dummy_user = None
 
     def check_empty_models(self):
         all_models = apps.get_app_config('legacy').get_models()
+        non_empty_models = []
         for legacy_model in all_models:
             if legacy_model.objects.exists() and legacy_model in self.models_assumed_empty:
-                self.stderr.write(f'Model {legacy_model} assumed empty has existing entries!')
+                non_empty_models.append(legacy_model)
+
+        if non_empty_models:
+            raise Exception(
+                f'Models:\n{non_empty_models}\nassumed empty have existing entries! '
+                f'Update migration code to handle those!'
+            )
 
     def migrate_partner(self, source: legacy_models.PartnerPartner):
         self.stdout.write(f'Migrating {source.pk} - {source.legal_name}')
@@ -130,8 +138,6 @@ class Command(BaseCommand):
         self.stdout.write(f'Migrating PartnerAuthorisedOfficer {source.pk} for {partner}')
 
         defaults = {
-            'created': source.created,
-            'modified': source.modified,
             'fullname': clean_value(source.fullname),
             'job_title': clean_value(source.job_title),
             'telephone': clean_value(source.telephone),
@@ -143,8 +149,14 @@ class Command(BaseCommand):
             self.stderr.write('Empty PartnerAuthorisedOfficer data, skipping...')
             return
 
+        defaults['created'] = source.created
+        defaults['modified'] = source.modified
+        defaults['created_by'] = self.dummy_user
+
         PartnerAuthorisedOfficer.objects.update_or_create(
             partner=partner,
+            telephone=defaults.pop('telephone'),
+            email=defaults.pop('email'),
             defaults=defaults
         )
 
@@ -161,10 +173,10 @@ class Command(BaseCommand):
 
         PartnerBudget.objects.update_or_create(
             partner=partner,
+            year=source.year,
             defaults={
                 'created': source.created,
                 'modified': source.modified,
-                'year': source.year,
                 'budget': source.budget,
             }
         )
@@ -295,7 +307,201 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_vendor_numbers(self, source: legacy_models.PartnerPartnerVendorNumber):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerVendorNumber {source.pk} for {partner}')
+
+        PartnerVendorNumber.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'agency': UNHCR.model_instance,
+                'number': source.number,
+            }
+        )
+
+    def migrate_collaborations_partnerships(self, source: legacy_models.PartnerPartnercollaborationpartnership):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnercollaborationpartnership {source.pk} for {partner}')
+        partner.profile.any_partnered_with_un = True
+        partner.profile.save()
+
+        PartnerCollaborationPartnership.objects.update_or_create(
+            partner=partner,
+            created_by=self.dummy_user,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'agency': UNHCR.model_instance,
+                'description': source.description,
+            }
+        )
+
+    def migrate_mandate_mission(self, source: legacy_models.PartnerPartnermandatemission):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnermandatemission {source.pk} for {partner}')
+
+        PartnerMandateMission.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'background_and_rationale': source.background_and_rationale,
+                'mandate_and_mission': source.mandate_and_mission,
+            }
+        )
+
+    def migrate_internal_control(self, source: legacy_models.PartnerPartnerinternalcontrol):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerinternalcontrol {source.pk} for {partner}')
+
+        PartnerInternalControl.objects.update_or_create(
+            partner=partner,
+            functional_responsibility=source.functional_responsibility,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'segregation_duties': source.segregation_duties,
+                'comment': source.comment,
+            }
+        )
+
+    def migrate_policy_area(self, source: legacy_models.PartnerPartnerpolicyarea):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerpolicyarea {source.pk} for {partner}')
+
+        PartnerPolicyArea.objects.update_or_create(
+            partner=partner,
+            area=source.area,
+            defaults={
+                'created_by': self.dummy_user,
+                'created': source.created,
+                'modified': source.modified,
+                'document_policies': source.document_policies,
+            }
+        )
+
+    def migrate_audit_reports(self, source: legacy_models.PartnerPartnerauditreport):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerauditreport {source.pk} for {partner}')
+
+        PartnerAuditReport.objects.update_or_create(
+            partner=partner,
+            created=source.created,
+            defaults={
+                'created_by': self.dummy_user,
+                'modified': source.modified,
+                'org_audit': source.org_audit,
+                'link_report': source.link_report,
+            }
+        )
+
+    def migrate_experience(self, source: legacy_models.PartnerPartnerexperience):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerexperience {source.pk} for {partner}')
+
+        PartnerExperience.objects.update_or_create(
+            partner=partner,
+            created=source.created,
+            defaults={
+                'created_by': self.dummy_user,
+                'modified': source.modified,
+                'years': source.years,
+                'specialization_id': source.specialization_id,
+            }
+        )
+
+    def migrate_user(self, source: legacy_models.PartnerUser):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.ProfileID,
+        )
+        self.stdout.write(f'Migrating PartnerUser {source.UserID} for {partner}')
+
+        user, _ = get_user_model().objects.get_or_create(
+            email=source.Username,
+            defaults={
+                'fullname': f'{source.FirstName} {source.LastName}' if source.FirstName else 'N/A',
+                'date_joined': source.ValidFrom,
+            }
+        )
+        user.set_unusable_password()
+        user.save()
+
+        PartnerMember.objects.get_or_create(
+            user=user,
+            partner=partner,
+            defaults={
+                'title': 'Member'
+            }
+        )
+
+    def migrate_other_info(self, source: legacy_models.PartnerPartnerotherinfo):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerotherinfo {source.pk} for {partner}')
+
+        # TODO: Files
+        PartnerOtherInfo.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created_by': self.dummy_user,
+                'created': source.created,
+                'modified': source.modified,
+                'info_to_share': source.info_to_share,
+            }
+        )
+
+    def migrate_reporting(self, source: legacy_models.PartnerPartnerreporting):
+        partner = Partner.objects.get(
+            migrated_from=Partner.SOURCE_UNHCR,
+            migrated_original_id=source.partner_id,
+        )
+        self.stdout.write(f'Migrating PartnerPartnerreporting {source.pk} for {partner}')
+
+        # TODO: Files
+        PartnerReporting.objects.update_or_create(
+            partner=partner,
+            defaults={
+                'created': source.created,
+                'modified': source.modified,
+                'key_result': source.key_result,
+                'publish_annual_reports': source.publish_annual_reports,
+                'last_report': source.last_report,
+                'link_report': source.link_report or None,
+            }
+        )
+
+    def _migrate_model(self, migrate_function, model):
+        for obj in model.objects.all():
+            migrate_function(obj)
+
     def handle(self, *args, **options):
+        self.stdout.write('Start data mgiration')
         self.check_empty_models()
         # Need this for models that require a creator
         self.dummy_user, _ = get_user_model().objects.update_or_create(
@@ -306,23 +512,23 @@ class Command(BaseCommand):
             }
         )
 
-        for external_partner in legacy_models.PartnerPartner.objects.all():
-            self.migrate_partner(external_partner)
+        self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
+        self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
+        self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
+        self._migrate_model(self.migrate_budget_info, legacy_models.PartnerPartnerbudget)
+        self._migrate_model(self.migrate_collaboration_evidence, legacy_models.PartnerPartnercollaborationevidence)
+        self._migrate_model(self.migrate_mailing_address, legacy_models.PartnerPartnermailingaddress)
+        self._migrate_model(self.migrate_profile, legacy_models.PartnerPartnerprofile)
+        self._migrate_model(self.migrate_vendor_numbers, legacy_models.PartnerPartnerVendorNumber)
+        self._migrate_model(
+            self.migrate_collaborations_partnerships, legacy_models.PartnerPartnercollaborationpartnership
+        )
+        self._migrate_model(self.migrate_mandate_mission, legacy_models.PartnerPartnermandatemission)
+        self._migrate_model(self.migrate_internal_control, legacy_models.PartnerPartnerinternalcontrol)
+        self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
+        self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
+        self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
+        self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
+        self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
 
-        for audit_assessment in legacy_models.PartnerPartnerauditassessment.objects.all():
-            self.migrate_audit(audit_assessment)
-
-        for authorised_officer in legacy_models.PartnerPartnerauthorisedofficer.objects.all():
-            self.migrate_authorised_officer(authorised_officer)
-
-        for budget_info in legacy_models.PartnerPartnerbudget.objects.all():
-            self.migrate_budget_info(budget_info)
-
-        for collaboration_evidence in legacy_models.PartnerPartnercollaborationevidence.objects.all():
-            self.migrate_collaboration_evidence(collaboration_evidence)
-
-        for mailing_address in legacy_models.PartnerPartnermailingaddress.objects.all():
-            self.migrate_mailing_address(mailing_address)
-
-        for profile in legacy_models.PartnerPartnerprofile.objects.all():
-            self.migrate_profile(profile)
+        self._migrate_model(self.migrate_user, legacy_models.PartnerUser)

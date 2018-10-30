@@ -6,6 +6,8 @@ import sys
 ####
 # Change per project
 ####
+from django.urls import reverse_lazy
+
 PROJECT_NAME = 'unpp_api'
 # project root and add "apps" to the path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -89,7 +91,6 @@ if POSTGRES_SSL_MODE == 'on':
     DATABASES['default'].update({'OPTIONS': {"sslmode": 'require'}})
 
 MIDDLEWARE = [
-    'elasticapm.contrib.django.middleware.TracingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -120,7 +121,6 @@ TEMPLATES = [
 ]
 
 INSTALLED_APPS = [
-    'elasticapm.contrib.django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.humanize',
@@ -190,7 +190,7 @@ KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
 SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+SOCIAL_AUTH_SANITIZE_REDIRECTS = True
 POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
 
 TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
@@ -198,7 +198,7 @@ SCOPE = ['openid', 'email']
 IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/dashboard"
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('accounts:social-logged-in')
 SOCIAL_AUTH_PIPELINE = (
     'common.authentication.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -210,9 +210,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'common.authentication.user_details',
 )
-
-# TODO: Re-enable this back once we figure out all email domain names to whitelist from partners
-# SOCIAL_AUTH_WHITELISTED_DOMAINS = ['unicef.org', 'google.com']
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_USER_FIELDS = [
+    'email', 'fullname'
+]
 
 TEST_RUNNER = os.getenv('DJANGO_TEST_RUNNER', 'django.test.runner.DiscoverRunner')
 NOSE_ARGS = ['--with-timer', '--nocapture', '--nologcapture']
@@ -226,7 +226,7 @@ REST_FRAMEWORK = {
 }
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer',
-    'USER_DETAILS_SERIALIZER': 'account.serializers.RegisterSimpleAccountSerializer',
+    'USER_DETAILS_SERIALIZER': 'account.serializers.SimpleAccountSerializer',
     'PASSWORD_RESET_SERIALIZER': 'account.serializers.CustomPasswordResetSerializer',
 }
 
@@ -238,6 +238,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
+LOG_LEVEL = 'DEBUG' if DEBUG and 'test' not in sys.argv else 'INFO'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -256,13 +257,9 @@ LOGGING = {
     },
     'handlers': {
         'default': {
-            'level': 'DEBUG',
+            'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
-        },
-        'elasticapm': {
-            'level': 'ERROR',
-            'class': 'elasticapm.contrib.django.handlers.LoggingHandler',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -291,20 +288,8 @@ LOGGING = {
             'handlers': ['default'],
             'propagate': False,
         },
-        'elasticapm.errors': {
-            'level': 'ERROR',
-            'handlers': ['default'],
-            'propagate': False,
-        },
     }
 }
-
-# apm related - it's enough to set those as env variables, here just for documentation
-# by default logging and apm is off, so below envs needs to be set per environment
-
-# ELASTIC_APM_APP_NAME=<app-name> # set app name visible on dashboard
-# ELASTIC_APM_SECRET_TOKEN=<app-token> #secret token - needs to be exact same as on apm-server
-# ELASTIC_APM_SERVER_URL=http://elastic.tivixlabs.com:8200 # apm-server url
 
 UNHCR_API_HOST = os.getenv('UNHCR_API_HOST')
 UNHCR_API_USERNAME = os.getenv('UNHCR_API_USERNAME')

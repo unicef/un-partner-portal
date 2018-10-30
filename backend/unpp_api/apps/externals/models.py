@@ -9,7 +9,7 @@ class PartnerVendorNumber(TimeStampedModel):
 
     partner = models.ForeignKey('partner.Partner', related_name='vendor_numbers')
     agency = models.ForeignKey('agency.Agency', related_name='vendor_numbers')
-    business_area = FixedTextField(choices=BUSINESS_AREAS)
+    business_area = FixedTextField(choices=BUSINESS_AREAS, null=True, blank=True)
     number = models.TextField(max_length=1024)
 
     class Meta:

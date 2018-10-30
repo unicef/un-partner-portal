@@ -44,8 +44,8 @@ class CfeiManagementContainer extends Component {
   tableCell({ row, column, value }) {
     if (column.name === 'locations') {
       return <CountriesCell locations={value} />;
-    } else if (column.name === 'project_locations') {
-      return <LocationsCell locations={row.locations} />;
+    } else if (column.name === 'locations_project') {
+      return <LocationsCell locations={row.locations_project} />;
     }
     return <TableCell><Typography>{value}</Typography></TableCell>;
   }

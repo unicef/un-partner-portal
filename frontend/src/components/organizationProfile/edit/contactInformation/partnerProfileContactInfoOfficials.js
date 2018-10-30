@@ -13,6 +13,10 @@ import { email, phoneNumber } from '../../../../helpers/validation';
 const messages = {
   boardOfDirectors: 'Does your organization have a board of director(s)?',
   authorisedOfficers: 'Does your organization have any other authorized officers who are not listed above?',
+  infoText: 'Authorised officer: a member of the organization who has been formally ' +
+  'empowered by that organization to conduct affairs on its behalf, and who has the ' +
+  'authority to enter the organization into legal agreements with the UN and others. An ' +
+  'organization may have one or more authorized officers.',
   directos: 'Board of Director(s)',
   officers: 'Authorised Officer(s)',
 };
@@ -149,6 +153,7 @@ const PartnerProfileContactInfoOfficials = (props) => {
         fieldName="have_authorised_officers"
         values={BOOL_VAL}
         warn
+        infoText={messages.infoText}
         optional
         readOnly={readOnly}
       />

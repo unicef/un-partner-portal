@@ -38,6 +38,7 @@ from notification.helpers import (
     user_received_notification_recently,
     send_partner_made_decision_notification,
     send_eoi_sent_for_decision_notification,
+    send_project_draft_sent_for_review_notification,
 )
 from partner.permissions import PartnerPermission
 from project.exports.excel.application_compare import ApplicationCompareSpreadsheetGenerator
@@ -942,9 +943,7 @@ class EOISendToPublishAPIView(RetrieveAPIView):
         project.sent_for_publishing = True
         project.save()
 
-        send_notification(NotificationType.CFEI_DRAFT_SENT_FOR_REVIEW, project, project.focal_points.all(), context={
-            'eoi': project,
-        })
+        send_project_draft_sent_for_review_notification(project)
 
         return Response(self.serializer_class(project).data)
 

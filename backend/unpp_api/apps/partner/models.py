@@ -657,6 +657,9 @@ class PartnerPolicyArea(TimeStampedModel):
 
     class Meta:
         ordering = ('id', )
+        unique_together = (
+            'partner', 'area'
+        )
 
     def __str__(self):
         return "PartnerPolicyArea <pk:{}>".format(self.id)
@@ -863,6 +866,9 @@ class PartnerInternalControl(TimeStampedModel):
 
     class Meta:
         ordering = ('id', )
+        unique_together = (
+            'partner', 'functional_responsibility'
+        )
 
     def __str__(self):
         return "PartnerInternalControl <pk:{}>".format(self.id)

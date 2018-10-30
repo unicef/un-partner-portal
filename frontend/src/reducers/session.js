@@ -148,11 +148,17 @@ export const loadUserData = () => (dispatch, getState) => {
       }
       dispatch(initSession(sessionObject));
       dispatch(sessionReady(getState));
+
       return sessionObject;
     })
     .catch((error) => {
-      // TODO correct error handling for different scenarios
-      history.push('/login');
+      if (error.response.status === 404) {
+        history.push('/registration');
+      } else {
+        window.localStorage.removeItem('token');
+        history.push('/login');
+      }
+
       dispatch(initSession({
         authorized: false,
         role: ROLES.PARTNER,
@@ -189,7 +195,9 @@ export const registerUser = json => dispatch => postRegistration(json)
 
 export const changePassword = payload => () => passwordResetConfirm(payload);
 
-const setSession = (state, session) => R.mergeDeepRight(state, session);
+const setSession = (state, session) => {
+  return R.mergeDeepRight(state, session);
+}
 
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {

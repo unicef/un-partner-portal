@@ -32,7 +32,7 @@ const initialState = {
     { name: 'displayID', title: 'Project ID' },
     { name: 'title', title: 'Project Title', width: 250 },
     { name: 'locations', title: 'Country' },
-    { name: 'project_locations', title: 'Project Location' },
+    { name: 'locations_project', title: 'Project Location' },
     { name: 'type_display', title: 'Type of expresssion of interest' },
   ],
   loading: false,
@@ -48,6 +48,7 @@ export const loadCfeiReportsList = params => (dispatch) => {
     .then((reports) => {
       dispatch(reportsCfeiLoadEnded());
       reports.results = R.map(item => {
+        item = R.assoc('locations_project', item.locations, item);
         item.locations = R.map(location =>
           R.assocPath(['admin_level_1', 'name'], item.displayID, location), item.locations)
         return item;
