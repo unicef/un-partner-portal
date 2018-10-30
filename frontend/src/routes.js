@@ -74,7 +74,6 @@ const allRoutes = () => (
   <Router history={history}>
     <Route component={auth}>
       <Route component={main}>
-        <Route path="/registration" component={registration} />
         <Route path="/dev" component={dev} />
         <Route path="/" component={mainLayout} >
           <IndexRedirect to="dashboard" />
@@ -166,6 +165,7 @@ const allRoutes = () => (
       </Route>
     </Route>
     <Route component={nonAuth}>
+      <Route path="/registration" component={registration} />
       <Route path="/login" component={login} />
       <Route path="/login/:token" component={loginToken} />
       <Route path="/password-reset/:uid/:token" component={passwordReset} />

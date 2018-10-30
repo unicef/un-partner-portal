@@ -2,7 +2,9 @@ import R from 'ramda';
 import React from 'react';
 import { connect } from 'react-redux';
 import { formValueSelector, SubmissionError } from 'redux-form';
+import { browserHistory as history } from 'react-router';
 import PropTypes from 'prop-types';
+import Typography from 'material-ui/Typography';
 import {
   Stepper,
   Step,
@@ -14,12 +16,10 @@ import OrganizationType from './organizationType';
 import BasicInformation from './basicInformation';
 import RegistrationStep from './registrationStep';
 import Declaration, { PLAIN_DECLRATIONS } from './declaration';
-import Account from './account';
 import AlertDialog from '../common/alertDialog';
 import { loadCountries } from '../../reducers/countries';
 import { registerUser } from '../../reducers/session';
 import { loadPartnerConfig } from '../../reducers/partnerProfileConfig';
-import Typography from 'material-ui/Typography';
 
 const messages = {
   error: 'Registration failed',
@@ -52,6 +52,11 @@ class RegistrationStepper extends React.Component {
   }
 
   componentWillMount() {
+    const token = window.localStorage.token;
+    if (!token) {
+      history.push('/login');
+    }
+
     this.props.loadCountries();
     this.props.loadPartnerConfig();
   }
