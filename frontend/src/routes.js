@@ -35,6 +35,7 @@ import partnerVerification from './components/partners/profile/overview/partnerV
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
 import registration from './components/registration/registration';
 import login from './components/login/login';
+import loginToken from './components/login/loginToken';
 import passwordReset from './components/passwordReset/passwordReset';
 import setPassword from './components/setPassword/setPassword';
 import mainContent from './components/common/mainContentWrapper';
@@ -164,10 +165,11 @@ const allRoutes = () => (
       </Route>
     </Route>
     <Route component={nonAuth}>
+      <Route path="/registration" component={registration} />
       <Route path="/login" component={login} />
+      <Route path="/login/:token" component={loginToken} />
       <Route path="/password-reset/:uid/:token" component={passwordReset} />
       <Route path="/set-password/:uid/:token" component={setPassword} />
-      <Route path="/registration" component={registration} />
     </Route>
   </Router>
 );

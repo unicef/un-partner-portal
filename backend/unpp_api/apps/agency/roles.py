@@ -224,6 +224,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_FINALIZE,
         AgencyPermission.CFEI_FINALIZED_VIEW_ALL_REVIEWS,
         AgencyPermission.CFEI_FINALIZED_VIEW_ALL_INFO,
+        AgencyPermission.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS,
 
         AgencyPermission.CFEI_DIRECT_EDIT_SENT,
         AgencyPermission.CFEI_DIRECT_PUBLISH,

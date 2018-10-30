@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
 import Typography from 'material-ui/Typography';
 import CnCell from './cnCell';
-import TitleCell from './titleCell';
 import PartnerApplicationListFilter from './partnerApplicationListFilter';
 import PaginatedList from '../common/list/paginatedList';
 import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
@@ -30,7 +29,7 @@ const applicationCell = ({ row, column, value }) => {
   } else if (column.name === 'id') {
     return <CnCell type={row.cfei_type} cnId={`${row.id}`} eoiId={`${row.eoi_id}`} />;
   } else if (column.name === 'title') {
-    return <TitleCell type={row.cfei_type} eoiId={`${row.eoi_id}`} title={row.title} />;
+    return <TableCell><Typography>{value}</Typography></TableCell >;
   } else if (column.name === 'country_code') {
     return <CountriesCell countries={row.country_code} />;
   }

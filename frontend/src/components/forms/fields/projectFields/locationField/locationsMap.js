@@ -31,7 +31,7 @@ const geocodingClient = mbxGeocoding({ accessToken: process.env.MAP_BOX_KEY });
 
 const messages = {
   error: 'Location doesn\'t contains all required informations',
-}
+};
 
 class LocationsMapBase extends Component {
   constructor() {
@@ -101,12 +101,14 @@ class LocationsMapBase extends Component {
     geocodingClient.forwardGeocode({ query: countries[country] || country, limit: 1, countries: [code || country] })
       .send()
       .then(response => {
-        const match = response.body.features[0];
+        if (response.body.features.length > 0) {
+          const match = response.body.features[0];
 
-        this.setState({
-          pos: match.center,
-          bounds: match.bbox,
-        });
+          this.setState({
+            pos: match.center,
+            bounds: match.bbox,
+          });
+        }
       });
 
     this.setState({ previousCountry: country });

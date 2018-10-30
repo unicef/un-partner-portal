@@ -329,11 +329,13 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def collaborations_partnership(self, create, extracted, **kwargs):
-        PartnerCollaborationPartnership.objects.create(
+        PartnerCollaborationPartnership.objects.get_or_create(
             partner=self,
-            created_by=get_partner_member(),
             agency=get_random_agency(),
-            description="description"
+            defaults={
+                'created_by': get_partner_member(),
+                'description': 'description',
+            }
         )
 
     @factory.post_generation
@@ -361,60 +363,26 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def internal_controls(self, create, extracted, **kwargs):
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.procurement,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.authorization,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.recording,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.payment,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.custody,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.bank,
-            segregation_duties=True,
-            comment="fake comment"
-        )
+        for functional_responsibility in FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values:
+            PartnerInternalControl.objects.get_or_create(
+                partner=self,
+                functional_responsibility=functional_responsibility,
+                defaults={
+                    'segregation_duties': True,
+                    'comment': 'fake comment'
+                }
+            )
 
     @factory.post_generation
     def area_policies(self, create, extracted, **kwargs):
-        PartnerPolicyArea.objects.create(
-            partner=self,
-            area=POLICY_AREA_CHOICES.human,
-            document_policies=bool(random.getrandbits(1))
-        )
-        PartnerPolicyArea.objects.create(
-            partner=self,
-            area=POLICY_AREA_CHOICES.procurement,
-            document_policies=bool(random.getrandbits(1))
-        )
-        PartnerPolicyArea.objects.create(
-            partner=self,
-            area=POLICY_AREA_CHOICES.asset,
-            document_policies=bool(random.getrandbits(1))
-        )
+        for area in POLICY_AREA_CHOICES._db_values:
+            PartnerPolicyArea.objects.get_or_create(
+                partner=self,
+                area=area,
+                defaults={
+                    'document_policies': bool(random.getrandbits(1)),
+                }
+            )
 
     @factory.post_generation
     def org_head(self, create, extracted, **kwargs):

@@ -758,8 +758,8 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             return applications.count() == user.assessments.filter(application__in=applications, completed=True).count()
 
     @transaction.atomic
-    def update(self, instance, validated_data):
-        if instance.status == CFEI_STATUSES.closed and not set(validated_data.keys()).issubset(
+    def update(self, eoi: EOI, validated_data):
+        if eoi.status == CFEI_STATUSES.closed and not set(validated_data.keys()).issubset(
             {'reviewers', 'focal_points', 'completed_reason', 'justification'}
         ):
             raise serializers.ValidationError(
@@ -785,61 +785,65 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
                 COMPLETED_REASON.partners,
                 ALL_COMPLETED_REASONS.accepted,
                 ALL_COMPLETED_REASONS.accepted_retention,
-            } and not instance.contains_partner_accepted:
+            } and not eoi.contains_partner_accepted:
                 raise serializers.ValidationError({
                     'completed_reason': f"You've selected '{ALL_COMPLETED_REASONS[completed_reason]}' as "
                                         f"finalize resolution, but no partners have accepted."
                 })
 
         has_just_been_completed = all([
-            instance.completed_reason is None,
+            eoi.completed_reason is None,
             validated_data.get('completed_reason'),
-            instance.completed_date is None,
-            instance.is_completed is False
+            eoi.completed_date is None,
+            eoi.is_completed is False
         ])
 
         if has_just_been_completed:
-            instance.completed_date = datetime.now()
-            instance.is_completed = True
+            eoi.completed_date = datetime.now()
+            eoi.is_completed = True
 
-        instance = super(AgencyProjectSerializer, self).update(instance, validated_data)
+        eoi = super(AgencyProjectSerializer, self).update(eoi, validated_data)
 
         invited_partners = self.initial_data.get('invited_partners', [])
         if invited_partners:
             invited_partner_ids = [p['id'] for p in invited_partners]
-            instance.invited_partners.through.objects.exclude(partner_id__in=invited_partner_ids).delete()
-            instance.invited_partners.add(*Partner.objects.filter(id__in=invited_partner_ids))
+            eoi.invited_partners.through.objects.filter(eoi_id=eoi.id).exclude(
+                partner_id__in=invited_partner_ids
+            ).delete()
+            eoi.invited_partners.add(*Partner.objects.filter(id__in=invited_partner_ids))
         elif 'invited_partners' in self.initial_data:
-            instance.invited_partners.clear()
+            eoi.invited_partners.clear()
 
         specialization_ids = self.initial_data.get('specializations', [])
         if specialization_ids:
-            instance.specializations.through.objects.exclude(specialization_id__in=specialization_ids).delete()
-            instance.specializations.add(*Specialization.objects.filter(id__in=specialization_ids))
+            eoi.specializations.through.objects.filter(eoi_id=eoi.id).exclude(
+                specialization_id__in=specialization_ids
+            ).delete()
+            eoi.specializations.add(*Specialization.objects.filter(id__in=specialization_ids))
 
         locations_data = self.initial_data.get('locations', [])
         if locations_data:
-            instance.locations.clear()
+            eoi.locations.clear()
             for location_data in locations_data:
                 location_serializer = PointSerializer(data=location_data)
                 location_serializer.is_valid(raise_exception=True)
-                instance.locations.add(location_serializer.save())
+                eoi.locations.add(location_serializer.save())
 
-        update_cfei_reviewers(instance, self.initial_data.get('reviewers'))
-        update_cfei_focal_points(instance, self.initial_data.get('focal_points'))
+        update_cfei_reviewers(eoi, self.initial_data.get('reviewers'))
+        update_cfei_focal_points(eoi, self.initial_data.get('focal_points'))
 
-        if instance.is_direct and self.initial_data.get('applications'):
+        if eoi.is_direct and self.initial_data.get('applications'):
             # DSRs should only have 1 application
             application_data = self.initial_data.get('applications')[0]
             serializer = CreateDirectApplicationNoCNSerializer(
-                instance=instance.applications.first(),
+                instance=eoi.applications.first(),
                 data=application_data,
                 partial=True
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
-        return instance
+        return eoi
 
     def validate(self, data):
         assessments_criteria = data.get('assessments_criteria', [])

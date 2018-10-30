@@ -83,7 +83,7 @@ export const loadUserData = () => (dispatch, getState) => {
   const { session } = getState();
   const token = session.token;
   const partnerId = session.partnerId;
-
+  
   if (!token) {
     history.push('/login');
     return Promise.resolve();
@@ -189,7 +189,9 @@ export const registerUser = json => dispatch => postRegistration(json)
 
 export const changePassword = payload => () => passwordResetConfirm(payload);
 
-const setSession = (state, session) => R.mergeDeepRight(state, session);
+const setSession = (state, session) => {
+ return R.mergeDeepRight(state, session);
+}
 
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {

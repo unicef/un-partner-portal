@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Q
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
@@ -54,7 +55,7 @@ class OrganizationProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
     queryset = Partner.objects.all()
 
 
-class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
+class PartnerProfileAPIView(RetrieveAPIView):
 
     permission_classes = (
         HasUNPPPermission(
@@ -71,6 +72,14 @@ class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
         if request.GET.get('export', '').lower() == 'pdf':
             return PartnerProfilePDFExporter(self.get_object()).get_as_response()
         return super(PartnerProfileAPIView, self).retrieve(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = super(PartnerProfileAPIView, self).get_queryset()
+        if self.request.active_partner:
+            queryset = queryset.filter(
+                Q(id__in=self.request.user.partner_ids) | Q(children__id__in=self.request.user.partner_ids)
+            )
+        return queryset
 
 
 class PartnerProfileSummaryAPIView(FilterUsersPartnersMixin, RetrieveAPIView):

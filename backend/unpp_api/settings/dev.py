@@ -31,8 +31,6 @@ extend_list_avoid_repeats(INSTALLED_APPS, [
     'rest_framework_swagger',
 ])
 
-MIDDLEWARE.remove('elasticapm.contrib.django.middleware.TracingMiddleware')
-
 try:
     from .local import *  # noqa: ignore=F403
 except ImportError:

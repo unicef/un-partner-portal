@@ -45,6 +45,7 @@ const styleSheet = (theme) => {
       padding: '0px 6px 0px 6px',
       background: theme.palette.secondary[500],
       color: '#FFF',
+      whiteSpace: 'nowrap',
     },
   };
 };
