@@ -33,6 +33,7 @@ class LoginToken extends Component {
     loadUserInfo().then(() => {
       history.push('/');
     }).catch(() => {
+      window.localStorage.removeItem('token');
       history.push('/registration');
     });
   }
