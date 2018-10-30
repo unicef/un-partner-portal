@@ -32,7 +32,6 @@ from partner.serializers import (
     PartnerSerializer,
     PartnerProfileSerializer,
     PartnerHeadOrganizationRegisterSerializer,
-    PartnerMemberSerializer,
     PartnerGoverningDocumentSerializer,
     PartnerRegistrationDocumentSerializer,
     PartnerCollaborationEvidenceSerializer,
@@ -211,7 +210,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         )
 
         sanctions_scan_partner(self.partner)
-
+        from partner.serializers import PartnerMemberSerializer
         return {
             "partner": PartnerSerializer(instance=self.partner).data,
             "partner_profile": PartnerProfileSerializer(instance=self.partner.profile).data,
