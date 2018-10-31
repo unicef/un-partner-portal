@@ -20,7 +20,7 @@ const messages = {
 };
 
 const PartnerProfileMandateCountryPresence = (props) => {
-  const { readOnly, isCountryProfile, countries, profileId, staffGlobally } = props;
+  const { readOnly, locations, isCountryProfile, countries, profileId, staffGlobally } = props;
 
   return (
     <FormSection name="country_presence">
@@ -44,6 +44,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
             profileId={profileId}
             formName={'partnerProfile'}
             readOnly={readOnly}
+            locations={locations}
             optional
             name={'mandate_mission.country_presence.location_field_offices'}
           />
@@ -96,6 +97,7 @@ PartnerProfileMandateCountryPresence.propTypes = {
   isCountryProfile: PropTypes.bool.isRequired,
   profileId: PropTypes.string,
   countries: PropTypes.array,
+  locations: PropTypes.array,
   staffGlobally: PropTypes.array.isRequired,
 };
 
@@ -106,6 +108,7 @@ const connected = connect((state, ownProps) => {
     || state.agencyPartnersList.data.partners);
   return {
     countries: selector(state, 'mandate_mission.country_presence.country_presence'),
+    locations: selector(state, 'mandate_mission.country_presence.location_field_offices') || [],
     isCountryProfile: partner ? !partner.is_hq : false,
     staffGlobally: selectNormalizedStaffGlobalyChoices(state),
   };
