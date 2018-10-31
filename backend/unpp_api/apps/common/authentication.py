@@ -29,6 +29,7 @@ def social_details(backend, details, response, *args, **kwargs):
 
 
 def user_details(strategy, details, user=None, *args, **kwargs):
+    logger.debug(f'user_details for user {user} details:\n{details}')
 
     if user:
         user.fullname = f"{details['first_name']} {details['last_name']}"
