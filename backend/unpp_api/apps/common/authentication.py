@@ -16,6 +16,10 @@ class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
         super(CustomAzureADBBCOAuth2, self).__init__(*args, **kwargs)
         self.redirect_uri = f'https://{settings.FRONTEND_HOST}/api/social/complete/azuread-b2c-oauth2/'
 
+    def get_user_details(self, response):
+        logger.debug(f'get_user_details response:\n{response}')
+        return super(CustomAzureADBBCOAuth2, self).get_user_details(response)
+
 
 def social_details(backend, details, response, *args, **kwargs):
     r = social_auth.social_details(backend, details, response, *args, **kwargs)

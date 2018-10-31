@@ -32,10 +32,8 @@ RUN pip install --upgrade pip && pip install -r $REQUIREMENT_FILE --trusted-host
 
 ADD . /code/
 
-RUN mkdir -p /data/unpp_api/logs
 RUN mkdir -p /data/staticserve
 RUN mkdir -p /data/uploads
-RUN touch /data/unpp_api/logs/django.log
 
 RUN chmod -R a+rw /data
 
