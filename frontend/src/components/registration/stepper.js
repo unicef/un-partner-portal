@@ -107,21 +107,20 @@ class RegistrationStepper extends React.Component {
 
     payload = R.dissoc('questions', payload);
 
-    return this.props.registerUser(payload.json).catch((error) => {
-      const errorMsg = R.path(['response', 'data', 'non_field_errors'], error) || messages.error;
+    return this.props.registerUser(payload.json)
+      .catch((error) => {
+        const errorMsg = R.path(['response', 'data', 'non_field_errors'], error) || messages.error;
 
-      if (error.response.data.user) {
-        this.setState({ stepIndex: 4, duplicationAlert: true, duplicationFields: `${messages.userEmail} ${userEmail}` });
-      } else if (error.response.data.partner_head_organization) {
-        this.setState({ stepIndex: 1, duplicationAlert: true, duplicationFields: `${messages.headOfOrgEmail} ${headOfOrgEmail}` });
-      } else {
-        this.setState({ stepIndex: 1, duplicationAlert: true, duplicationFields: errorMsg });
-      }
-      throw new SubmissionError({
-        json: { ...error.response.data },
-        _error: errorMsg,
+        if (error.response.data.partner_head_organization) {
+          this.setState({ stepIndex: 1, duplicationAlert: true, duplicationFields: `${messages.headOfOrgEmail} ${headOfOrgEmail}` });
+        } else {
+          this.setState({ stepIndex: 1, duplicationAlert: true, duplicationFields: errorMsg });
+        }
+        throw new SubmissionError({
+          json: { ...error.response.data },
+          _error: errorMsg,
+        });
       });
-    });
   }
 
   render() {
