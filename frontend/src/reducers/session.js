@@ -187,10 +187,11 @@ export const logoutUser = () => dispatch => logout()
   });
 
 export const registerUser = json => dispatch => postRegistration(json)
-  .then(({ user: { email, username } }) => {
+  .then(() => {
     dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
     dispatch(sessionChange({ newlyRegistered: true }));
-    dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
+    dispatch(loadUserData());
+    history.push('/');
   });
 
 export const changePassword = payload => () => passwordResetConfirm(payload);
