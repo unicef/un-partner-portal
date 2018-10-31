@@ -14,9 +14,9 @@ const messages = {
   attachment: 'Attachment (Optional)',
 };
 
-const Partner = (getPartners, readOnly, partnerName, ...props) => (member, index, fields) => (
+const Partner = (getPartners, readOnly, partnerName, hidePartner, ...props) => (member, index, fields) => (
   <GridColumn>
-    <AutocompleteForm
+    {!hidePartner && <AutocompleteForm
       fieldName={`${member}.partner`}
       label="Partner"
       async
@@ -28,7 +28,7 @@ const Partner = (getPartners, readOnly, partnerName, ...props) => (member, index
       search={'legal_name'}
       extra={'no_flags=FL4_Red'}
       {...props}
-    />
+    />}
     <JustificationField
       name={member}
       disabled={!fields.get(index).partner}
@@ -46,11 +46,12 @@ const Partner = (getPartners, readOnly, partnerName, ...props) => (member, index
       formName="newDirectCfei"
       label={messages.attachment}
       optional
+      readOnly={readOnly}
     />
   </GridColumn>);
 
 const PartnersFieldArray = (props) => {
-  const { getPartners, readOnly, partnerName, ...other } = props;
+  const { getPartners, readOnly, partnerName, hidePartner, ...other } = props;
   return (
     <ArrayForm
       label=""
@@ -59,7 +60,7 @@ const PartnersFieldArray = (props) => {
       initial
       readOnly={readOnly}
       {...other}
-      outerField={Partner(getPartners, readOnly, partnerName, ...other)}
+      outerField={Partner(getPartners, readOnly, partnerName, hidePartner, ...other)}
     />
   );
 };
@@ -67,6 +68,7 @@ const PartnersFieldArray = (props) => {
 PartnersFieldArray.propTypes = {
   getPartners: PropTypes.func,
   readOnly: PropTypes.bool,
+  hidePartner: PropTypes.bool,
   partnerName: PropTypes.string,
 };
 
