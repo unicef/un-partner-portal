@@ -7,8 +7,8 @@ from account.models import User
 
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ('fullname', 'email', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
+    list_display = ('email', 'fullname', 'date_joined', 'is_staff')
+    list_filter = ('is_staff', 'is_superuser', 'is_active')
     search_fields = ('fullname', 'email')
     ordering = ('email', )
     readonly_fields = (

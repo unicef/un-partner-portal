@@ -211,7 +211,7 @@ SOCIAL_AUTH_PIPELINE = (
     'common.authentication.user_details',
 )
 SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_USER_FIELDS = [
-    'username', 'email', 'fullname'
+    'email', 'fullname'
 ]
 
 TEST_RUNNER = os.getenv('DJANGO_TEST_RUNNER', 'django.test.runner.DiscoverRunner')
