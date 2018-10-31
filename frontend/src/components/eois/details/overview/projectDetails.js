@@ -11,6 +11,7 @@ import HeaderList from '../../../common/list/headerList';
 import TextField from '../../../forms/textFieldForm';
 import ProjectPartners from '../../../forms/fields/projectFields/partnersField/ProjectPartners';
 import PaddedContent from '../../../common/paddedContent';
+import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
 import {
   Attachments,
   TitleField,
@@ -66,7 +67,7 @@ const Fields = ({ type, role, partnerId, displayGoal, formName }) => {
           fieldName="agency"
           readOnly
         />}
-        <LocationFieldReadOnlyArray formName={formName}  />
+        <LocationFieldReadOnlyArray formName={formName} />
         <SectorForm readOnly />
         {role === ROLES.AGENCY && <Grid container justify="flex-end">
           <Grid item>
@@ -100,12 +101,14 @@ const Fields = ({ type, role, partnerId, displayGoal, formName }) => {
         <DeadlineDate readOnly />
         <NotifyDate readOnly />
       </GridRow>}
-      <GridRow columns={3} >
+      <GridRow columns={2} >
         <StartDate readOnly />
         <EndDate readOnly />
       </GridRow>
       {type === PROJECT_TYPES.OPEN &&
         <Attachments readOnly />}
+      {type === PROJECT_TYPES.DIRECT &&
+        <PartnersForm hidePartner readOnly />}
     </GridColumn>
   </PaddedContent>);
 };
@@ -124,11 +127,11 @@ const title = type => () => (
   <SpreadContent>
     <Typography type="headline" >{messages.title}</Typography>
     {type !== PROJECT_TYPES.UNSOLICITED &&
-    <TextField
-      fieldName="displayID"
-      label={(type === PROJECT_TYPES.OPEN || type === PROJECT_TYPES.PINNED) ? messages.labels.id : messages.labels.dsrId}
-      readOnly
-    />}
+      <TextField
+        fieldName="displayID"
+        label={(type === PROJECT_TYPES.OPEN || type === PROJECT_TYPES.PINNED) ? messages.labels.id : messages.labels.dsrId}
+        readOnly
+      />}
   </SpreadContent>
 );
 
