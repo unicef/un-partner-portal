@@ -14,6 +14,22 @@ spec:
   selector:
     app: backend-container
 ---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend
+  namespace: {{NAMESPACE}}
+  labels:
+    app: backend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1beta1
+    kind: Deployment
+    name: backend
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 60
+---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
