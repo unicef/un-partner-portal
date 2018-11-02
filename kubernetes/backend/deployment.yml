@@ -111,6 +111,13 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
             successThreshold: 1
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 150m
+            requests:
+              cpu: 100m
+              memory: 150Mi
 
       volumes:
       - name: static-volume-{{NAMESPACE}}
