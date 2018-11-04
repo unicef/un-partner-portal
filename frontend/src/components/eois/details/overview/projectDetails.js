@@ -12,6 +12,7 @@ import TextField from '../../../forms/textFieldForm';
 import ProjectPartners from '../../../forms/fields/projectFields/partnersField/ProjectPartners';
 import PaddedContent from '../../../common/paddedContent';
 import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
+import SelectPopulationOfConcern from '../../../forms/fields/newCfeiFields/selectPopulationOfConcern';
 import {
   Attachments,
   TitleField,
@@ -45,7 +46,7 @@ const messages = {
   },
 };
 
-const Fields = ({ type, role, partnerId, displayGoal, formName }) => {
+const Fields = ({ type, role, partnerId, displayGoal, formName, isUnhcr }) => {
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return (<PaddedContent>
       <GridColumn >
@@ -88,6 +89,7 @@ const Fields = ({ type, role, partnerId, displayGoal, formName }) => {
       <FocalPoint readOnly />
       <LocationFieldReadOnlyArray formName={formName} />
       <SectorForm readOnly />
+      {isUnhcr && <SelectPopulationOfConcern readOnly />}
       <Agencies
         fieldName="agency"
         label={messages.labels.issued}
@@ -116,12 +118,11 @@ const Fields = ({ type, role, partnerId, displayGoal, formName }) => {
 Fields.propTypes = {
   type: PropTypes.string,
   role: PropTypes.string,
-  partner: PropTypes.string,
   formName: PropTypes.string,
   partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
+  isUnhcr: PropTypes.bool,
 };
-
 
 const title = type => () => (
   <SpreadContent>
@@ -135,11 +136,11 @@ const title = type => () => (
   </SpreadContent>
 );
 
-const ProjectDetails = ({ type, role, partner, partnerId, displayGoal, formName }) => (
+const ProjectDetails = ({ type, role, partner, partnerId, displayGoal, formName, isUnhcr }) => (
   <HeaderList
     header={title(type)}
   >
-    <Fields formName={formName} type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
+    <Fields formName={formName} isUnhcr={isUnhcr} type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
   </HeaderList>
 );
 
@@ -147,8 +148,10 @@ ProjectDetails.propTypes = {
   type: PropTypes.string,
   role: PropTypes.string,
   partner: PropTypes.string,
+  formName: PropTypes.string,
   partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
+  isUnhcr: PropTypes.bool,
 };
 
 export default ProjectDetails;

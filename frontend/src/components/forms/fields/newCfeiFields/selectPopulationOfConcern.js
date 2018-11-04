@@ -9,17 +9,20 @@ const messages = {
 };
 // TODO make this only for agency=UNHCR
 const SelectPopulationOfConcern = (props) => {
-  const { values } = props;
+  const { values, readOnly } = props;
   return (<SelectForm
     label={messages.label}
     fieldName="population"
     values={values}
+    readOnly={readOnly}
     optional
+    multiple
   />);
 };
 
 SelectPopulationOfConcern.propTypes = {
   values: PropTypes.array.isRequired,
+  readOnly: PropTypes.bool,
 };
 
 export default connect(state => ({

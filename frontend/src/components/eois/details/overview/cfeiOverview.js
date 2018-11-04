@@ -24,7 +24,7 @@ const messages = {
 
 const CfeiOverview = (props) => {
   const { params: { id, type }, role, cn, isComplete, cn_template,
-    partner, partnerId, displayGoal, loading } = props;
+    partner, partnerId, displayGoal, loading, isUnhcr } = props;
 
   return (
     <form >
@@ -39,6 +39,7 @@ const CfeiOverview = (props) => {
               partnerId={partnerId}
               partner={partner}
               displayGoal={displayGoal}
+              isUnhcr={isUnhcr}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -79,6 +80,7 @@ CfeiOverview.propTypes = {
   displayGoal: PropTypes.bool,
   isComplete: PropTypes.bool,
   loading: PropTypes.bool,
+  isUnhcr: PropTypes.bool,
 };
 
 const formCfeiDetails = reduxForm({
@@ -114,9 +116,9 @@ const mapStateToProps = (state, ownProps) => {
     role: state.session.role,
     displayGoal: true,
     cfei,
+    isUnhcr: state.session.agencyName === 'UNHCR',
   };
 };
-
 
 export default connect(
   mapStateToProps,

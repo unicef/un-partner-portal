@@ -16,7 +16,7 @@ const messages = {
 
 const ProjectDetails = (props) => {
   const { children, formName, displayPopulation } = props;
-
+  
   return (
     <GridColumn>
       <Typography type="headline">
