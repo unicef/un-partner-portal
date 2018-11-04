@@ -20,6 +20,7 @@ const WithdrawApplicationButton = (props) => {
     dialogOpen,
     onUpdate,
     disabled,
+    isCompleted,
     ...other
   } = props;
 
@@ -35,6 +36,7 @@ const WithdrawApplicationButton = (props) => {
         />
         : <Button
           color="accent"
+          disabled={isCompleted}
           onClick={handleDialogOpen}
           {...other}
         >
@@ -60,6 +62,7 @@ WithdrawApplicationButton.propTypes = {
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
   onUpdate: PropTypes.func,
+  isCompleted: PropTypes.bool,
   disabled: PropTypes.bool,
 };
 
