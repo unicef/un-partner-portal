@@ -34,7 +34,7 @@ const styleSheet = theme => ({
 const messages = {
   country: 'Country',
   location: 'Location of office(s)',
-  errorMsg: 'Please select at least one location.';
+  errorMsg: 'Please select at least one location.',
 };
 
 const LocationFieldArray = (props) => {
