@@ -11,8 +11,7 @@ import ControlledModal from '../../../../../common/modals/controlledModal';
 import AddVendorNumberForm from './addVendorNumberForm';
 import PaddedContent from '../../../../../common/paddedContent';
 import { addVendorNumber } from '../../../../../../reducers/vendorNumber';
-import { getPartnerUnData } from '../../../../../../reducers/partnerUnData';
-import { selectNormalizedBusinessAreas } from '../../../../../../store';
+import { getPartnerUnData } from '../../../../../../reducers/partnerUnData'; 
 
 const messages = {
   title: 'Add the Partner\'s vendor number/partner ID',
@@ -21,7 +20,6 @@ const messages = {
   confirmInfo: 'Please confirm you want to display the information below. This information will be visible to the partner and other UN agencies',
   partnerName: 'Partner Name: ',
   vendorId: 'Vendor/Partner ID: ',
-  area: 'Implementing Business Area: ',
   display: 'Yes, Display',
   submit: 'submit',
 };
@@ -68,9 +66,8 @@ class AddVendorNumberModal extends Component {
   }
 
   confirmData() {
-    const { partnerName, classes, businessArea } = this.props;
+    const { partnerName, classes } = this.props;
     const { payload } = this.state;
-    const area = payload && R.find(R.propEq('value', payload.business_area))(businessArea)
     
     return (payload && <PaddedContent>
       <div className={classes.center}>
@@ -80,10 +77,6 @@ class AddVendorNumberModal extends Component {
       <div className={classes.center}>
         <Typography type="body2">{messages.vendorId}</Typography>&nbsp;
         <Typography type="body1">{payload.number}</Typography>
-      </div>
-      <div className={classes.center}>
-        <Typography type="body2">{messages.area}</Typography>&nbsp;
-        <Typography type="body1">{area && area.label}</Typography>
       </div>
     </PaddedContent>);
   }
@@ -144,8 +137,7 @@ AddVendorNumberModal.propTypes = {
   partnerId: PropTypes.string,
   agencyId: PropTypes.number,
   showLoading: PropTypes.bool,
-  loadUnData: PropTypes.func,
-  businessArea: PropTypes.array,
+  loadUnData: PropTypes.func, 
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -156,8 +148,7 @@ const mapStateToProps = (state, ownProps) => {
     partneId: ownProps.params.id,
     partnerName,
     query: ownProps.location.query,
-    showLoading: state.vendorNumber.newVendorNumberSubmitting,
-    businessArea: selectNormalizedBusinessAreas(state),
+    showLoading: state.vendorNumber.newVendorNumberSubmitting, 
   };
 };
 
