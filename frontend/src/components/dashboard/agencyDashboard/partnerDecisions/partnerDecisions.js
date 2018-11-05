@@ -12,7 +12,7 @@ import PaddedContent from '../../common/paddedContent';
 import EmptyContent from '../../common/emptyContent';
 
 const messages = {
-  title: 'Partner Decisions From 5 Past Days',
+  title: 'Partner Decisions From Past 5 Days',
 };
 
 

@@ -29,38 +29,12 @@ def social_details(backend, details, response, *args, **kwargs):
 
 
 def user_details(strategy, details, user=None, *args, **kwargs):
-    # # This is where we update the user
-    # # see what the property to map by is here
-    # updates_available = False
+    logger.debug(f'user_details for user {user} details:\n{details}')
 
     if user:
-        # user_groups = [group.name for group in user.groups.all()]
-        # business_area_code = details.get("business_area_code", 'defaultBA1235')
-
-        # Update username with email and unusable password
-        user.username = user.email
         user.fullname = f"{details['first_name']} {details['last_name']}"
         user.save()
 
         # TODO: update details
-        # def update_user_country():
-        #     try:
-        #         user.profile.country = Country.objects.get(business_area_code=business_area_code)
-        #     except Country.DoesNotExist:
-        #         user.profile.country = Country.objects.get(name='UAT')
-
-        # if not user.profile.country:
-        #     update_user_country()
-        #     updates_available = True
-
-        # elif not user.profile.country_override:
-        #     # make sure that we update the workspace based business area
-        #     if business_area_code != user.profile.country.business_area_code:
-        #         update_user_country()
-        #         updates_available = True
-
-        # if updates_available:
-        #     user.save()
-        #     user.profile.save()
 
     return social_core_user.user_details(strategy, details, user, *args, **kwargs)

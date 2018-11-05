@@ -78,7 +78,7 @@ class PartnerProfileAPIView(RetrieveAPIView):
         if self.request.active_partner:
             queryset = queryset.filter(
                 Q(id__in=self.request.user.partner_ids) | Q(children__id__in=self.request.user.partner_ids)
-            )
+            ).order_by().distinct('id')
         return queryset
 
 

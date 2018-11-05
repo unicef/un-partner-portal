@@ -24,7 +24,6 @@ import ApplicationStatusText from '../applicationStatusText';
 import GridRow from '../../../../common/grid/gridRow';
 import EditReviewModalButton from './reviewContent/editReviewModalButton';
 import AddReviewModalButton from './reviewContent/addReviewModalButton';
-import AwardApplicationButtonContainer from '../../../buttons/awardApplicationButtonContainer';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 import { APPLICATION_STATUSES, PROJECT_STATUSES } from '../../../../../helpers/constants';
 import { checkPermission, AGENCY_PERMISSIONS, isRoleOffice, AGENCY_ROLES } from '../../../../../helpers/permissions';
