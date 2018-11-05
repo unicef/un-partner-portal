@@ -60,3 +60,34 @@ def get_absolute_frontend_url(relative_url):
         host = host[:-1]
 
     return 'http://' + host + relative_url
+
+
+def update_m2m_relation(obj, related_name, related_data_list, serializer_class, context=None, save_kwargs=None):
+    if related_data_list is None:
+        return
+    from common.serializers import CommonFileSerializer
+
+    valid_ids = []
+
+    serializer_instance = serializer_class()
+
+    for related_object_data in related_data_list:
+        # This is a workaround for a poorly thought out concept behind CommonFileSerializer
+        # where serialized value is invalid on updates
+        for attr_name, attr_value in list(related_object_data.items()):
+            if isinstance(serializer_instance.fields.get(attr_name), CommonFileSerializer) and \
+                    not isinstance(attr_value, int):
+                related_object_data.pop(attr_name)
+
+        related_object = serializer_class.Meta.model.objects.filter(id=related_object_data.get('id')).first()
+        is_update = bool(related_object)
+        related_serializer = serializer_class(
+            instance=related_object, data=related_object_data, partial=is_update, context=context or {}
+        )
+        if related_serializer.is_valid(raise_exception=not is_update):
+            related_serializer.save(**(save_kwargs or {}))
+        valid_ids.append(related_serializer.instance.id)
+
+    related_manager = getattr(obj, related_name)
+    related_manager.exclude(id__in=valid_ids).delete()
+    related_manager.add(*serializer_class.Meta.model.objects.filter(id__in=valid_ids))

@@ -26,7 +26,7 @@ from common.consts import (
     OTHER_AGENCIES_DSR_COMPLETED_REASONS,
     UNHCR_DSR_COMPLETED_REASONS,
 )
-from common.utils import get_countries_code_from_queryset
+from common.utils import get_countries_code_from_queryset, update_m2m_relation
 from common.serializers import (
     SimpleSpecializationSerializer,
     PointSerializer,
@@ -52,6 +52,7 @@ class EOIAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = EOIAttachment
         fields = (
+            'id',
             'created_by',
             'description',
             'file',
@@ -831,6 +832,17 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
 
         update_cfei_reviewers(eoi, self.initial_data.get('reviewers'))
         update_cfei_focal_points(eoi, self.initial_data.get('focal_points'))
+
+        update_m2m_relation(
+            eoi,
+            'attachments',
+            self.initial_data.get('attachments'),
+            EOIAttachmentSerializer,
+            context=self.context,
+            save_kwargs={
+                'eoi': eoi
+            }
+        )
 
         if eoi.is_direct and self.initial_data.get('applications'):
             # DSRs should only have 1 application
