@@ -16,7 +16,6 @@ const messages = {
   confirmInfo: 'Please confirm you want to delete vendor number/partner ID.',
   partnerName: 'Partner Name: ',
   vendorId: 'Vendor/Partner ID: ',
-  area: 'Implementing Business Area: ',
   delete: 'Delete',
 };
 
@@ -58,10 +57,6 @@ class DeleteVendorNumberModal extends Component {
       <div className={classes.center}>
         <Typography type="body2">{messages.vendorId}</Typography>&nbsp;
         <Typography type="body1">{vendorNumber.number}</Typography>
-      </div>
-      <div className={classes.center}>
-        <Typography type="body2">{messages.area}</Typography>&nbsp;
-        <Typography type="body1">{vendorNumber.business_area}</Typography>
       </div>
     </PaddedContent>);
   }
