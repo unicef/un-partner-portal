@@ -195,9 +195,8 @@ SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_
 
 SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
 SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_SCOPE = [
-    'openid', 'email', 'verified_primary_email'
+    'openid', 'email',
 ]
-# IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('accounts:social-logged-in')
