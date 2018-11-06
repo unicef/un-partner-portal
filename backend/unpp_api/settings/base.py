@@ -57,7 +57,7 @@ IS_STAGING = False
 IS_PROD = False
 
 UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
-DEFAULT_FROM_EMAIL = 'UNPP Stage <noreply@unpp.org>'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'UNPP Stage <noreply@unpartnerportal.org>')
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
