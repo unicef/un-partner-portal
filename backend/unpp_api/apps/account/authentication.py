@@ -13,22 +13,18 @@ logger = logging.getLogger('console')
 
 class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
 
-    EXTRA_DATA = AzureADB2COAuth2.EXTRA_DATA + [
-        ('email', 'email'),
-    ]
-
     def __init__(self, *args, **kwargs):
         super(CustomAzureADBBCOAuth2, self).__init__(*args, **kwargs)
         self.redirect_uri = f'https://{settings.FRONTEND_HOST}/api/social/complete/azuread-b2c-oauth2/'
 
 
 def social_details(backend, details, response, *args, **kwargs):
+    logger.debug(f'social_details response:\n{response}')
     r = social_auth.social_details(backend, details, response, *args, **kwargs)
     r['details']['idp'] = response.get('idp')
 
     if not r['details'].get('email'):
         r['details']['email'] = response.get('email')
-    logger.debug(f'social_details response:\n{r}')
 
     return r
 
