@@ -194,7 +194,9 @@ SOCIAL_AUTH_SANITIZE_REDIRECTS = True
 POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
 
 TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
-SCOPE = ['openid', 'email']
+SCOPE = [
+    'openid', 'email', 'profile'
+]
 IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
