@@ -37,8 +37,6 @@ def user_details(strategy, details, user=None, *args, **kwargs):
         user.fullname = f"{details['first_name']} {details['last_name']}"
         user.save()
 
-        # TODO: update details
-
     return social_core_user.user_details(strategy, details, user, *args, **kwargs)
 
 
