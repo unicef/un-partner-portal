@@ -1,5 +1,6 @@
 import logging
 
+from social_core.exceptions import InvalidEmail
 from social_core.pipeline import social_auth
 
 from django.conf import settings
@@ -38,3 +39,14 @@ def user_details(strategy, details, user=None, *args, **kwargs):
         # TODO: update details
 
     return social_core_user.user_details(strategy, details, user, *args, **kwargs)
+
+
+def require_email(strategy, details, user=None, is_new=False, *args, **kwargs):
+    if user and user.email:
+        return
+    elif is_new and not details.get('email'):
+        email = strategy.request_data().get('email')
+        if email:
+            details['email'] = email
+        else:
+            raise InvalidEmail
