@@ -4,14 +4,14 @@ from social_core.exceptions import InvalidEmail
 from social_core.pipeline import social_auth
 
 from django.conf import settings
-from social_core.backends.azuread_b2c import AzureADB2COAuth2
+from social_core.backends.azuread_tenant import AzureADTenantOAuth2
 from social_core.pipeline import user as social_core_user
 
 
 logger = logging.getLogger('console')
 
 
-class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
+class CustomAzureADBBCOAuth2(AzureADTenantOAuth2):
 
     def __init__(self, *args, **kwargs):
         super(CustomAzureADBBCOAuth2, self).__init__(*args, **kwargs)

@@ -186,14 +186,14 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Django-social-auth settings
-KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
-SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
+SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
+SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_SANITIZE_REDIRECTS = True
 POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
 
-TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
+SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
 SCOPE = [
     'openid', 'email', 'profile'
 ]
