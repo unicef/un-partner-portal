@@ -40,6 +40,7 @@ class RegistrationStepper extends React.Component {
       stepIndex: 0,
       lastStep: 4,
       duplicationFields: '',
+      errorAlert: false,
       declarationAlert: false,
       legalStatusAlert: false,
       duplicationAlert: false,
@@ -110,14 +111,17 @@ class RegistrationStepper extends React.Component {
     return this.props.registerUser(payload.json)
       .catch((error) => {
         const errorMsg = R.path(['response', 'data', 'non_field_errors'], error) || messages.error;
+        const data = R.path(['response', 'data'], error).detail || R.path(['response', 'data'], error)
+          || R.path(['response', 'data', 'non_field_errors'], error) || messages.error;
 
-        if (error.response.data.partner_head_organization) {
+        if (data && data.partner_head_organization) {
           this.setState({ stepIndex: 1, duplicationAlert: true, duplicationFields: `${messages.headOfOrgEmail} ${headOfOrgEmail}` });
         } else {
-          this.setState({ stepIndex: 1, duplicationAlert: true, duplicationFields: errorMsg });
+          this.setState({ stepIndex: 1, errorAlert: true, error: data });
         }
+
         throw new SubmissionError({
-          json: { ...error.response.data },
+          json: data,
           _error: errorMsg,
         });
       });
@@ -167,6 +171,12 @@ class RegistrationStepper extends React.Component {
             </StepContent>
           </Step>
         </Stepper>
+        <AlertDialog
+          trigger={!!this.state.errorAlert}
+          title={messages.warning}
+          text={this.state.error}
+          handleDialogClose={() => this.setState({ errorAlert: false })}
+        />
         <AlertDialog
           trigger={!!this.state.declarationAlert}
           title={messages.warning}
