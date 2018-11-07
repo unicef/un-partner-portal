@@ -33,7 +33,7 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
   if (officeId) headers = { ...headers, 'Agency-Office-ID': officeId };
-  console.log('Authorized: ', authorize, token, partnerId, officeId);
+  
   return { ...headers, ...extraHeaders };
 }
 

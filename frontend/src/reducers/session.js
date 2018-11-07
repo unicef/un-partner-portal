@@ -83,7 +83,7 @@ export const loadUserData = () => (dispatch, getState) => {
   const { session } = getState();
   const token = session.token;
   const partnerId = session.partnerId;
-  console.log('Load user data: ', token);
+ 
   if (!token) {
     history.push('/login');
     return Promise.resolve();
@@ -188,7 +188,6 @@ export const logoutUser = () => dispatch => logout()
 
 export const registerUser = json => dispatch => postRegistration(json)
   .then(() => {
-    console.log('Registration finished');
     dispatch(loginSuccess({ role: ROLES.PARTNER }));
     dispatch(sessionChange({ newlyRegistered: true }));
     dispatch(loadUserData());
