@@ -36,7 +36,6 @@ from partner.serializers import (
 from partner.filters import PartnersListFilter
 from partner.models import (
     Partner,
-    PartnerProfile,
     PartnerMember,
 )
 from partner.mixins import FilterUsersPartnersMixin, VerifyPartnerProfileUpdatePermissionsMixin
