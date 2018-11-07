@@ -41,7 +41,7 @@ def user_details(strategy, details, user=None, is_new=False, *args, **kwargs):
     logger.debug(f'user_details for user {user} details:\n{details}')
 
     if user:
-        user.fullname = f"{details['first_name']} {details['last_name']}"
+        user.fullname = details.get('fullname') or f"{details['first_name']} {details['last_name']}"
         if is_new:
             user.set_unusable_password()
         user.save()
