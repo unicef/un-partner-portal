@@ -14,7 +14,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from account.authentication import CustomAzureADBBCOAuth2
 from agency.agencies import UNHCR
 from agency.permissions import AgencyPermission
 from agency.roles import AgencyRole
@@ -151,7 +150,6 @@ class GeneralConfigAPIView(APIView):
             "active_directory_login_url": request.build_absolute_uri(reverse('social:begin', kwargs={
                 'backend': 'azuread-b2c-oauth2'
             })),
-            "active_directory_logout_url": CustomAzureADBBCOAuth2().logout_url,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

@@ -2,6 +2,7 @@ import logging
 from datetime import date
 from time import sleep
 
+from babel.numbers import format_decimal
 from django.conf import settings
 from django.db.models import Sum
 from requests.auth import HTTPBasicAuth
@@ -73,7 +74,7 @@ class UNICEFInfoClient(object):
 
     start_year = 2015
 
-    def get_total_and_yearly_data(self, partner, vendor_code):
+    def get_total_and_yearly_data(self, vendor_code):
         total = None
         yearly_data = dict()
 
@@ -85,18 +86,18 @@ class UNICEFInfoClient(object):
         )
 
         for year, cash_transfers_total, cash_transfer_year_total in cash_data:
-            yearly_data[year] = cash_transfer_year_total
+            yearly_data[year] = format_decimal(cash_transfer_year_total, locale='en_US')
             total = max(
                 total or 0, cash_transfers_total
             )
 
-        return total, yearly_data
+        return format_decimal(total, locale='en_US'), yearly_data
 
     def get_tables(self, vendor_number: PartnerVendorNumber):
         current_year = date.today().year
         partner = vendor_number.partner
 
-        total, yearly_data = self.get_total_and_yearly_data(partner, vendor_number.number)
+        total, yearly_data = self.get_total_and_yearly_data(vendor_number.number)
 
         years = range(max(self.start_year, current_year - 5), current_year + 1)
 
@@ -104,9 +105,9 @@ class UNICEFInfoClient(object):
             partner.legal_name,
             partner.get_country_code_display(),
             *[
-                yearly_data.get(y, 'No Data') for y in years
+                yearly_data.get(y) for y in years
             ],
-            total if total is not None else 'No Data'
+            total
         ]]
 
         for child in partner.children.all():
@@ -116,15 +117,15 @@ class UNICEFInfoClient(object):
             if not child_vendor_number:
                 continue
 
-            child_total, child_yearly_data = self.get_total_and_yearly_data(child, child_vendor_number.number)
+            child_total, child_yearly_data = self.get_total_and_yearly_data(child_vendor_number.number)
 
             table_rows.append([
                 child.legal_name,
                 child.get_country_code_display(),
                 *[
-                    child_yearly_data.get(y, 'No Data') for y in years
+                    child_yearly_data.get(y) for y in years
                 ],
-                child_total if child_total is not None else 'No Data'
+                child_total
             ])
 
         tables = [{
