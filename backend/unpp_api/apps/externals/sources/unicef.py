@@ -63,8 +63,8 @@ class UNICEFInfoDownloader(object):
                     year=year,
                     defaults={
                         'vendor_name': vendor_name,
-                        'total_cash_transfers': cash_transfers_current_year,
-                        'cash_transfers_this_year': cash_transfers_year_to_date,
+                        'total_cash_transfers': cash_transfers_year_to_date,
+                        'cash_transfers_this_year': cash_transfers_current_year,
                     }
                 )
                 logger.debug('Saved')
@@ -75,21 +75,18 @@ class UNICEFInfoClient(object):
     start_year = 2015
 
     def get_total_and_yearly_data(self, vendor_code):
-        total = None
+        total = 0
         yearly_data = dict()
 
         cash_data = UNICEFVendorData.objects.filter(
             vendor_number=vendor_code, year__gte=self.start_year
         ).order_by().values_list('year').annotate(
             Sum('total_cash_transfers'),
-            Sum('cash_transfers_this_year'),
         )
 
-        for year, cash_transfers_total, cash_transfer_year_total in cash_data:
+        for year, cash_transfer_year_total in cash_data:
             yearly_data[year] = format_decimal(cash_transfer_year_total, locale='en_US')
-            total = max(
-                total or 0, cash_transfers_total
-            )
+            total += (cash_transfer_year_total or 0)
 
         return format_decimal(total, locale='en_US'), yearly_data
 
