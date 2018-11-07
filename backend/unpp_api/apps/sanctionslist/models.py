@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 from model_utils.models import TimeStampedModel
@@ -15,10 +14,9 @@ class SanctionedItem(TimeStampedModel):
     data_id = models.IntegerField(db_index=True, unique=True)
     listed_on = models.DateField(null=True, blank=True)
     last_updated = models.DateField(null=True, blank=True)
-    metadata = JSONField(null=True, blank=True)
 
     def __str__(self):
-        return "DATAID: {}".format(self.data_id)
+        return f"{self.__class__.__name__} [{self.pk}] {self.get_sanctioned_type_display()}"
 
 
 class SanctionedName(TimeStampedModel):
@@ -31,8 +29,8 @@ class SanctionedName(TimeStampedModel):
             ('item', 'name'),
         )
 
-    def __unicode__(self):
-        return "Name: {}".format(self.name)
+    def __str__(self):
+        return f"{self.__class__.__name__} [{self.pk}] {self.name}"
 
 
 class SanctionedNameMatch(TimeStampedModel):
@@ -48,5 +46,5 @@ class SanctionedNameMatch(TimeStampedModel):
             ('name', 'partner'),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return "Partner:{} Name:{}".format(self.partner, self.name)

@@ -259,7 +259,7 @@ class TestOpenCFEI(BaseAPITestCase):
                 lambda m: agency_member_advanced.user.email in m.to,
                 mail.outbox
             ))
-            self.assertIn('ready to have a winner picked', pick_a_winner_email.body)
+            self.assertIn('Prospective Partner Identified for CFEI', pick_a_winner_email.body)
 
         with self.login_as_user(agency_member_basic.user):
             # Check basic user cant pick winner
@@ -428,7 +428,7 @@ class TestOpenCFEI(BaseAPITestCase):
                 lambda m: agency_member_advanced.user.email in m.to,
                 mail.outbox
             ))
-            self.assertIn('ready to have a winner picked', pick_a_winner_email.body)
+            self.assertIn('Prospective Partner Identified for CFEI', pick_a_winner_email.body)
 
         with self.login_as_user(agency_member_advanced.user):
             application_url = reverse('projects:application', kwargs={'pk': apply2_response.data['id']})
@@ -599,7 +599,7 @@ class TestOpenCFEI(BaseAPITestCase):
                 lambda m: agency_member_advanced.user.email in m.to,
                 mail.outbox
             ))
-            self.assertIn('ready to have a winner picked', pick_a_winner_email.body)
+            self.assertIn('Prospective Partner Identified for CFEI', pick_a_winner_email.body)
 
         with self.login_as_user(agency_member_advanced.user):
             application_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})

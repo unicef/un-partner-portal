@@ -1,6 +1,6 @@
 Dear UN staff member,
 
-A Call of Expression of Interest {{ eoi.displayID }} "{{ eoi.title }}" is ready to have a winner picked.
+The assessment process for {{ eoi.displayID }}, {{ eoi.title }} is now complete and a prospective partner has been identified.
+To confirm the selection of the proposed partner, please visit: {{ eoi.get_absolute_url }}.
 
-To view the call for expression of interest, please visit: {{ eoi.get_absolute_url }}
 Thank you.

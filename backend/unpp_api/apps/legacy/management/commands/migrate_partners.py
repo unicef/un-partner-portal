@@ -27,7 +27,9 @@ from partner.models import (
     PartnerAuditReport,
     PartnerExperience,
     PartnerMember,
-    PartnerOtherInfo, PartnerReporting)
+    PartnerOtherInfo,
+    PartnerReporting,
+)
 from externals.models import PartnerVendorNumber
 
 
@@ -440,7 +442,7 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerUser {source.UserID} for {partner}')
 
-        user, _ = get_user_model().objects.get_or_create(
+        user, _ = get_user_model().objects.update_or_create(
             email=source.Username,
             defaults={
                 'fullname': f'{source.FirstName} {source.LastName}' if source.FirstName else 'N/A',
@@ -450,11 +452,12 @@ class Command(BaseCommand):
         user.set_unusable_password()
         user.save()
 
-        PartnerMember.objects.get_or_create(
+        PartnerMember.objects.update_or_create(
             user=user,
             partner=partner,
             defaults={
-                'title': 'Member'
+                'title': 'Member',
+                'role': source.Role,
             }
         )
 

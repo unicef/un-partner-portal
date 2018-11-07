@@ -82,7 +82,7 @@ class Partner(MigratedTimeStampedModel):
     class Meta:
         ordering = ('-created', )
         unique_together = (
-            'legal_name', 'country_code'
+            'legal_name', 'country_code', 'hq'
         )
 
     def __str__(self):

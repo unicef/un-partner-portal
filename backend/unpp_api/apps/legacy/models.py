@@ -455,7 +455,7 @@ class PartnerUser(models.Model):
 
     UserID = models.IntegerField(primary_key=True)
     Username = models.EmailField()
-    Role = models.IntegerField()
+    Role = models.TextField()
     ValidFrom = models.DateTimeField()
     ProfileID = models.IntegerField()
     FirstName = models.TextField()
