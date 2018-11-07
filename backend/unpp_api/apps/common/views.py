@@ -5,6 +5,7 @@ from collections import defaultdict
 from django.conf import settings
 from django.db import connections
 from django.db.migrations.recorder import MigrationRecorder
+from django.urls import reverse
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from account.authentication import CustomAzureADBBCOAuth2
 from agency.agencies import UNHCR
 from agency.permissions import AgencyPermission
 from agency.roles import AgencyRole
@@ -146,6 +148,10 @@ class GeneralConfigAPIView(APIView):
             "cfei-statuses": CFEI_STATUSES,
             "business-areas": BUSINESS_AREAS,
             "version": settings.GIT_VERSION,
+            "active_directory_login_url": request.build_absolute_uri(reverse('social:begin', kwargs={
+                'backend': 'azuread-b2c-oauth2'
+            })),
+            "active_directory_logout_url": CustomAzureADBBCOAuth2().logout_url,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

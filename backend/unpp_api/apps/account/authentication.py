@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urlencode
 
 from social_core.exceptions import InvalidEmail
 from social_core.pipeline import social_auth
@@ -16,6 +17,13 @@ class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
     def __init__(self, *args, **kwargs):
         super(CustomAzureADBBCOAuth2, self).__init__(*args, **kwargs)
         self.redirect_uri = f'https://{settings.FRONTEND_HOST}/api/social/complete/azuread-b2c-oauth2/'
+
+    @property
+    def logout_url(self):
+        kwargs = {
+            'post_logout_redirect_uri': "https://unpp-stage.tivixlabs.com/login"
+        }
+        return f"{self.base_url}/oauth2/v2.0/logout?{urlencode(kwargs)}"
 
 
 def social_details(backend, details, response, *args, **kwargs):
