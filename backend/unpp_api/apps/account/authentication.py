@@ -32,7 +32,8 @@ def social_details(backend, details, response, *args, **kwargs):
     r = social_auth.social_details(backend, details, response, *args, **kwargs)
 
     if not r['details'].get('email'):
-        r['details']['email'] = backend.user_data(None, response=response).get('signInNames.emailAddress')
+        user_data = backend.user_data(None, response=response) or {}
+        r['details']['email'] = user_data.get('email', user_data.get('signInNames.emailAddress'))
 
     return r
 
