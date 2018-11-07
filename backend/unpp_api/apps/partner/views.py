@@ -36,7 +36,6 @@ from partner.serializers import (
 from partner.filters import PartnersListFilter
 from partner.models import (
     Partner,
-    PartnerProfile,
     PartnerMember,
 )
 from partner.mixins import FilterUsersPartnersMixin, VerifyPartnerProfileUpdatePermissionsMixin
@@ -140,7 +139,10 @@ class PartnerIdentificationAPIView(
         ),
     )
     serializer_class = PartnerIdentificationSerializer
-    queryset = PartnerProfile.objects.all()
+    queryset = Partner.objects.all()
+
+    def get_object(self):
+        return super(PartnerIdentificationAPIView, self).get_object().profile
 
 
 class PartnerContactInformationAPIView(

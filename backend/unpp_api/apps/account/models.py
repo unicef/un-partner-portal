@@ -119,13 +119,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @threaded_cached_property
     def partner_ids(self):
-        partner_members = self.partner_members.exclude(partner__is_locked=True)
-        partner_ids = []
-        for partner_member in partner_members:
-            partner_ids.append(partner_member.partner.id)
-            if partner_member.partner.is_hq:
-                partner_ids.extend(partner_member.partner.country_profiles.values_list('id', flat=True))
-
+        partner_ids = set(self.partner_members.values_list('partner_id', flat=True))
+        partner_ids.update(
+            set(filter(None, self.partner_members.values_list('partner__children__id', flat=True)))
+        )
         return partner_ids
 
     def get_partner_ids_i_can_access(self):
