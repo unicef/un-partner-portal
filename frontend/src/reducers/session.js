@@ -189,7 +189,7 @@ export const logoutUser = () => dispatch => logout()
 export const registerUser = json => dispatch => postRegistration(json)
   .then(() => {
     console.log('Registration finished');
-    dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
+    dispatch(loginSuccess({ role: ROLES.PARTNER }));
     dispatch(sessionChange({ newlyRegistered: true }));
     dispatch(loadUserData());
     history.push('/');
