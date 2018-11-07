@@ -14,8 +14,7 @@ class PartnerVendorNumber(TimeStampedModel):
 
     class Meta:
         unique_together = (
-            ('agency', 'partner'),
-            ('agency', 'partner', 'number'),
+            ('agency', 'partner', 'business_area', 'number'),
         )
 
     def __str__(self):

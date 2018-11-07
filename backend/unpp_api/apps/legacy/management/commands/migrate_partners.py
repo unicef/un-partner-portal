@@ -318,10 +318,11 @@ class Command(BaseCommand):
 
         PartnerVendorNumber.objects.update_or_create(
             partner=partner,
+            agency=UNHCR.model_instance,
+            business_area=None,
             defaults={
                 'created': source.created,
                 'modified': source.modified,
-                'agency': UNHCR.model_instance,
                 'number': source.number,
             }
         )
@@ -435,7 +436,7 @@ class Command(BaseCommand):
             }
         )
 
-    def migrate_user(self, source: legacy_models.PartnerUser):
+    def migrate_partner_user(self, source: legacy_models.PartnerUser):
         partner = Partner.objects.get(
             migrated_from=Partner.SOURCE_UNHCR,
             migrated_original_id=source.ProfileID,
@@ -534,4 +535,4 @@ class Command(BaseCommand):
         self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
         self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
 
-        self._migrate_model(self.migrate_user, legacy_models.PartnerUser)
+        self._migrate_model(self.migrate_partner_user, legacy_models.PartnerUser)

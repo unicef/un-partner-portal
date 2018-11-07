@@ -464,3 +464,14 @@ class PartnerUser(models.Model):
     class Meta:
         managed = False
         db_table = 'User'
+
+
+class UNHCRUser(models.Model):
+
+    SharePointGroupName = models.TextField()
+    DisplayName = models.TextField()
+    Email = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'UNHCR_Users'
