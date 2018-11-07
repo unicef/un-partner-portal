@@ -22,10 +22,9 @@ def social_details(backend, details, response, *args, **kwargs):
     logger.debug(f'social_details response:\n{response}')
     logger.debug(f'user_data:\n{backend.user_data(None, response=response)}')
     r = social_auth.social_details(backend, details, response, *args, **kwargs)
-    r['details']['idp'] = response.get('idp')
 
     if not r['details'].get('email'):
-        r['details']['email'] = response.get('email')
+        r['details']['email'] = backend.user_data(None, response=response).get('signInNames.emailAddress')
 
     return r
 
