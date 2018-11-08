@@ -2,14 +2,13 @@ from __future__ import absolute_import
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from agency.agencies import UNHCR
 from agency.roles import AgencyRole
 from common.consts import BUDGET_CHOICES
-from common.factories import get_new_common_file
+from common.models import CommonFile
 from legacy import models as legacy_models
 from partner.models import (
     Partner,
@@ -30,6 +29,7 @@ from partner.models import (
     PartnerMember,
     PartnerOtherInfo,
     PartnerReporting,
+    PartnerGoverningDocument,
 )
 from agency.models import AgencyMember, AgencyOffice
 from externals.models import PartnerVendorNumber
@@ -67,6 +67,21 @@ class Command(BaseCommand):
         legacy_models.PartnerPartnerreview,
     }
     dummy_user = None
+
+    def _migrate_common_file(self, legacy_common_file_id: int):
+        legacy_cf: legacy_models.CommonFile = legacy_models.CommonFile.objects.filter(id=legacy_common_file_id).first()
+        if not legacy_cf:
+            if legacy_common_file_id:
+                self.stderr.write(f'File referenced by ID: {legacy_common_file_id} not found in legacy database')
+            return
+
+        return CommonFile.objects.get_or_create(
+            file_field=legacy_cf.file_field,
+            defaults={
+                'created': legacy_cf.created,
+                'modified': legacy_cf.modified,
+            }
+        )[0]
 
     def check_empty_models(self):
         all_models = apps.get_app_config('legacy').get_models()
@@ -209,6 +224,7 @@ class Command(BaseCommand):
                 'date_received': source.date_received,
                 'organization_name': source.organization_name,
                 'created_by': self.dummy_user,
+                'evidence_file': self._migrate_common_file(source.evidence_file_id),
             }
         )
 
@@ -304,10 +320,23 @@ class Command(BaseCommand):
             }
         )
 
-        dummy_registration_document = get_new_common_file()
-        dummy_registration_document.file_field.save('dummy_registration_doc.txt', ContentFile(
-            'Placeholder registration document for imported registration number.'
-        ))
+        if source.gov_doc_id:
+            common_file = self._migrate_common_file(source.gov_doc_id)
+            if common_file:
+                PartnerGoverningDocument.objects.update_or_create(
+                    profile=profile,
+                    document=common_file,
+                    defaults={
+                        'created_by': self.dummy_user,
+                        'editable': False,
+                    }
+                )
+
+        if source.registration_doc_id:
+            registration_document = self._migrate_common_file(source.registration_doc_id)
+        else:
+            registration_document = None
+
         PartnerRegistrationDocument.objects.update_or_create(
             profile=profile,
             defaults={
@@ -316,7 +345,8 @@ class Command(BaseCommand):
                 'created_by': self.dummy_user,
                 'registration_number': source.registration_number,
                 'issue_date': source.created,
-                'document': dummy_registration_document,
+                'document': registration_document,
+                'editable': False,
             }
         )
 
@@ -372,6 +402,20 @@ class Command(BaseCommand):
                 'modified': source.modified,
                 'background_and_rationale': source.background_and_rationale,
                 'mandate_and_mission': source.mandate_and_mission,
+                'governance_structure': source.governance_structure,
+                'governance_hq': source.governance_hq,
+                'governance_organigram': self._migrate_common_file(source.governance_organigram_id),
+                'ethic_safeguard': source.ethic_safeguard,
+                'ethic_safeguard_comment': source.ethic_safeguard_comment,
+                'ethic_safeguard_policy': self._migrate_common_file(source.ethic_safeguard_policy_id),
+                'ethic_fraud': source.ethic_fraud,
+                'ethic_fraud_comment': source.ethic_fraud_comment,
+                'ethic_fraud_policy': self._migrate_common_file(source.ethic_fraud_policy_id),
+                'population_of_concern': source.population_of_concern,
+                'concern_groups': source.concern_groups.split(','),
+                'security_high_risk_locations': source.security_high_risk_locations,
+                'security_high_risk_policy': source.security_high_risk_policy,
+                'security_desc': source.security_desc,
             }
         )
 
@@ -426,6 +470,7 @@ class Command(BaseCommand):
                 'modified': source.modified,
                 'org_audit': source.org_audit,
                 'link_report': source.link_report,
+                'most_recent_audit_report': self._migrate_common_file(source.most_recent_audit_report_id)
             }
         )
 
@@ -498,6 +543,8 @@ class Command(BaseCommand):
                     'role': AGENCY_ROLE_MAPPING[source.UNPP_Role.strip()],
                 }
             )
+        else:
+            self.stderr.write('Missing country code for Agency User, skipping...')
 
     def migrate_other_info(self, source: legacy_models.PartnerPartnerotherinfo):
         partner = Partner.objects.get(
@@ -506,7 +553,6 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnerotherinfo {source.pk} for {partner}')
 
-        # TODO: Files
         PartnerOtherInfo.objects.update_or_create(
             partner=partner,
             defaults={
@@ -514,6 +560,11 @@ class Command(BaseCommand):
                 'created': source.created,
                 'modified': source.modified,
                 'info_to_share': source.info_to_share,
+                'org_logo': self._migrate_common_file(source.org_logo_id),
+                'org_logo_thumbnail': source.org_logo_thumbnail,
+                'other_doc_1': self._migrate_common_file(source.other_doc_1_id),
+                'other_doc_2': self._migrate_common_file(source.other_doc_2_id),
+                'other_doc_3': self._migrate_common_file(source.other_doc_3_id),
             }
         )
 
@@ -524,7 +575,6 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnerreporting {source.pk} for {partner}')
 
-        # TODO: Files
         PartnerReporting.objects.update_or_create(
             partner=partner,
             defaults={
@@ -534,6 +584,7 @@ class Command(BaseCommand):
                 'publish_annual_reports': source.publish_annual_reports,
                 'last_report': source.last_report,
                 'link_report': source.link_report or None,
+                'report': self._migrate_common_file(source.report_id),
             }
         )
 

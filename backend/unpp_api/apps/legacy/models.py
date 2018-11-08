@@ -477,3 +477,14 @@ class UNHCRUser(models.Model):
     class Meta:
         managed = False
         db_table = 'UNHCR_Users'
+
+
+class CommonFile(models.Model):
+
+    created = models.DateTimeField()
+    modified = models.DateTimeField()
+    file_field = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'common_commonfile'

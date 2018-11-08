@@ -98,7 +98,7 @@ class CommonFile(TimeStampedModel):
         ordering = ['id']
 
     def __str__(self):
-        return "CommonFile <pk:{}>".format(self.id)
+        return f"CommonFile [{self.pk}] {self.file_field}"
 
     @property
     def has_existing_reference(self):
