@@ -124,7 +124,7 @@ steps:
         when:
             branch:
                 only:
-#                    - develop
+                    - develop
                     - master
         steps:
 #            deploy_legacydb:
