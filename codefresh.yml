@@ -72,6 +72,11 @@ steps:
     push_images:
         type: parallel
         stage: 'push'
+        when:
+            branch:
+                only:
+                    - develop
+                    - master
         steps:
             push_backend_to_hub:
                 type: push
@@ -82,11 +87,6 @@ steps:
                     - ${{CF_BRANCH}}
                     - ${{CF_SHORT_REVISION}}
                     - latest
-                when:
-                    branch:
-                        only:
-                            - develop
-                            - master
 
             push_db_to_hub:
                 type: push
@@ -97,11 +97,6 @@ steps:
                     - ${{CF_BRANCH}}
                     - ${{CF_SHORT_REVISION}}
                     - latest
-                when:
-                    branch:
-                        only:
-                            - develop
-                            - master
 
             push_frontend_to_hub:
                 type: push
@@ -112,11 +107,6 @@ steps:
                     - ${{CF_BRANCH}}
                     - ${{CF_SHORT_REVISION}}
                     - latest
-                when:
-                    branch:
-                        only:
-                            - develop
-                            - master
 
             push_proxy_to_hub:
                 type: push
@@ -127,15 +117,15 @@ steps:
                     - ${{CF_BRANCH}}
                     - ${{CF_SHORT_REVISION}}
                     - latest
-                when:
-                    branch:
-                        only:
-                            - develop
-                            - master
 
     deploy_services:
         type: parallel
         stage: 'deploy'
+        when:
+            branch:
+                only:
+                    - develop
+                    - master
         steps:
 #            deploy_legacydb:
 #                title: Deploying Legacy DB
@@ -148,11 +138,6 @@ steps:
 #                  - KUBECONTEXT=${{KUBECONTEXT}}
 #                  - KUBERNETES_NAMESPACE=${{NAMESPACE}}
 #                  - KUBERNETES_DEPLOYMENT_TIMEOUT=500
-#                when:
-#                  branch:
-#                    only:
-#                      - develop
-#                      - master
 
             deploy_redis:
                 title: Deploying Redis
@@ -165,11 +150,6 @@ steps:
                   - KUBECONTEXT=${{KUBECONTEXT}}
                   - KUBERNETES_NAMESPACE=${{NAMESPACE}}
                   - KUBERNETES_DEPLOYMENT_TIMEOUT=500
-                when:
-                  branch:
-                    only:
-                      - develop
-                      - master
 
             deploy_backend:
                 title: Deploying backend
@@ -187,11 +167,6 @@ steps:
                   - POSTGRES_DB=${{POSTGRES_DB}}
                   - POSTGRES_HOST=${{POSTGRES_HOST}}
                   - KUBERNETES_DEPLOYMENT_TIMEOUT=500
-                when:
-                  branch:
-                    only:
-                      - develop
-                      - master
 
             deploy_frontend:
                 title: Deploying frontend
@@ -205,11 +180,6 @@ steps:
                   - KUBERNETES_NAMESPACE=${{NAMESPACE}}
                   - ENV=${{ENV}}
                   - KUBERNETES_DEPLOYMENT_TIMEOUT=500
-                when:
-                  branch:
-                    only:
-                      - develop
-                      - master
 
             deploy_proxy:
                 title: Deploying nginx proxy
@@ -223,11 +193,6 @@ steps:
                   - KUBERNETES_NAMESPACE=${{NAMESPACE}}
                   - ENV=${{ENV}}
                   - KUBERNETES_DEPLOYMENT_TIMEOUT=500
-                when:
-                  branch:
-                    only:
-                      - develop
-                      - master
 
             deploy_cronjobs:
                 title: Creating backend cronjobs
@@ -244,11 +209,6 @@ steps:
                   - POSTGRES_USER=${{POSTGRES_USER}}
                   - POSTGRES_DB=${{POSTGRES_DB}}
                   - POSTGRES_HOST=${{POSTGRES_HOST}}
-                when:
-                  branch:
-                    only:
-                      - develop
-                      - master
 
     delete_jobs:
         stage: 'run_jobs'
