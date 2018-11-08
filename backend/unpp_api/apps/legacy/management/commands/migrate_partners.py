@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from agency.agencies import UNHCR
+from agency.roles import AgencyRole
 from common.consts import BUDGET_CHOICES
 from common.factories import get_new_common_file
 from legacy import models as legacy_models
@@ -30,6 +31,7 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerReporting,
 )
+from agency.models import AgencyMember, AgencyOffice
 from externals.models import PartnerVendorNumber
 
 
@@ -37,6 +39,15 @@ def clean_value(value):
     if hasattr(value, 'strip'):
         value = value.strip()
     return value or None
+
+
+AGENCY_ROLE_MAPPING = {
+    'Administrator': AgencyRole.ADMINISTRATOR.name,
+    'HQ Editor': AgencyRole.HQ_EDITOR.name,
+    'MFT USER': AgencyRole.MFT_USER.name,
+    'PAM USER': AgencyRole.PAM_USER.name,
+    'Reader': AgencyRole.READER.name,
+}
 
 
 class Command(BaseCommand):
@@ -462,6 +473,32 @@ class Command(BaseCommand):
             }
         )
 
+    def migrate_agency_user(self, source: legacy_models.UNHCRUser):
+        self.stdout.write(f'Migrating AgencyUser {source.Email}')
+
+        user, _ = get_user_model().objects.update_or_create(
+            email=source.Email,
+            defaults={
+                'fullname': source.DisplayName or 'N/A',
+            }
+        )
+        user.set_unusable_password()
+        user.save()
+
+        if source.Country_Code:
+            office, _ = AgencyOffice.objects.get_or_create(
+                agency=UNHCR.model_instance,
+                country=source.Country_Code,
+            )
+
+            AgencyMember.objects.update_or_create(
+                user=user,
+                office=office,
+                defaults={
+                    'role': AGENCY_ROLE_MAPPING[source.UNPP_Role.strip()],
+                }
+            )
+
     def migrate_other_info(self, source: legacy_models.PartnerPartnerotherinfo):
         partner = Partner.objects.get(
             migrated_from=Partner.SOURCE_UNHCR,
@@ -536,3 +573,4 @@ class Command(BaseCommand):
         self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
 
         self._migrate_model(self.migrate_partner_user, legacy_models.PartnerUser)
+        self._migrate_model(self.migrate_agency_user, legacy_models.UNHCRUser)

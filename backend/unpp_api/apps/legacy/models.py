@@ -470,7 +470,9 @@ class UNHCRUser(models.Model):
 
     SharePointGroupName = models.TextField()
     DisplayName = models.TextField()
-    Email = models.TextField()
+    Email = models.TextField(primary_key=True)
+    UNPP_Role = models.TextField()
+    Country_Code = models.TextField()
 
     class Meta:
         managed = False
