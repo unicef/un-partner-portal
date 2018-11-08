@@ -19,7 +19,7 @@ const AzureLogin = () => (
           style={{ marginTop: '25px' }}
           raised
           color="accent"
-          onTouchTap={() => { window.open('/api/social/login/azuread-b2c-oauth2/', '_self'); }}
+          onTouchTap={() => { window.open('/api/accounts/social-login/azuread-b2c-oauth2/', '_self'); }}
         >
           {messages.signIn}
         </Button>

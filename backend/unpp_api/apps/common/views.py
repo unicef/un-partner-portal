@@ -147,9 +147,9 @@ class GeneralConfigAPIView(APIView):
             "cfei-statuses": CFEI_STATUSES,
             "business-areas": BUSINESS_AREAS,
             "version": settings.GIT_VERSION,
-            "active_directory_login_url": request.build_absolute_uri(reverse('social:begin', kwargs={
+            "active-directory-login-url": reverse('accounts:social-login', kwargs={
                 'backend': 'azuread-b2c-oauth2'
-            })),
+            }),
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

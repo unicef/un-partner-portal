@@ -1,7 +1,9 @@
 from django.conf import settings
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import Http404
+from django.urls import reverse
 from rest_framework.exceptions import PermissionDenied
 from django.views.generic import RedirectView
 from rest_auth.models import TokenModel
@@ -63,3 +65,14 @@ class SocialAuthLoggedInUserView(LoginRequiredMixin, RedirectView):
         token = default_create_token(TokenModel, self.request.user, None)
 
         return f'{protocol}://{settings.FRONTEND_HOST}/login/{token}'
+
+
+class SocialAuthLoginView(RedirectView):
+
+    def get_redirect_url(self, *args, **kwargs):
+        # Make sure session is properly cleared, in case frontend fails to do so
+        logout(self.request)
+
+        return reverse('social:begin', kwargs={
+            'backend': self.kwargs['backend']
+        })
