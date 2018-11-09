@@ -40,4 +40,3 @@ LocationFieldArray.propTypes = {
 };
 
 export default (LocationFieldArray);
-
