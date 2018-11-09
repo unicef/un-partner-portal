@@ -7,7 +7,10 @@ import { withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import HeaderList from '../../../../../../common/list/headerList';
-import { selectRecommendedPartnersCount, selectRecommendedPartners, isUserACreator, isUserAFocalPoint, selectCfeiReviewSummary } from '../../../../../../../store';
+import {
+  selectRecommendedPartnersCount, selectRecommendedPartners,
+  isCfeiCompleted, isUserACreator, isUserAFocalPoint, selectCfeiReviewSummary,
+} from '../../../../../../../store';
 import { loadRecommendedPartners } from '../../../../../../../reducers/recommendedPartners';
 import CollapsableItemAction from '../../../../../../common/collapsableItemAction';
 import SpreadContent from '../../../../../../common/spreadContent';
@@ -82,7 +85,7 @@ class RecommendedPartners extends Component {
   }
 
   applicationItem(application) {
-    const { isCreator, isFocalPoint, hasSelectRecommendedPermission, summary } = this.props;
+    const { isCreator, isFocalPoint, hasSelectRecommendedPermission, summary, isCompleted } = this.props;
 
     let action = null;
 
@@ -100,6 +103,7 @@ class RecommendedPartners extends Component {
               disabled={application.did_accept || application.did_decline}
               onUpdate={() => this.props.loadPartners(this.state.params)}
               applicationId={application.id}
+              isCompleted={isCompleted}
             />);
           }
         } else if (!summary.review_summary_comment) {
@@ -127,6 +131,7 @@ class RecommendedPartners extends Component {
           action = (<AwardApplicationButton
             onUpdate={() => this.props.loadPartners(this.state.params)}
             applicationId={application.id}
+            isCompleted={isCompleted}
           />);
         }
       }
@@ -158,7 +163,7 @@ class RecommendedPartners extends Component {
               {messages.title}
             </Typography>
             {!hasSelectRecommendedPermission &&
-            <SendRecommendedPartnerButton id={cfeiId} />}
+              <SendRecommendedPartnerButton id={cfeiId} />}
           </SpreadContent>
         }
         loading={loading}
@@ -193,6 +198,7 @@ RecommendedPartners.propTypes = {
   isFocalPoint: PropTypes.bool,
   summary: PropTypes.object,
   isCreator: PropTypes.bool,
+  isCompleted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -209,6 +215,7 @@ const mapStateToProps = (state, ownProps) => {
     isCreator: isUserACreator(state, cfeiId),
     cfeiId,
     allCriteria: state.selectionCriteria,
+    isCompleted: isCfeiCompleted(state, ownProps.id),
   };
 };
 

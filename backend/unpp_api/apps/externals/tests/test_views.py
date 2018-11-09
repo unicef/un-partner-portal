@@ -84,7 +84,7 @@ class TestUNICEFVendorDataTestCase(BaseAPITestCase):
         data_row = partner_erp_data_response.data['tables'][0]['rows'][0]
 
         for number in data_row[2:]:
-            self.assertTrue(number > 0)
+            self.assertTrue(number)
 
     def test_vendor_data_sync(self):
         response_sample_file_path = os.path.join(

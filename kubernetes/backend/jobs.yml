@@ -95,7 +95,7 @@ spec:
       - name: backend-sync-sanctions-container
         image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
         command: ["bash"]
-        args: ["-c", "python /code/manage.py sanctions_list_sync"]
+        args: ["-c", "python /code/manage.py sanction_sync_and_rescan"]
         env:
             - name: SECRET_KEY
               valueFrom:

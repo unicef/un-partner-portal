@@ -36,6 +36,7 @@ const EditCfeiForm = (props) => {
           <fields.StartDate minDate={start_date} />
           <fields.EndDate minDate={deadline_date} />
         </ProjectDetails>
+        <fields.Attachments />
         <Typography type="headline">
           {messages.selectionCriteria}
         </Typography>
@@ -79,6 +80,7 @@ const mapStateToProps = (state, ownProps) => {
       other_information: cfei.other_information,
       has_weighting: cfei.has_weighting,
       assessments_criteria: cfei.assessments_criteria,
+      attachments: cfei.attachments,
     },
     focalPointNameArray,
   };

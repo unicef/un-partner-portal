@@ -82,7 +82,7 @@ class Partner(MigratedTimeStampedModel):
     class Meta:
         ordering = ('-created', )
         unique_together = (
-            'legal_name', 'country_code'
+            'legal_name', 'country_code', 'hq'
         )
 
     def __str__(self):
@@ -982,7 +982,8 @@ class PartnerOtherInfo(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="other_info")
     info_to_share = models.TextField(max_length=5000, null=True, blank=True)
     org_logo = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="others_info")
+        'common.CommonFile', null=True, blank=True, related_name="others_info"
+    )
     org_logo_thumbnail = models.ImageField(null=True, blank=True)
 
     other_doc_1 = models.ForeignKey(

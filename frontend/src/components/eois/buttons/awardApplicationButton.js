@@ -10,11 +10,12 @@ const messages = {
 };
 
 const AwardApplicationButton = (props) => {
-  const { applicationId, handleDialogClose, handleDialogOpen, dialogOpen, onUpdate, ...other } = props;
+  const { applicationId, handleDialogClose, handleDialogOpen, dialogOpen, onUpdate, isCompleted, ...other } = props;
   return (
     <Grid item>
       <Button
         raised
+        disabled={isCompleted}
         color="accent"
         onClick={handleDialogOpen}
         {...other}
@@ -35,6 +36,7 @@ const AwardApplicationButton = (props) => {
 AwardApplicationButton.propTypes = {
   applicationId: PropTypes.number,
   dialogOpen: PropTypes.bool,
+  isCompleted: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
   onUpdate: PropTypes.func,

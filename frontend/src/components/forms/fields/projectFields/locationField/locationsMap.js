@@ -30,7 +30,7 @@ const geocodingClient = mbxGeocoding({ accessToken: process.env.MAP_BOX_KEY });
  */
 
 const messages = {
-  error: 'Location doesn\'t contains all required informations',
+  error: 'Please indicate locations within the geographic boundaries of the selected country',
 };
 
 class LocationsMapBase extends Component {

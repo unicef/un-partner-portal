@@ -455,7 +455,7 @@ class PartnerUser(models.Model):
 
     UserID = models.IntegerField(primary_key=True)
     Username = models.EmailField()
-    Role = models.IntegerField()
+    Role = models.TextField()
     ValidFrom = models.DateTimeField()
     ProfileID = models.IntegerField()
     FirstName = models.TextField()
@@ -464,3 +464,27 @@ class PartnerUser(models.Model):
     class Meta:
         managed = False
         db_table = 'User'
+
+
+class UNHCRUser(models.Model):
+
+    SharePointGroupName = models.TextField()
+    DisplayName = models.TextField()
+    Email = models.TextField(primary_key=True)
+    UNPP_Role = models.TextField()
+    Country_Code = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'UNHCR_Users'
+
+
+class CommonFile(models.Model):
+
+    created = models.DateTimeField()
+    modified = models.DateTimeField()
+    file_field = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'common_commonfile'

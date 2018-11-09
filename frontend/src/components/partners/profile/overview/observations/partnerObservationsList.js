@@ -104,10 +104,10 @@ class PartnerObservationsList extends Component {
           </div>
           <div className={classes.options}>
             {hovered
-               && hasReviewSanctionMatchPermission
-               && category === FLAGS.SANCTION
-               && isValid === null
-               && <UpdateSanctionObservationButton id={id} />}
+              && hasReviewSanctionMatchPermission
+              && category === FLAGS.SANCTION
+              && isValid === null
+              && <UpdateSanctionObservationButton id={id} />}
           </div>
         </Grid>
       </Grid>

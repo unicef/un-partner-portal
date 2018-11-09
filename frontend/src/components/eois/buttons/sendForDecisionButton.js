@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import { connect } from 'react-redux';
-import { selectCfeiReviewSummary, cfeiHasRecommendedPartner, isSendForDecision } from '../../../store';
+import { selectCfeiReviewSummary, cfeiHasRecommendedPartner, isSendForDecision, isCfeiCompleted } from '../../../store';
 import withDialogHandling from '../../common/hoc/withDialogHandling';
 import SendCfeiForDecisionModal from '../modals/sendCfeiForDecision/sendCfeiForDecisionModal';
 import ButtonWithTooltip from '../../common/buttonWithTooltipEnabled';
@@ -17,13 +17,14 @@ const messages = {
 };
 
 const SendForDecisionButton = (props) => {
-  const { id, handleDialogClose, handleDialogOpen, dialogOpen, hasRecommendedPartner, summary, isSend } = props;
+  const { id, handleDialogClose, handleDialogOpen, dialogOpen, hasRecommendedPartner,
+    summary, isSend, isCompleted } = props;
   const tooltip = !hasRecommendedPartner && messages.addRecommendedPartner
-   || R.isEmpty(summary.review_summary_comment) && messages.addSummary;
+    || R.isEmpty(summary.review_summary_comment) && messages.addSummary;
 
   return (
     <div>
-      {(!hasRecommendedPartner || R.isEmpty(summary.review_summary_comment)) ?
+      {!isCompleted && ((!hasRecommendedPartner || R.isEmpty(summary.review_summary_comment)) ?
         <ButtonWithTooltip
           name="send"
           disabled
@@ -39,7 +40,7 @@ const SendForDecisionButton = (props) => {
           onTouchTap={handleDialogOpen}
         >
           {isSend ? messages.send : messages.text}
-        </Button>}
+        </Button>)}
       <SendCfeiForDecisionModal
         id={id}
         dialogOpen={dialogOpen}
@@ -57,12 +58,14 @@ SendForDecisionButton.propTypes = {
   hasRecommendedPartner: PropTypes.bool,
   summary: PropTypes.object,
   isSend: PropTypes.bool,
+  isCompleted: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   summary: selectCfeiReviewSummary(state, ownProps.id),
   hasRecommendedPartner: cfeiHasRecommendedPartner(state, ownProps.id),
   isSend: isSendForDecision(state, ownProps.id),
+  isCompleted: isCfeiCompleted(state, ownProps.id),
 });
 
 const connected = connect(mapStateToProps)(SendForDecisionButton);

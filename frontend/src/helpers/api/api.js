@@ -33,6 +33,7 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
   if (authorize) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
   if (officeId) headers = { ...headers, 'Agency-Office-ID': officeId };
+  
   return { ...headers, ...extraHeaders };
 }
 
@@ -304,26 +305,30 @@ export function getApplicationReviews(applicationId, options) {
 export function postApplicationReview(applicationId, reviewerId, body) {
   return authorizedPost({
     uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
-    body });
+    body
+  });
 }
 
 export function putApplicationReview(applicationId, reviewerId, body) {
   return authorizedPut({
     uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
-    body });
+    body
+  });
 }
 
 export function getApplicationFeedback(applicationId, params, options) {
   return authorizedGet({
     uri: `/projects/application/${applicationId}/feedback/`,
     params,
-    options });
+    options
+  });
 }
 
 export function postApplicationFeedback(applicationId, body) {
   return authorizedPost({
     uri: `/projects/application/${applicationId}/feedback/`,
-    body });
+    body
+  });
 }
 
 export function postUnsolicitedCN(body) {

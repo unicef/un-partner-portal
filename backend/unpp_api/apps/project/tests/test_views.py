@@ -1289,6 +1289,45 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         })
         self.assertResponseStatusIs(patch_response)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_patch_attachments(self):
+        project = OpenEOIFactory(created_by=self.user)
+        project_url = reverse('projects:eoi-detail', kwargs={'pk': project.pk})
+        project_response = self.client.get(project_url)
+        self.assertResponseStatusIs(project_response)
+
+        patch_payload = {
+            "attachments": project_response.data['attachments'] + [
+                {
+                    'description': 'Test Description',
+                    'file': get_new_common_file().pk
+                },
+            ],
+        }
+
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+        self.assertEqual(
+            len(patch_response.data['attachments']),
+            len(patch_payload['attachments']),
+        )
+
+        for attachment in patch_payload['attachments']:
+            attachment['description'] = 'TEST'
+
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+        for attachment in patch_response.data['attachments']:
+            self.assertEqual(attachment['description'], 'TEST')
+
+        patch_payload['attachments'].pop(0)
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+        self.assertEqual(
+            len(patch_response.data['attachments']),
+            len(patch_payload['attachments']),
+        )
+
 
 class TestEOIPublish(BaseAPITestCase):
 

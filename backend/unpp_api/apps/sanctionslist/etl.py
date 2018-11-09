@@ -35,7 +35,7 @@ def normalize_person_names(person):
         person.get('SECOND_NAME', None),
         person.get('THIRD_NAME', None)
     ]
-    primary_name = ''.join(filter(None, names))
+    primary_name = ' '.join(filter(None, names))
     normalized_names.append(primary_name)
 
     person_alias = person['INDIVIDUAL_ALIAS']
@@ -47,7 +47,7 @@ def normalize_person_names(person):
         if person_alias:
             normalized_names.append(parse_alias(person_alias))
 
-    return [x.lower() for x in normalized_names if x]
+    return filter(None, normalized_names)
 
 
 def normalize_entity_names(entity):
@@ -64,7 +64,7 @@ def normalize_entity_names(entity):
         if entity_alias:
             normalized_names.append(parse_alias(entity_alias))
 
-    return [x.lower() for x in normalized_names if x]
+    return filter(None, normalized_names)
 
 
 def parse_unsc_individuals(individuals):
@@ -72,10 +72,14 @@ def parse_unsc_individuals(individuals):
         listed_on = parser.parse(person['LISTED_ON']).date()
         last_updated = parse_last_updated(person['LAST_DAY_UPDATED']['VALUE'])
 
-        item_inst, created = SanctionedItem.objects.update_or_create(
+        item_inst, _ = SanctionedItem.objects.update_or_create(
             sanctioned_type=SANCTION_LIST_TYPES.individual,
             data_id=int(person['DATAID']),
-            defaults={'listed_on': listed_on, 'last_updated': last_updated})
+            defaults={
+                'listed_on': listed_on,
+                'last_updated': last_updated
+            }
+        )
 
         for name in normalize_person_names(person):
             SanctionedName.objects.get_or_create(item=item_inst, name=name)
@@ -86,10 +90,13 @@ def parse_unsc_entities(entities):
         listed_on = parser.parse(entity['LISTED_ON']).date()
         last_updated = parse_last_updated(entity['LAST_DAY_UPDATED']['VALUE'])
 
-        item_inst, created = SanctionedItem.objects.update_or_create(
+        item_inst, _ = SanctionedItem.objects.update_or_create(
             sanctioned_type=SANCTION_LIST_TYPES.entity,
             data_id=int(entity['DATAID']),
-            defaults={'listed_on': listed_on, 'last_updated': last_updated}
+            defaults={
+                'listed_on': listed_on,
+                'last_updated': last_updated
+            }
         )
 
         # TODO - keep list of present names and deactivate those not present
@@ -98,7 +105,7 @@ def parse_unsc_entities(entities):
             SanctionedName.objects.get_or_create(item=item_inst, name=name)
 
 
-def parse_unsc_list():
+def sync_sanction_list():
     response = requests.get(settings.SANCTIONS_LIST_URL)
     dict_response = xmltodict.parse(response.content)
     consolidated_list = dict_response['CONSOLIDATED_LIST']

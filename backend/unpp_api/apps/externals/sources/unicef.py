@@ -2,6 +2,7 @@ import logging
 from datetime import date
 from time import sleep
 
+from babel.numbers import format_decimal
 from django.conf import settings
 from django.db.models import Sum
 from requests.auth import HTTPBasicAuth
@@ -62,8 +63,8 @@ class UNICEFInfoDownloader(object):
                     year=year,
                     defaults={
                         'vendor_name': vendor_name,
-                        'total_cash_transfers': cash_transfers_current_year,
-                        'cash_transfers_this_year': cash_transfers_year_to_date,
+                        'total_cash_transfers': cash_transfers_year_to_date,
+                        'cash_transfers_this_year': cash_transfers_current_year,
                     }
                 )
                 logger.debug('Saved')
@@ -73,30 +74,27 @@ class UNICEFInfoClient(object):
 
     start_year = 2015
 
-    def get_total_and_yearly_data(self, partner, vendor_code):
-        total = None
+    def get_total_and_yearly_data(self, vendor_code):
+        total = 0
         yearly_data = dict()
 
         cash_data = UNICEFVendorData.objects.filter(
             vendor_number=vendor_code, year__gte=self.start_year
         ).order_by().values_list('year').annotate(
             Sum('total_cash_transfers'),
-            Sum('cash_transfers_this_year'),
         )
 
-        for year, cash_transfers_total, cash_transfer_year_total in cash_data:
-            yearly_data[year] = cash_transfer_year_total
-            total = max(
-                total or 0, cash_transfers_total
-            )
+        for year, cash_transfer_year_total in cash_data:
+            yearly_data[year] = format_decimal(cash_transfer_year_total, locale='en_US')
+            total += (cash_transfer_year_total or 0)
 
-        return total, yearly_data
+        return format_decimal(total, locale='en_US'), yearly_data
 
     def get_tables(self, vendor_number: PartnerVendorNumber):
         current_year = date.today().year
         partner = vendor_number.partner
 
-        total, yearly_data = self.get_total_and_yearly_data(partner, vendor_number.number)
+        total, yearly_data = self.get_total_and_yearly_data(vendor_number.number)
 
         years = range(max(self.start_year, current_year - 5), current_year + 1)
 
@@ -104,9 +102,9 @@ class UNICEFInfoClient(object):
             partner.legal_name,
             partner.get_country_code_display(),
             *[
-                yearly_data.get(y, 'No Data') for y in years
+                yearly_data.get(y) for y in years
             ],
-            total if total is not None else 'No Data'
+            total
         ]]
 
         for child in partner.children.all():
@@ -116,15 +114,15 @@ class UNICEFInfoClient(object):
             if not child_vendor_number:
                 continue
 
-            child_total, child_yearly_data = self.get_total_and_yearly_data(child, child_vendor_number.number)
+            child_total, child_yearly_data = self.get_total_and_yearly_data(child_vendor_number.number)
 
             table_rows.append([
                 child.legal_name,
                 child.get_country_code_display(),
                 *[
-                    child_yearly_data.get(y, 'No Data') for y in years
+                    child_yearly_data.get(y) for y in years
                 ],
-                child_total if child_total is not None else 'No Data'
+                child_total
             ])
 
         tables = [{

@@ -474,9 +474,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             partner_permissions=[
                 PartnerPermission.CFEI_VIEW,
             ],
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_APPLICATIONS,
-            ]
+            agency_permissions=[]
         ),
     )
     queryset = Application.objects.select_related("partner", "eoi", "cn").prefetch_related("eoi__reviewers").all()
@@ -656,9 +654,7 @@ class ReviewerAssessmentsAPIView(ListCreateAPIView, RetrieveUpdateAPIView):
 class UnsolicitedProjectListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_APPLICATIONS,
-            ]
+            agency_permissions=[]
         ),
     )
     queryset = Application.objects.filter(is_unsolicited=True, is_published=True).distinct()

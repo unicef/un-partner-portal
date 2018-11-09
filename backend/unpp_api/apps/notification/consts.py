@@ -129,7 +129,7 @@ NOTIFICATION_DATA = {
     },
     NotificationType.CFEI_SENT_FOR_DECISION_MAKING: {
         'template_name': 'cfei_sent_for_decision_making',
-        'subject': 'CFEI winner ready to be picked'
+        'subject': 'Prospective Partner Identified for CFEI'
     },
     NotificationType.CFEI_CLARIFICATION_DEADLINE_PASSED: {
         'template_name': 'cfei_clarification_deadline_passed',
