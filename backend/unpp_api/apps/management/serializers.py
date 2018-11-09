@@ -163,6 +163,10 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
             user.profile.save()
             user.set_random_password()
             user.save()
-            send_partner_user_invite(user, self.context['request'].user)
+            send_partner_user_invite(
+                user,
+                self.context['request'].user,
+                partner=getattr(self.context.get('request'), 'active_partner', None)
+            )
 
         return user
