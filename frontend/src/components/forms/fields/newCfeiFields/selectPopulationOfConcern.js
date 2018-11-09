@@ -12,7 +12,7 @@ const SelectPopulationOfConcern = (props) => {
   const { values, readOnly } = props;
   return (<SelectForm
     label={messages.label}
-    fieldName="population"
+    fieldName="populations_of_concern"
     values={values}
     readOnly={readOnly}
     optional

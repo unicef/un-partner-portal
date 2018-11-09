@@ -705,6 +705,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'current_user_marked_reviews_completed',
             'assessments_marked_as_completed',
             'contains_recommended_applications',
+            'populations_of_concern',
         )
         read_only_fields = (
             'created',
