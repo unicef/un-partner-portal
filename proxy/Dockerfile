@@ -1,4 +1,4 @@
-FROM nginx:1.15.5-alpine
+FROM nginx:1.15.6-alpine
 
 RUN apk update
 RUN apk add --upgrade --no-cache py-pip bash
@@ -12,6 +12,8 @@ ADD main.sh /
 RUN chmod a+rx /docker-entrypoint.sh
 RUN chmod a+rx /main.sh
 ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
+
+ADD landing_page /srv/www/landing
 
 EXPOSE 80
 EXPOSE 443

@@ -85,7 +85,7 @@ export const loadUserData = () => (dispatch, getState) => {
   const partnerId = session.partnerId;
  
   if (!token) {
-    history.push('/login');
+    window.location.href = '/landing/';
     return Promise.resolve();
   }
   dispatch(sessionInitializing());
@@ -156,7 +156,7 @@ export const loadUserData = () => (dispatch, getState) => {
         history.push('/registration');
       } else {
         window.localStorage.removeItem('token');
-        history.push('/login');
+        window.location.href = '/landing/';
       }
 
       dispatch(initSession({
@@ -179,11 +179,11 @@ export const logoutUser = () => dispatch => logout()
   .then(() => {
     window.localStorage.removeItem('token');
     dispatch(logoutSuccess());
-    history.push('/login');
+    window.location.href = '/landing/';
   }).catch(() => {
     window.localStorage.removeItem('token');
     dispatch(logoutSuccess());
-    history.push('/login');
+    window.location.href = '/landing/';
   });
 
 export const registerUser = json => dispatch => postRegistration(json)
@@ -198,7 +198,7 @@ export const changePassword = payload => () => passwordResetConfirm(payload);
 
 const setSession = (state, session) => {
   return R.mergeDeepRight(state, session);
-}
+};
 
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {
