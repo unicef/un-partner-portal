@@ -17,7 +17,7 @@ from common.consts import (
     ALL_COMPLETED_REASONS,
     EXTENDED_APPLICATION_STATUSES,
     DSR_FINALIZE_RETENTION_CHOICES,
-)
+    POPULATION_OF_CONCERN_CHOICES)
 from common.database_fields import FixedTextField
 from common.utils import get_countries_code_from_queryset, get_absolute_frontend_url
 from project.validators import validate_weight_adjustments
@@ -92,6 +92,12 @@ class EOI(TimeStampedModel):
     # 'If the CSO deletes the concept note and replaces it with a new concept note,
     # then CSO should remain on the shortlist.'
     preselected_partners = ArrayField(models.IntegerField(), default=list)
+    populations_of_concern = ArrayField(
+        models.CharField(max_length=3, choices=POPULATION_OF_CONCERN_CHOICES),
+        default=list,
+        null=True,
+        help_text='UNHCR specific'
+    )
 
     class Meta:
         ordering = (

@@ -127,7 +127,7 @@ YEARS_OF_EXP_CHOICES = Choices(
     ('YE4', 'more_10', '10+ years'),
 )
 
-CONCERN_CHOICES = Choices(
+POPULATION_OF_CONCERN_CHOICES = Choices(
     ('Ref', 'refugees', 'Refugees'),
     ('Asy', 'asylum seekers', 'Asylum seekers'),
     ('IDP', 'internally_displaced', 'Internally displaced persons'),

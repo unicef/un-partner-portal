@@ -34,7 +34,7 @@ from common.consts import (
     WORKING_LANGUAGES_CHOICES,
     MAILING_TYPES,
     YEARS_OF_EXP_CHOICES,
-    CONCERN_CHOICES,
+    POPULATION_OF_CONCERN_CHOICES,
     STAFF_GLOBALLY_CHOICES,
     PARTNER_DONORS_CHOICES,
     POLICY_AREA_CHOICES,
@@ -799,7 +799,7 @@ class PartnerMandateMission(TimeStampedModel):
     # population of concern
     population_of_concern = models.NullBooleanField()
     concern_groups = ArrayField(
-        models.CharField(max_length=3, choices=CONCERN_CHOICES),
+        models.CharField(max_length=3, choices=POPULATION_OF_CONCERN_CHOICES),
         default=list,
         null=True
     )

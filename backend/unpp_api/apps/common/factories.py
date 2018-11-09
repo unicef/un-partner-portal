@@ -47,7 +47,7 @@ from project.models import EOI, Application, Assessment, EOIAttachment
 from review.models import PartnerFlag, PartnerVerification
 from common.consts import (
     PARTNER_TYPES,
-    CONCERN_CHOICES,
+    POPULATION_OF_CONCERN_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_DONORS_CHOICES,
     COLLABORATION_EVIDENCE_MODES,
@@ -147,7 +147,7 @@ def get_job_title():
 
 
 def get_concerns(quantity=2):
-    return [random.choice(list(CONCERN_CHOICES._db_values)) for _ in range(0, quantity)]
+    return [random.choice(list(POPULATION_OF_CONCERN_CHOICES._db_values)) for _ in range(0, quantity)]
 
 
 def get_year_of_exp():

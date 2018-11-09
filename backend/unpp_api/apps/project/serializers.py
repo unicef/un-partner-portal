@@ -83,6 +83,7 @@ class BaseProjectSerializer(serializers.ModelSerializer):
             'status',
             'completed_date',
             'focal_points',
+            'populations_of_concern',
         )
 
     def get_created(self, obj):
