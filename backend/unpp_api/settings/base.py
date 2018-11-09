@@ -20,6 +20,8 @@ ADMINS = (
     ('Alerts', os.getenv('ALERTS_EMAIL') or 'unicef-unpp@tivix.com'),
 )
 
+LOGIN_URL = LOGOUT_REDIRECT_URL = 'cms:landing'
+
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
 SITE_ID = 1
 TIME_ZONE = 'UTC'
@@ -142,6 +144,7 @@ INSTALLED_APPS = [
     'django_nose',
 
     'common',
+    'cms',
     'account',
     'agency',
     'partner',
