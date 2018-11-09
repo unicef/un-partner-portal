@@ -568,6 +568,11 @@ export class AutocompleteRenderer extends Component {
             error: (touched && (!!error || !!warning)),
             label,
             type: 'text',
+            // In some cases, the browser will continue suggesting autocompletion values even if the autocomplete
+            // attribute is set to off. The trick to really enforcing non-autocompletion is to assign an invalid value
+            // to the attribute.
+            // https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion#Disabling_autocompletion
+            autocomplete: 'none',
             placeholder,
             value: fieldValue,
             multiValues,
