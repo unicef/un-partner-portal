@@ -352,7 +352,7 @@ class Command(BaseCommand):
                 }
             )
         except IntegrityError:
-            pass
+            self.stderr.write('INTEGRITY ERROR PARTNERREGISTRATIONDOCUMENT.')
 
     def migrate_vendor_numbers(self, source: legacy_models.PartnerPartnerVendorNumber):
         partner = Partner.objects.get(
@@ -485,16 +485,19 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnerexperience {source.pk} for {partner}')
 
-        PartnerExperience.objects.update_or_create(
-            partner=partner,
-            created=source.created,
-            defaults={
-                'created_by': self.dummy_user,
-                'modified': source.modified,
-                'years': source.years,
-                'specialization_id': source.specialization_id,
-            }
-        )
+        try:
+            PartnerExperience.objects.update_or_create(
+                partner=partner,
+                created=source.created,
+                defaults={
+                    'created_by': self.dummy_user,
+                    'modified': source.modified,
+                    'years': source.years,
+                    'specialization_id': source.specialization_id,
+                }
+            )
+        except IntegrityError:
+            self.stderr.write('INTEGRITY ERROR PARTNEREXPERIENCE.')
 
     def migrate_partner_user(self, source: legacy_models.PartnerUser):
         partner = Partner.objects.get(
