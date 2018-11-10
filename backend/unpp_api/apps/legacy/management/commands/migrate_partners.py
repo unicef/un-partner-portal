@@ -4,6 +4,7 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.db import IntegrityError
 
 from agency.agencies import UNHCR
 from agency.roles import AgencyRole
@@ -337,18 +338,21 @@ class Command(BaseCommand):
         else:
             registration_document = None
 
-        PartnerRegistrationDocument.objects.update_or_create(
-            profile=profile,
-            defaults={
-                'created': source.created,
-                'modified': source.modified,
-                'created_by': self.dummy_user,
-                'registration_number': source.registration_number,
-                'issue_date': source.created,
-                'document': registration_document,
-                'editable': False,
-            }
-        )
+        try:
+            PartnerRegistrationDocument.objects.update_or_create(
+                profile=profile,
+                defaults={
+                    'created': source.created,
+                    'modified': source.modified,
+                    'created_by': self.dummy_user,
+                    'registration_number': source.registration_number,
+                    'issue_date': source.created,
+                    'document': registration_document,
+                    'editable': False,
+                }
+            )
+        except IntegrityError:
+            pass
 
     def migrate_vendor_numbers(self, source: legacy_models.PartnerPartnerVendorNumber):
         partner = Partner.objects.get(
