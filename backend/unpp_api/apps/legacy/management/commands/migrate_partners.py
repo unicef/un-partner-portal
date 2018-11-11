@@ -623,25 +623,28 @@ class Command(BaseCommand):
                 'is_active': False,
             }
         )
+        try:
+            self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
+            self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
+            self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
+            self._migrate_model(self.migrate_budget_info, legacy_models.PartnerPartnerbudget)
+            self._migrate_model(self.migrate_collaboration_evidence, legacy_models.PartnerPartnercollaborationevidence)
+            self._migrate_model(self.migrate_mailing_address, legacy_models.PartnerPartnermailingaddress)
+            self._migrate_model(self.migrate_profile, legacy_models.PartnerPartnerprofile)
+            self._migrate_model(self.migrate_vendor_numbers, legacy_models.PartnerPartnerVendorNumber)
+            self._migrate_model(
+                self.migrate_collaborations_partnerships, legacy_models.PartnerPartnercollaborationpartnership
+            )
+            self._migrate_model(self.migrate_mandate_mission, legacy_models.PartnerPartnermandatemission)
+            self._migrate_model(self.migrate_internal_control, legacy_models.PartnerPartnerinternalcontrol)
+            self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
+            self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
+            self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
+            self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
+            self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
 
-        self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
-        self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
-        self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
-        self._migrate_model(self.migrate_budget_info, legacy_models.PartnerPartnerbudget)
-        self._migrate_model(self.migrate_collaboration_evidence, legacy_models.PartnerPartnercollaborationevidence)
-        self._migrate_model(self.migrate_mailing_address, legacy_models.PartnerPartnermailingaddress)
-        self._migrate_model(self.migrate_profile, legacy_models.PartnerPartnerprofile)
-        self._migrate_model(self.migrate_vendor_numbers, legacy_models.PartnerPartnerVendorNumber)
-        self._migrate_model(
-            self.migrate_collaborations_partnerships, legacy_models.PartnerPartnercollaborationpartnership
-        )
-        self._migrate_model(self.migrate_mandate_mission, legacy_models.PartnerPartnermandatemission)
-        self._migrate_model(self.migrate_internal_control, legacy_models.PartnerPartnerinternalcontrol)
-        self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
-        self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
-        self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
-        self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
-        self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
+            self._migrate_model(self.migrate_partner_user, legacy_models.PartnerUser)
+            self._migrate_model(self.migrate_agency_user, legacy_models.UNHCRUser)
+        except:
+            self.stderr.write('ERROR -----')
 
-        self._migrate_model(self.migrate_partner_user, legacy_models.PartnerUser)
-        self._migrate_model(self.migrate_agency_user, legacy_models.UNHCRUser)
