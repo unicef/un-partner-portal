@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db import IntegrityError
+from django.core.exceptions import MultipleObjectsReturned
 
 from agency.agencies import UNHCR
 from agency.roles import AgencyRole
@@ -99,9 +100,13 @@ class Command(BaseCommand):
 
     def migrate_partner(self, source: legacy_models.PartnerPartner):
         self.stdout.write(f'Migrating {source.pk} - {source.legal_name}')
-        hq = self.migrate_partner(
-            legacy_models.PartnerPartner.objects.get(id=source.hq_id)
-        ) if source.hq_id else None
+
+        try:
+            hq = self.migrate_partner(
+                legacy_models.PartnerPartner.objects.get(id=source.hq_id)
+            ) if source.hq_id else None
+        except MultipleObjectsReturned:
+            self.stderr.write('LEGACY PARTNER MULTIPLE OBJECTS RETURNED.')
 
         legal_name_postfix = ''
         other_partners_with_same_name_in_country_count = Partner.objects.filter(
