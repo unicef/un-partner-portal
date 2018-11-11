@@ -239,7 +239,6 @@ class Command(BaseCommand):
         except DataError as de:
             self.stderr.write('DATA ERROR PartnerCollaborationEvidence.')
 
-
     def migrate_partner_funding(self, source: legacy_models.PartnerPartnerfunding):
         partner = Partner.objects.get(
             migrated_from=Partner.SOURCE_UNHCR,
@@ -265,23 +264,26 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerMailingAddress {source.pk} for {partner}')
 
-        PartnerMailingAddress.objects.update_or_create(
-            partner=partner,
-            defaults={
-                'created': source.created,
-                'modified': source.modified,
-                'mailing_type': source.mailing_type,
-                'street': source.street,
-                'po_box': source.po_box,
-                'city': source.city,
-                'country': source.country,
-                'zip_code': source.zip_code,
-                'telephone': source.telephone,
-                'fax': source.fax,
-                'website': source.website,
-                'org_email': source.org_email,
-            }
-        )
+        try:
+            PartnerMailingAddress.objects.update_or_create(
+                partner=partner,
+                defaults={
+                    'created': source.created,
+                    'modified': source.modified,
+                    'mailing_type': source.mailing_type,
+                    'street': source.street,
+                    'po_box': source.po_box,
+                    'city': source.city,
+                    'country': source.country,
+                    'zip_code': source.zip_code,
+                    'telephone': source.telephone,
+                    'fax': source.fax,
+                    'website': source.website,
+                    'org_email': source.org_email,
+                }
+            )
+        except DataError:
+            self.stderr.write('DATA ERROR PartnerMailingAddress.')
 
     def migrate_profile(self, source: legacy_models.PartnerPartnerprofile):
         partner = Partner.objects.get(
