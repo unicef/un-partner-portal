@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db import IntegrityError
+from django.db.utils import DataError
 from django.core.exceptions import MultipleObjectsReturned
 
 from agency.agencies import UNHCR
@@ -223,17 +224,21 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerCollaborationEvidence {source.pk} for {partner}')
 
-        PartnerCollaborationEvidence.objects.update_or_create(
-            partner=partner,
-            defaults={
-                'created': source.created,
-                'modified': source.modified,
-                'date_received': source.date_received,
-                'organization_name': source.organization_name,
-                'created_by': self.dummy_user,
-                'evidence_file': self._migrate_common_file(source.evidence_file_id),
-            }
-        )
+        try:
+            PartnerCollaborationEvidence.objects.update_or_create(
+                partner=partner,
+                defaults={
+                    'created': source.created,
+                    'modified': source.modified,
+                    'date_received': source.date_received,
+                    'organization_name': source.organization_name,
+                    'created_by': self.dummy_user,
+                    'evidence_file': self._migrate_common_file(source.evidence_file_id),
+                }
+            )
+        except DataError as de:
+            self.stderr.write('DATA ERROR PartnerCollaborationEvidence.')
+
 
     def migrate_partner_funding(self, source: legacy_models.PartnerPartnerfunding):
         partner = Partner.objects.get(
