@@ -394,16 +394,19 @@ class Command(BaseCommand):
         partner.profile.any_partnered_with_un = True
         partner.profile.save()
 
-        PartnerCollaborationPartnership.objects.update_or_create(
-            partner=partner,
-            created_by=self.dummy_user,
-            defaults={
-                'created': source.created,
-                'modified': source.modified,
-                'agency': UNHCR.model_instance,
-                'description': source.description,
-            }
-        )
+        try:
+            PartnerCollaborationPartnership.objects.update_or_create(
+                partner=partner,
+                created_by=self.dummy_user,
+                defaults={
+                    'created': source.created,
+                    'modified': source.modified,
+                    'agency': UNHCR.model_instance,
+                    'description': source.description,
+                }
+            )
+        except DataError:
+            self.stderr.write('DATA ERROR PartnerPartnercollaborationpartnership.')
 
     def migrate_mandate_mission(self, source: legacy_models.PartnerPartnermandatemission):
         partner = Partner.objects.get(
@@ -412,29 +415,32 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnermandatemission {source.pk} for {partner}')
 
-        PartnerMandateMission.objects.update_or_create(
-            partner=partner,
-            defaults={
-                'created': source.created,
-                'modified': source.modified,
-                'background_and_rationale': source.background_and_rationale,
-                'mandate_and_mission': source.mandate_and_mission,
-                'governance_structure': source.governance_structure,
-                'governance_hq': source.governance_hq,
-                'governance_organigram': self._migrate_common_file(source.governance_organigram_id),
-                'ethic_safeguard': source.ethic_safeguard,
-                'ethic_safeguard_comment': source.ethic_safeguard_comment,
-                'ethic_safeguard_policy': self._migrate_common_file(source.ethic_safeguard_policy_id),
-                'ethic_fraud': source.ethic_fraud,
-                'ethic_fraud_comment': source.ethic_fraud_comment,
-                'ethic_fraud_policy': self._migrate_common_file(source.ethic_fraud_policy_id),
-                'population_of_concern': source.population_of_concern,
-                'concern_groups': source.concern_groups.split(','),
-                'security_high_risk_locations': source.security_high_risk_locations,
-                'security_high_risk_policy': source.security_high_risk_policy,
-                'security_desc': source.security_desc,
-            }
-        )
+        try:
+            PartnerMandateMission.objects.update_or_create(
+                partner=partner,
+                defaults={
+                    'created': source.created,
+                    'modified': source.modified,
+                    'background_and_rationale': source.background_and_rationale,
+                    'mandate_and_mission': source.mandate_and_mission,
+                    'governance_structure': source.governance_structure,
+                    'governance_hq': source.governance_hq,
+                    'governance_organigram': self._migrate_common_file(source.governance_organigram_id),
+                    'ethic_safeguard': source.ethic_safeguard,
+                    'ethic_safeguard_comment': source.ethic_safeguard_comment,
+                    'ethic_safeguard_policy': self._migrate_common_file(source.ethic_safeguard_policy_id),
+                    'ethic_fraud': source.ethic_fraud,
+                    'ethic_fraud_comment': source.ethic_fraud_comment,
+                    'ethic_fraud_policy': self._migrate_common_file(source.ethic_fraud_policy_id),
+                    'population_of_concern': source.population_of_concern,
+                    'concern_groups': source.concern_groups.split(','),
+                    'security_high_risk_locations': source.security_high_risk_locations,
+                    'security_high_risk_policy': source.security_high_risk_policy,
+                    'security_desc': source.security_desc,
+                }
+            )
+        except DataError:
+            self.stderr.write('DATA ERROR PartnerPartnermandatemission.')
 
     def migrate_internal_control(self, source: legacy_models.PartnerPartnerinternalcontrol):
         partner = Partner.objects.get(
@@ -443,16 +449,19 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnerinternalcontrol {source.pk} for {partner}')
 
-        PartnerInternalControl.objects.update_or_create(
-            partner=partner,
-            functional_responsibility=source.functional_responsibility,
-            defaults={
-                'created': source.created,
-                'modified': source.modified,
-                'segregation_duties': source.segregation_duties,
-                'comment': source.comment,
-            }
-        )
+        try:
+            PartnerInternalControl.objects.update_or_create(
+                partner=partner,
+                functional_responsibility=source.functional_responsibility,
+                defaults={
+                    'created': source.created,
+                    'modified': source.modified,
+                    'segregation_duties': source.segregation_duties,
+                    'comment': source.comment,
+                }
+            )
+        except DataError:
+            self.stderr.write('DATA ERROR PartnerPartnerinternalcontrol.')
 
     def migrate_policy_area(self, source: legacy_models.PartnerPartnerpolicyarea):
         partner = Partner.objects.get(
@@ -461,16 +470,19 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnerpolicyarea {source.pk} for {partner}')
 
-        PartnerPolicyArea.objects.update_or_create(
-            partner=partner,
-            area=source.area,
-            defaults={
-                'created_by': self.dummy_user,
-                'created': source.created,
-                'modified': source.modified,
-                'document_policies': source.document_policies,
-            }
-        )
+        try:
+            PartnerPolicyArea.objects.update_or_create(
+                partner=partner,
+                area=source.area,
+                defaults={
+                    'created_by': self.dummy_user,
+                    'created': source.created,
+                    'modified': source.modified,
+                    'document_policies': source.document_policies,
+                }
+            )
+        except DataError:
+            self.stderr.write('DATA ERROR PartnerPartnerpolicyarea.')
 
     def migrate_audit_reports(self, source: legacy_models.PartnerPartnerauditreport):
         partner = Partner.objects.get(
@@ -478,18 +490,20 @@ class Command(BaseCommand):
             migrated_original_id=source.partner_id,
         )
         self.stdout.write(f'Migrating PartnerPartnerauditreport {source.pk} for {partner}')
-
-        PartnerAuditReport.objects.update_or_create(
-            partner=partner,
-            created=source.created,
-            defaults={
-                'created_by': self.dummy_user,
-                'modified': source.modified,
-                'org_audit': source.org_audit,
-                'link_report': source.link_report,
-                'most_recent_audit_report': self._migrate_common_file(source.most_recent_audit_report_id)
-            }
-        )
+        try:
+            PartnerAuditReport.objects.update_or_create(
+                partner=partner,
+                created=source.created,
+                defaults={
+                    'created_by': self.dummy_user,
+                    'modified': source.modified,
+                    'org_audit': source.org_audit,
+                    'link_report': source.link_report,
+                    'most_recent_audit_report': self._migrate_common_file(source.most_recent_audit_report_id)
+                }
+            )
+        except DataError:
+            self.stderr.write('DATA ERROR PartnerPartnerauditreport.')
 
     def migrate_experience(self, source: legacy_models.PartnerPartnerexperience):
         partner = Partner.objects.get(
@@ -573,20 +587,23 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnerotherinfo {source.pk} for {partner}')
 
-        PartnerOtherInfo.objects.update_or_create(
-            partner=partner,
-            defaults={
-                'created_by': self.dummy_user,
-                'created': source.created,
-                'modified': source.modified,
-                'info_to_share': source.info_to_share,
-                'org_logo': self._migrate_common_file(source.org_logo_id),
-                'org_logo_thumbnail': source.org_logo_thumbnail,
-                'other_doc_1': self._migrate_common_file(source.other_doc_1_id),
-                'other_doc_2': self._migrate_common_file(source.other_doc_2_id),
-                'other_doc_3': self._migrate_common_file(source.other_doc_3_id),
-            }
-        )
+        try:
+            PartnerOtherInfo.objects.update_or_create(
+                partner=partner,
+                defaults={
+                    'created_by': self.dummy_user,
+                    'created': source.created,
+                    'modified': source.modified,
+                    'info_to_share': source.info_to_share,
+                    'org_logo': self._migrate_common_file(source.org_logo_id),
+                    'org_logo_thumbnail': source.org_logo_thumbnail,
+                    'other_doc_1': self._migrate_common_file(source.other_doc_1_id),
+                    'other_doc_2': self._migrate_common_file(source.other_doc_2_id),
+                    'other_doc_3': self._migrate_common_file(source.other_doc_3_id),
+                }
+            )
+        except DataError:
+            self.stderr.write('DATA ERROR PartnerPartnerotherinfo.')
 
     def migrate_reporting(self, source: legacy_models.PartnerPartnerreporting):
         partner = Partner.objects.get(
@@ -595,18 +612,21 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnerreporting {source.pk} for {partner}')
 
-        PartnerReporting.objects.update_or_create(
-            partner=partner,
-            defaults={
-                'created': source.created,
-                'modified': source.modified,
-                'key_result': source.key_result,
-                'publish_annual_reports': source.publish_annual_reports,
-                'last_report': source.last_report,
-                'link_report': source.link_report or None,
-                'report': self._migrate_common_file(source.report_id),
-            }
-        )
+        try:
+            PartnerReporting.objects.update_or_create(
+                partner=partner,
+                defaults={
+                    'created': source.created,
+                    'modified': source.modified,
+                    'key_result': source.key_result,
+                    'publish_annual_reports': source.publish_annual_reports,
+                    'last_report': source.last_report,
+                    'link_report': source.link_report or None,
+                    'report': self._migrate_common_file(source.report_id),
+                }
+            )
+        except DataError:
+            self.stderr.write('DATA ERROR PartnerPartnerreporting.')
 
     def _migrate_model(self, migrate_function, model):
         for obj in model.objects.all():
@@ -623,28 +643,25 @@ class Command(BaseCommand):
                 'is_active': False,
             }
         )
-        try:
-            self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
-            self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
-            self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
-            self._migrate_model(self.migrate_budget_info, legacy_models.PartnerPartnerbudget)
-            self._migrate_model(self.migrate_collaboration_evidence, legacy_models.PartnerPartnercollaborationevidence)
-            self._migrate_model(self.migrate_mailing_address, legacy_models.PartnerPartnermailingaddress)
-            self._migrate_model(self.migrate_profile, legacy_models.PartnerPartnerprofile)
-            self._migrate_model(self.migrate_vendor_numbers, legacy_models.PartnerPartnerVendorNumber)
-            self._migrate_model(
-                self.migrate_collaborations_partnerships, legacy_models.PartnerPartnercollaborationpartnership
-            )
-            self._migrate_model(self.migrate_mandate_mission, legacy_models.PartnerPartnermandatemission)
-            self._migrate_model(self.migrate_internal_control, legacy_models.PartnerPartnerinternalcontrol)
-            self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
-            self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
-            self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
-            self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
-            self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
 
-            self._migrate_model(self.migrate_partner_user, legacy_models.PartnerUser)
-            self._migrate_model(self.migrate_agency_user, legacy_models.UNHCRUser)
-        except:
-            self.stderr.write('ERROR -----')
+        self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
+        self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
+        self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
+        self._migrate_model(self.migrate_budget_info, legacy_models.PartnerPartnerbudget)
+        self._migrate_model(self.migrate_collaboration_evidence, legacy_models.PartnerPartnercollaborationevidence)
+        self._migrate_model(self.migrate_mailing_address, legacy_models.PartnerPartnermailingaddress)
+        self._migrate_model(self.migrate_profile, legacy_models.PartnerPartnerprofile)
+        self._migrate_model(self.migrate_vendor_numbers, legacy_models.PartnerPartnerVendorNumber)
+        self._migrate_model(
+            self.migrate_collaborations_partnerships, legacy_models.PartnerPartnercollaborationpartnership
+        )
+        self._migrate_model(self.migrate_mandate_mission, legacy_models.PartnerPartnermandatemission)
+        self._migrate_model(self.migrate_internal_control, legacy_models.PartnerPartnerinternalcontrol)
+        self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
+        self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
+        self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
+        self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
+        self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
 
+        self._migrate_model(self.migrate_partner_user, legacy_models.PartnerUser)
+        self._migrate_model(self.migrate_agency_user, legacy_models.UNHCRUser)
