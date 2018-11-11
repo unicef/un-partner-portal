@@ -106,6 +106,7 @@ class Command(BaseCommand):
                 legacy_models.PartnerPartner.objects.get(id=source.hq_id)
             ) if source.hq_id else None
         except MultipleObjectsReturned:
+            hq = None
             self.stderr.write('LEGACY PARTNER MULTIPLE OBJECTS RETURNED.')
 
         legal_name_postfix = ''
