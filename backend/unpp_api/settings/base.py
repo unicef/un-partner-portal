@@ -44,9 +44,12 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
 
 
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
+# STATIC_URL = '/static/'
 STATIC_URL = '/api/static/'
-STATIC_ROOT = f'{DATA_VOLUME}/staticserve'
-
+# STATIC_ROOT = f'{DATA_VOLUME}/staticserve'
+STATIC_ROOT = "/home/jojo/workspace/unpp/backend/unpp_api/static"
+STATICFILES_DIRS = (
+)
 # static serving
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -118,6 +121,10 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.request',
             ],
+            'libraries': {
+                'staticfiles': 'django.templatetags.static',
+                'i18n': 'django.templatetags.i18n',
+            },
         },
     },
 ]

@@ -1,0 +1,61 @@
+// Your custom styles
+p{
+	font-size: 1.1em;
+}
+.logos{
+	max-height: 65px;
+	width: auto;
+}
+.unpp-green-text{
+	color: #34b0b7;
+}
+.unpp-purple-text{
+	color: #6B5CA5;
+}
+.blackcaption .carousel-caption {
+    position: relative;
+    right: 0;
+    bottom: 20px;
+    left: 0;
+    z-index: 10;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: #fff;
+    text-align: center;
+    background: #6B5CA5;
+    padding: 20px;
+}
+
+.blackcaption .carousel-caption a{
+	color: $white;
+	text-decoration: underline;
+}
+.carousel .carousel-control-next-icon {
+    background-image: url(../img/svg/arrow_right.svg);
+}
+.carousel .carousel-control-prev-icon {
+    background-image: url(../img/svg/arrow_left.svg);
+}
+.carousel.blackcaption .carousel-control-prev-icon, .carousel.blackcaption .carousel-control-next-icon {
+    width: 48px;
+    height: 48px;
+}
+.opsbkg{
+	height: 400px;
+	background-size: cover;
+	background-position: top center;
+}
+table td,  table th{
+    font-size: 1.0rem;
+}
+table td {
+    font-weight: 400;
+}
+.maxwidth130{
+	max-width: 130px;
+	
+}
+.introsection{
+	padding-top: 140px;
+	padding-bottom: 50px;
+}

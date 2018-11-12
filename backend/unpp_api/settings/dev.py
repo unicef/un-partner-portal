@@ -35,3 +35,17 @@ try:
     from .local import *  # noqa: ignore=F403
 except ImportError:
     pass
+
+STATIC_URL = '/api/static/'
+STATICFILES_DIR = [
+    # os.path.join(BASE_DIR, "static"),
+    # "/home/jojo/workspace/unpp/backend/unpp_api/static",
+]
+STATIC_ROOT = "/home/jojo/workspace/unpp/backend/unpp_api/static"
+
+
+print(111, STATICFILES_DIR)
+
+BASE = os.path.abspath(os.path.dirname(__name__))
+STATICFILES_DIRS = (os.path.join(BASE, "static"),)
+print(222, BASE)

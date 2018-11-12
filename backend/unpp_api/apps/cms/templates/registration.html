@@ -1,82 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Registration - UN Partner Portal{% endblock title %}
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Registration - UN Partner Portal</title>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!-- Bootstrap core CSS -->
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <!-- Material Design Bootstrap -->
-  <link href="css/mdb.css" rel="stylesheet">
-  <!-- Your custom styles (optional) -->
-  <link href="css/style.css" rel="stylesheet">
-  <style type="text/css">
-    @media (min-width: 800px) and (max-width: 850px) {
-            .navbar:not(.top-nav-collapse) {
-                background: #1C2331!important;
-            }
-        }
-  </style>
-</head>
-
-<body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar z-depth-0 ">
-    <div class="container">
-
-      <!-- Brand -->
-      <a class="navbar-brand" href="index.html">
-        <img src="img/unpp-logo-white-v4.png" height="47" alt="UN Partner Portal">
-   	 </a>
-
-      <!-- Collapse -->
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-        aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- Links -->
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-        <!-- Left -->
-        <ul class="navbar-nav mr-auto">
-          
-          <li class="nav-item">
-            <a class="nav-link" href="index.html#workingtogether">Working Together</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="partner-opportunities.html">Partnership Opportunities</a>
-          </li>
-			<li class="nav-item">
-            <a class="nav-link" href="https://unpartnerportalcso.zendesk.com/hc/en-us">Resource Library</a>
-          </li>
-        </ul>
-
-        <!-- Right -->
-        <ul class="navbar-nav nav-flex-icons">
-          <li class="nav-item">
-            <a href="registration.html" class="nav-link">
-              Register
-            </a>
-          </li>
-          
-          <li class="nav-item">
-            <a href="https://www.unpartnerportal.org/login" class="nav-link secondary-color rounded">
-              Sign In
-            </a>
-          </li>
-        </ul>
-
-      </div>
-
-    </div>
-  </nav>
-  <!-- Navbar -->
+{% block intro %}
 
  <!-- Full Page Intro -->
   <div class="unblue">
@@ -116,6 +42,10 @@
 
   </div>
   <!-- Full Page Intro -->
+
+{% endblock intro %}
+
+{% block main %}
 
   <!--Main layout-->
   <main>
@@ -220,93 +150,4 @@
   </main>
   <!--Main layout-->
 
-  <!-- Footer -->
-<footer class="page-footer font-small stylish-color-dark pt-4">
-
-    <!-- Footer Links -->
-    <div class="container text-center text-md-left">
-
-      <!-- Grid row -->
-      <div class="row">
-		  
-		   <!-- Grid column -->
-        <div class="col-md-8 mx-auto">
-
-          <!-- Content -->
-          <h6 class="mt-0 mb-0 text-white-50 border-bottom border-light">Site provided by</h6>
-          <div class="row justify-content-start">
-			    <div class="col-4 text-center"><a href="http://www.unhcr.org"><img src="img/logo-unhcr.png" alt="UNHCR" class="logos img-fluid mx-auto"></a></div>
-          <div class="col-4 text-center"><a href="http://www.unicef.org"><img src="img/logo-unicef.png" alt="unicef" class="logos img-fluid mx-auto"></div>
-			    <div class="col-4 text-center"><a href="http://www.wfp.org"><img src="img/logo-wfp-2.png" alt="WFP" class="logos img-fluid mx-auto"></div>
-        </div>
-
-
-        </div>
-        <!-- Grid column -->
-		  
-		  <hr class="clearfix w-100 d-md-none">
-
-        <!-- Grid column -->
-        <div class="col-md-4 mx-auto">
-			
-			<!-- Links -->
-        <ul class="list-unstyled">
-          <li>
-            <a href="https://unpartnerportalcso.zendesk.com/hc/en-us/requests/new">SUPPORT</a>
-          </li>
-          <li>
-            <a href="https://unpartnerportalcso.zendesk.com/hc/en-us/requests/new">CONTACT US</a>
-          </li>
-          <li>
-            <a href="#!">PRIVACY</a>
-          </li>
-          <li>
-            <a href="#!">TERMS AND CONDITIONS</a>
-          </li>
-        </ul>
-	
-          
-        </div>
-        <!-- Grid column -->
-
-        
-
-       
-
-        
-
-      </div>
-      <!-- Grid row -->
-
-    </div>
-    <!-- Footer Links -->
-
- 
-
-    <!-- Copyright -->
-    <div class="footer-copyright text-center py-3">© 2018 UN PARTNER PORTAL
-    </div>
-    <!-- Copyright -->
-
-</footer>
-<!-- Footer -->
-
-  <!-- SCRIPTS -->
-  <!-- JQuery -->
-  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-  <!-- Bootstrap tooltips -->
-  <script type="text/javascript" src="js/popper.min.js"></script>
-  <!-- Bootstrap core JavaScript -->
-  <script type="text/javascript" src="js/bootstrap.min.js"></script>
-  <!-- MDB core JavaScript -->
-  <script type="text/javascript" src="js/mdb.min.js"></script>
-  <!-- Custom JavaScript -->
-  <script type="text/javascript" src="js/custom.js"></script>
-  <!-- Initializations -->
-  <script type="text/javascript">
-    // Animations initialization
-    new WOW().init();
-  </script>
-</body>
-
-</html>
+{% endblock main %}
