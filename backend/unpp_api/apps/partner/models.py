@@ -15,6 +15,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MinValueValidator, MinLengthValidator
 from django.db.models import Q, Count
 from django.db.models.signals import post_save
+from django_countries.fields import Country
 from model_utils.models import TimeStampedModel
 
 from account.models import User
@@ -214,6 +215,18 @@ class Partner(MigratedTimeStampedModel):
     @property
     def org_head(self):
         return self.organisation_heads.order_by('-created').first()
+
+    @property
+    def country(self):
+        return Country(self.country_code)
+
+    @property
+    def country_iso_alpha2(self):
+        return Country(self.country_code).code
+
+    @property
+    def country_iso_alpha3(self):
+        return Country(self.country_code).alpha3
 
     @property
     def last_update_timestamp(self):
