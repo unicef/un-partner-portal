@@ -115,44 +115,44 @@ spec:
 
       restartPolicy: Never
   backoffLimit: 4
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: backend-migrate-partners
-  annotations:
-    revision: "{{CF_SHORT_REVISION}}"
-  labels:
-    redeploy: "true"
-  namespace: {{NAMESPACE}}
-spec:
-  template:
-    spec:
-      containers:
-      - name: backend-migrate-partners
-        image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
-        command: ["bash"]
-        args: ["-c", "python /code/manage.py migrate_partners"]
-        env:
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: secret-key
-                  key: password
-            - name: ENV
-              value: {{ENV}}
-            - name: POSTGRES_DB
-              value: {{POSTGRES_DB}}
-            - name: POSTGRES_USER
-              value: {{POSTGRES_USER}}
-            - name: POSTGRES_HOST
-              value: {{POSTGRES_HOST}}
-            - name: DJANGO_ALLOWED_HOST
-              value: {{DJANGO_ALLOWED_HOST}}
-            - name: SA_PASSWORD
-              value: "{{SA_PASSWORD}}"
-            - name: LEGACY_DB_HOST
-              value: "{{LEGACY_DB_HOST}}"
-
-      restartPolicy: Never
-  backoffLimit: 4
+#---
+#apiVersion: batch/v1
+#kind: Job
+#metadata:
+#  name: backend-migrate-partners
+#  annotations:
+#    revision: "{{CF_SHORT_REVISION}}"
+#  labels:
+#    redeploy: "true"
+#  namespace: {{NAMESPACE}}
+#spec:
+#  template:
+#    spec:
+#      containers:
+#      - name: backend-migrate-partners
+#        image: unicef/unpp-backend:{{CF_SHORT_REVISION}}
+#        command: ["bash"]
+#        args: ["-c", "python /code/manage.py migrate_partners"]
+#        env:
+#            - name: SECRET_KEY
+#              valueFrom:
+#                secretKeyRef:
+#                  name: secret-key
+#                  key: password
+#            - name: ENV
+#              value: {{ENV}}
+#            - name: POSTGRES_DB
+#              value: {{POSTGRES_DB}}
+#            - name: POSTGRES_USER
+#              value: {{POSTGRES_USER}}
+#            - name: POSTGRES_HOST
+#              value: {{POSTGRES_HOST}}
+#            - name: DJANGO_ALLOWED_HOST
+#              value: {{DJANGO_ALLOWED_HOST}}
+#            - name: SA_PASSWORD
+#              value: "{{SA_PASSWORD}}"
+#            - name: LEGACY_DB_HOST
+#              value: "{{LEGACY_DB_HOST}}"
+#
+#      restartPolicy: Never
+#  backoffLimit: 4

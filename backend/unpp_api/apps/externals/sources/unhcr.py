@@ -16,7 +16,9 @@ class UNHCRInfoClient(object):
         self.session.auth = self.auth
 
     def get_tables(self, vendor_number):
-        url_postfix = f'?PARTNER_CODE={vendor_number.number}&ISO_CODE={vendor_number.partner.country_iso_alpha3}'
+        url_postfix = f'?PARTNER_CODE={vendor_number.number}'
+        if not vendor_number.partner.is_hq:
+            url_postfix += f'&ISO_CODE={vendor_number.partner.country_iso_alpha3}'
 
         sources = {
             'Overview': f"{self.host}params/flat/OVERVIEW" + url_postfix,
