@@ -83,7 +83,7 @@ export const loadUserData = () => (dispatch, getState) => {
   const { session } = getState();
   const token = session.token;
   const partnerId = session.partnerId;
- 
+
   if (!token) {
     window.location.href = '/landing/';
     return Promise.resolve();
@@ -175,16 +175,20 @@ export const loginUser = creds => dispatch => login(creds)
     history.push('/');
   });
 
-export const logoutUser = () => dispatch => logout()
-  .then(() => {
-    window.localStorage.removeItem('token');
-    dispatch(logoutSuccess());
-    window.location.href = '/landing/';
-  }).catch(() => {
-    window.localStorage.removeItem('token');
-    dispatch(logoutSuccess());
-    window.location.href = '/landing/';
-  });
+export const logoutUser = () => (dispatch, getState) => {
+  const logoutAzure = getState().partnerProfileConfig['active-directory-logout-url'];
+
+  return logout()
+    .then(() => {
+      window.localStorage.removeItem('token');
+      dispatch(logoutSuccess());
+      window.location.href = logoutAzure;
+    }).catch(() => {
+      window.localStorage.removeItem('token');
+      dispatch(logoutSuccess());
+      window.location.href = logoutAzure;
+    })
+};
 
 export const registerUser = json => dispatch => postRegistration(json)
   .then(() => {
