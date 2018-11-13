@@ -44,7 +44,7 @@ def social_details(backend, details, response, *args, **kwargs):
         user_data = backend.user_data(None, response=response) or {}
         r['details']['email'] = user_data.get('email', user_data.get('signInNames.emailAddress'))
 
-    details['idp'] = response.get('idp', '')
+    r['details']['idp'] = response.get('idp', '')
 
     return r
 
@@ -58,7 +58,7 @@ def user_details(strategy, details, user=None, *args, **kwargs):
 
         if not user.agency_members.exists():
             for agency in AGENCIES:
-                if agency.name.lower() in details['idp']:
+                if agency.name.lower() in details.get('idp'):
                     office, _ = AgencyOffice.get_or_create(
                         agency=agency.model_instance,
                         country='CH'  # TODO: Need to decide how to retrieve country for user
