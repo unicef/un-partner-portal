@@ -8,5 +8,5 @@ Hello {{ invited_user.fullname }}
 {{ partner.legal_name|default:inviting_user.fullname }} has registered on the UN Partner Portal and invites you to access the account.
 <br/>
 <br/>
-Please visit URL {{ login_url }} and register using this email address to continue.
+Please visit URL <a href="{{ login_url }}">{{ login_url }}</a> and register using this email address to continue.
 {% endblock %}

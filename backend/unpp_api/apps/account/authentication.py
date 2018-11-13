@@ -8,6 +8,8 @@ from django.conf import settings
 from social_core.backends.azuread_b2c import AzureADB2COAuth2
 from social_core.pipeline import user as social_core_user
 
+from agency.agencies import AGENCIES
+from agency.models import AgencyMember, AgencyOffice
 
 logger = logging.getLogger('console')
 
@@ -28,6 +30,8 @@ def social_details(backend, details, response, *args, **kwargs):
         user_data = backend.user_data(None, response=response) or {}
         r['details']['email'] = user_data.get('email', user_data.get('signInNames.emailAddress'))
 
+    details['idp'] = response.get('idp', '')
+
     return r
 
 
@@ -37,6 +41,21 @@ def user_details(strategy, details, user=None, *args, **kwargs):
     if user:
         user.fullname = details.get('fullname') or f"{details['first_name']} {details['last_name']}"
         user.save()
+
+        if not user.agency_members.exists():
+            for agency in AGENCIES:
+                if agency.name.lower() in details['idp']:
+                    office, _ = AgencyOffice.get_or_create(
+                        agency=agency.model_instance,
+                        country='CH'  # TODO: Need to decide how to retrieve country for user
+                    )
+                    AgencyMember.objects.get_or_create(
+                        user=user,
+                        defaults={
+                            'office': office,
+                        }
+                    )
+                    break
 
     return social_core_user.user_details(strategy, details, user, *args, **kwargs)
 

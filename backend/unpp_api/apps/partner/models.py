@@ -743,7 +743,7 @@ class PartnerReporting(TimeStampedModel):
     publish_annual_reports = models.NullBooleanField()
     last_report = models.DateField(verbose_name='Date of most recent annual report', null=True, blank=True)
     report = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="reports")
-    link_report = models.URLField(null=True, blank=True)
+    link_report = models.URLField(max_length=1000, null=True, blank=True)
 
     class Meta:
         ordering = ('id', )
