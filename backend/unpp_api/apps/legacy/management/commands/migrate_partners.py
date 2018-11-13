@@ -640,6 +640,13 @@ class Command(BaseCommand):
             }
         )
 
+        # Cleanup results of previous bug
+        PartnerAuditReport.objects.filter(
+            partner__migrated_from=Partner.SOURCE_UNHCR,
+            most_recent_audit_report=None,
+            link_report=None
+        ).delete()
+
         self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
         self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
         self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
