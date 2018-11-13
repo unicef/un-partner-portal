@@ -34,6 +34,7 @@ from partner.models import (
 )
 from agency.models import AgencyMember, AgencyOffice
 from externals.models import PartnerVendorNumber
+from review.models import PartnerVerification
 
 
 def clean_value(value):
@@ -138,6 +139,19 @@ class Command(BaseCommand):
         if created:
             partner.migrated_timestamp = timezone.now()
             partner.save()
+
+        if not partner.verifications.exists():
+            PartnerVerification.objects.create(
+                partner=partner,
+                submitter=self.dummy_user,
+                is_verified=True,
+                is_cert_uploaded=True,
+                is_mm_consistent=True,
+                is_indicate_results=True,
+                is_rep_risk=False,
+                is_yellow_flag=False,
+            )
+
         return partner
 
     def migrate_audit(self, source: legacy_models.PartnerPartnerauditassessment):
