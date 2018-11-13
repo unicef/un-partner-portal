@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db import IntegrityError
@@ -102,7 +103,9 @@ class Command(BaseCommand):
         self.stdout.write(f'Migrating {source.pk} - {source.legal_name}')
 
         hq = self.migrate_partner(
-            legacy_models.PartnerPartner.objects.get(id=source.hq_id)
+            legacy_models.PartnerPartner.objects.filter(
+                hq_id=None, id=source.hq_id
+            ).first()  # TODO: Proper fix for duplicated entries
         ) if source.hq_id else None
 
         legal_name_postfix = ''
@@ -476,17 +479,20 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'Migrating PartnerPartnerauditreport {source.pk} for {partner}')
 
-        PartnerAuditReport.objects.update_or_create(
-            partner=partner,
-            org_audit=source.org_audit,
-            defaults={
-                'created_by': self.dummy_user,
-                'created': source.created,
-                'modified': source.modified,
-                'link_report': source.link_report,
-                'most_recent_audit_report': self._migrate_common_file(source.most_recent_audit_report_id)
-            }
-        )
+        report_file = self._migrate_common_file(source.most_recent_audit_report_id)
+
+        if source.link_report or report_file:
+            PartnerAuditReport.objects.update_or_create(
+                partner=partner,
+                org_audit=source.org_audit,
+                link_report=source.link_report,
+                most_recent_audit_report=report_file,
+                defaults={
+                    'created_by': self.dummy_user,
+                    'created': source.created,
+                    'modified': source.modified,
+                }
+            )
 
     def migrate_experience(self, source: legacy_models.PartnerPartnerexperience):
         partner = Partner.objects.get(
@@ -508,6 +514,13 @@ class Command(BaseCommand):
             )
         except IntegrityError:
             self.stderr.write(f'Bad Specialization ID specified {source.specialization_id}.')
+        except MultipleObjectsReturned:
+            # Cleanup duplicate entries caused by previous script run
+            PartnerExperience.objects.filter(
+                partner=partner,
+                specialization_id=source.specialization_id,
+            ).delete()
+            return self.migrate_experience(source)
 
     def migrate_partner_user(self, source: legacy_models.PartnerUser):
         partner = Partner.objects.get(
@@ -515,29 +528,31 @@ class Command(BaseCommand):
             migrated_original_id=source.ProfileID,
         )
         self.stdout.write(f'Migrating PartnerUser {source.UserID} for {partner}')
+        email = source.Username.strip()
+        if not email:
+            self.stderr.write('Missing email for user, skipping...')
+            return
 
-        try:
-            user, _ = get_user_model().objects.update_or_create(
-                email=source.Username,
-                defaults={
-                    'fullname': f'{source.FirstName} {source.LastName}' if source.FirstName else 'N/A',
-                    'date_joined': source.ValidFrom,
-                }
-            )
-            user.set_unusable_password()
-            user.save()
+        user, _ = get_user_model().objects.update_or_create(
+            email__iexact=email,
+            defaults={
+                'email': email,
+                'fullname': f'{source.FirstName} {source.LastName}' if source.FirstName else 'N/A',
+                'date_joined': source.ValidFrom,
+            }
+        )
+        user.set_unusable_password()
+        user.save()
 
-            user_role = source.Role.split()[-1] if 'HQ' in source.Role else source.Role
-            PartnerMember.objects.update_or_create(
-                user=user,
-                partner=partner,
-                defaults={
-                    'title': 'Member',
-                    'role': user_role,
-                }
-            )
-        except IntegrityError:
-            self.stderr.write('Integrity ERROR PartnerUser.')
+        user_role = source.Role.split()[-1] if 'HQ' in source.Role else source.Role
+        PartnerMember.objects.update_or_create(
+            user=user,
+            partner=partner,
+            defaults={
+                'title': 'Member',
+                'role': user_role,
+            }
+        )
 
     def migrate_agency_user(self, source: legacy_models.UNHCRUser):
         self.stdout.write(f'Migrating AgencyUser {source.Email}')
@@ -614,7 +629,7 @@ class Command(BaseCommand):
             migrate_function(obj)
 
     def handle(self, *args, **options):
-        self.stdout.write('Start data mgiration')
+        self.stdout.write('Start data migration')
         self.check_empty_models()
         # Need this for models that require a creator
         self.dummy_user, _ = get_user_model().objects.update_or_create(
@@ -625,24 +640,24 @@ class Command(BaseCommand):
             }
         )
 
-        self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
-        self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
-        self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
-        self._migrate_model(self.migrate_budget_info, legacy_models.PartnerPartnerbudget)
-        self._migrate_model(self.migrate_collaboration_evidence, legacy_models.PartnerPartnercollaborationevidence)
-        self._migrate_model(self.migrate_mailing_address, legacy_models.PartnerPartnermailingaddress)
-        self._migrate_model(self.migrate_profile, legacy_models.PartnerPartnerprofile)
-        self._migrate_model(self.migrate_vendor_numbers, legacy_models.PartnerPartnerVendorNumber)
-        self._migrate_model(
-            self.migrate_collaborations_partnerships, legacy_models.PartnerPartnercollaborationpartnership
-        )
-        self._migrate_model(self.migrate_mandate_mission, legacy_models.PartnerPartnermandatemission)
-        self._migrate_model(self.migrate_internal_control, legacy_models.PartnerPartnerinternalcontrol)
-        self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
-        self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
-        self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
-        self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
-        self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
+        # self._migrate_model(self.migrate_partner, legacy_models.PartnerPartner)
+        # self._migrate_model(self.migrate_audit, legacy_models.PartnerPartnerauditassessment)
+        # self._migrate_model(self.migrate_authorised_officer, legacy_models.PartnerPartnerauthorisedofficer)
+        # self._migrate_model(self.migrate_budget_info, legacy_models.PartnerPartnerbudget)
+        # self._migrate_model(self.migrate_collaboration_evidence, legacy_models.PartnerPartnercollaborationevidence)
+        # self._migrate_model(self.migrate_mailing_address, legacy_models.PartnerPartnermailingaddress)
+        # self._migrate_model(self.migrate_profile, legacy_models.PartnerPartnerprofile)
+        # self._migrate_model(self.migrate_vendor_numbers, legacy_models.PartnerPartnerVendorNumber)
+        # self._migrate_model(
+        #     self.migrate_collaborations_partnerships, legacy_models.PartnerPartnercollaborationpartnership
+        # )
+        # self._migrate_model(self.migrate_mandate_mission, legacy_models.PartnerPartnermandatemission)
+        # self._migrate_model(self.migrate_internal_control, legacy_models.PartnerPartnerinternalcontrol)
+        # self._migrate_model(self.migrate_policy_area, legacy_models.PartnerPartnerpolicyarea)
+        # self._migrate_model(self.migrate_audit_reports, legacy_models.PartnerPartnerauditreport)
+        # self._migrate_model(self.migrate_experience, legacy_models.PartnerPartnerexperience)
+        # self._migrate_model(self.migrate_other_info, legacy_models.PartnerPartnerotherinfo)
+        # self._migrate_model(self.migrate_reporting, legacy_models.PartnerPartnerreporting)
 
         self._migrate_model(self.migrate_partner_user, legacy_models.PartnerUser)
         self._migrate_model(self.migrate_agency_user, legacy_models.UNHCRUser)
