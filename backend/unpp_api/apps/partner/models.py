@@ -593,15 +593,15 @@ class PartnerMailingAddress(TimeStampedModel):
         choices=MAILING_TYPES,
         default=MAILING_TYPES.street
     )
-    street = models.CharField(max_length=200, null=True, blank=True)
-    po_box = models.CharField(max_length=200, null=True, blank=True)
-    city = models.CharField(max_length=200, null=True, blank=True)
+    street = models.CharField(max_length=1000, null=True, blank=True)
+    po_box = models.CharField(max_length=1000, null=True, blank=True)
+    city = models.CharField(max_length=1000, null=True, blank=True)
     country = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
-    zip_code = models.CharField(max_length=200, null=True, blank=True)
-    telephone = models.CharField(max_length=255, null=True, blank=True)
-    fax = models.CharField(max_length=255, null=True, blank=True)
-    website = models.URLField(null=True, blank=True)
-    org_email = models.EmailField(null=True, blank=True)
+    zip_code = models.CharField(max_length=1000, null=True, blank=True)
+    telephone = models.CharField(max_length=1000, null=True, blank=True)
+    fax = models.CharField(max_length=1000, null=True, blank=True)
+    website = models.URLField(max_length=1000, null=True, blank=True)
+    org_email = models.EmailField(max_length=1000, null=True, blank=True)
 
     class Meta:
         ordering = ('id', )
@@ -928,7 +928,7 @@ class PartnerFunding(TimeStampedModel):
         ordering = ('id', )
 
     def __str__(self):
-        return "PartnerFunding <pk:{}>".format(self.id)
+        return f"PartnerFunding {self.partner}"
 
 
 class PartnerCollaborationPartnership(TimeStampedModel):
@@ -937,7 +937,7 @@ class PartnerCollaborationPartnership(TimeStampedModel):
     agency = models.ForeignKey(
         'agency.Agency', related_name="collaborations_partnership", blank=True, null=True
     )
-    description = models.CharField(max_length=5000, blank=True, null=True)
+    description = models.CharField(max_length=10000, blank=True, null=True)
     partner_number = models.CharField(
         max_length=200, blank=True, null=True, verbose_name='Please provide your Vendor/Partner Number (If applicable)'
     )

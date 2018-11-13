@@ -478,11 +478,11 @@ class Command(BaseCommand):
 
         PartnerAuditReport.objects.update_or_create(
             partner=partner,
-            created=source.created,
+            org_audit=source.org_audit,
             defaults={
                 'created_by': self.dummy_user,
+                'created': source.created,
                 'modified': source.modified,
-                'org_audit': source.org_audit,
                 'link_report': source.link_report,
                 'most_recent_audit_report': self._migrate_common_file(source.most_recent_audit_report_id)
             }
@@ -498,12 +498,12 @@ class Command(BaseCommand):
         try:
             PartnerExperience.objects.update_or_create(
                 partner=partner,
-                created=source.created,
+                specialization_id=source.specialization_id,
                 defaults={
                     'created_by': self.dummy_user,
+                    'created': source.created,
                     'modified': source.modified,
                     'years': source.years,
-                    'specialization_id': source.specialization_id,
                 }
             )
         except IntegrityError:
