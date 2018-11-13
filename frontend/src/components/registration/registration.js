@@ -1,29 +1,40 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { browserHistory as history } from 'react-router';
+import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import Card from '../common/card';
 import Stepper from './stepper';
-import { browserHistory as history } from 'react-router';
 
 const messages = {
   title: 'Registration Organization',
   signOut: 'Sign out',
 };
 
-const Registration = () => (
-  <div>
+const Registration = (props) => {
+  const { logoutAzure } = props;
+
+  return (<div>
     <Button
       style={{ marginTop: '15px', right: '15px', position: 'fixed' }}
       color="accent"
       raised
       onClick={() => {
         window.localStorage.removeItem('token');
-        history.push('/login');
+        window.location.href = logoutAzure;
       }}>{messages.signOut}</Button>
     <Card title={messages.title}>
       <Stepper />
     </Card>
-  </div >
-);
+  </div >)
+};
 
+Registration.propTypes = {
+  logoutAzure: PropTypes.string,
+};
 
-export default Registration;
+const mapStateToProps = state => ({
+  logoutAzure: state.partnerProfileConfig['active-directory-logout-url'],
+});
+
+export default connect(mapStateToProps)(Registration);
