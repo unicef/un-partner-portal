@@ -60,7 +60,7 @@ def user_details(strategy, details, user=None, *args, **kwargs):
             for agency in AGENCIES:
                 # TODO: Settle if it's ok to use IDP, or just match by email domain
                 if agency.name.lower() in details.get('idp', '').lower():
-                    office, _ = AgencyOffice.get_or_create(
+                    office, _ = AgencyOffice.objects.get_or_create(
                         agency=agency.model_instance,
                         country='CH'  # TODO: Need to decide how to retrieve country for user
                     )
