@@ -29,11 +29,10 @@ import {
   handleClear,
 } from '../components/forms//autocompleteHelpers/autocompleteFunctions';
 import { RenderMultipleSelections, RenderPlaceholder } from '../components/forms/selectHelpers/selectRenderers';
-import TextFieldForm from '../components/forms/textFieldForm';
 
 export const fileNameFromUrl = (url) => {
   if (url) {
-    return url.split('/').pop();
+    return url.split('?')[0].split('/').pop();
   }
 
   return '-';
