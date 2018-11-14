@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from rest_framework import serializers
 
 from account.models import User
@@ -104,6 +105,17 @@ class PartnerOfficeManagementSerializer(serializers.ModelSerializer):
         )
 
 
+class CurrentUserOfficesListSerializer(serializers.ListSerializer):
+
+    def to_representation(self, data):
+        request = self.context.get('request')
+        if request:
+            data = data.filter(
+                Q(partner_id=request.active_partner.id) | Q(partner__hq_id=request.active_partner.id)
+            )
+        return super(CurrentUserOfficesListSerializer, self).to_representation(data)
+
+
 class PartnerMemberManagementSerializer(serializers.ModelSerializer):
 
     office = PartnerOfficeManagementSerializer(read_only=True, source='partner')
@@ -121,6 +133,7 @@ class PartnerMemberManagementSerializer(serializers.ModelSerializer):
             'office_id',
             'current_user_can_edit',
         )
+        list_serializer_class = CurrentUserOfficesListSerializer
 
     def get_current_user_can_edit(self, member: PartnerMember):
         request = self.context.get('request')
@@ -156,6 +169,7 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
     def save(self):
         update = bool(self.instance)
         user = super(PartnerUserManagementSerializer, self).save()
+        request = self.context.get('request')
 
         if self.context['partner_members'] is not None:
             memberships = []
@@ -165,7 +179,9 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
                     partner=member_data.pop('office_id'),
                     defaults=member_data
                 )[0].pk)
-            PartnerMember.objects.filter(user=user).exclude(pk__in=memberships).delete()
+            PartnerMember.objects.filter(user=user).filter(
+                Q(partner_id=request.active_partner.id) | Q(partner__hq_id=request.active_partner.id)
+            ).exclude(pk__in=memberships).delete()
 
         if not update:
             user.profile.accepted_tos = True
