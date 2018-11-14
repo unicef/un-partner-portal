@@ -7,17 +7,25 @@ import sys
 # Change per project
 ####
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 
 PROJECT_NAME = 'unpp_api'
 # project root and add "apps" to the path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 
+# domains/hosts etc.
+DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
+WWW_ROOT = 'http://%s/' % DOMAIN_NAME
+ALLOWED_HOSTS = [DOMAIN_NAME]
+FRONTEND_HOST = os.getenv('UNPP_FRONTEND_HOST', DOMAIN_NAME)
+
 ####
 # Other settings
 ####
 ADMINS = (
-    ('Alerts', os.getenv('ALERTS_EMAIL') or 'unicef-unpp@tivix.com'),
+    ('Alerts', os.getenv('ALERTS_EMAIL') or 'admin@unpartnerportal.com'),
+    ('Tivix', f'unicef-unpp+{slugify(DOMAIN_NAME)}@tivix.com'),
 )
 
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
@@ -68,12 +76,6 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', '').lower() == 'true'
 ENV = os.getenv('ENV')
 if not ENV:
     raise Exception('Environment variable ENV is required!')
-
-# domains/hosts etc.
-DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
-WWW_ROOT = 'http://%s/' % DOMAIN_NAME
-ALLOWED_HOSTS = [DOMAIN_NAME]
-FRONTEND_HOST = os.getenv('UNPP_FRONTEND_HOST', DOMAIN_NAME)
 
 DATABASES = {
     'default': {
