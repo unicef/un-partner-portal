@@ -39,32 +39,27 @@ class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
 class CustomSocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
 
     def get_redirect_uri(self, request, exception):
-        error = request.GET.get('error', None)
-
         # This is what we should expect:
         # ['AADB2C90118: The user has forgotten their password.\r\n
         # Correlation ID: 7e8c3cf9-2fa7-47c7-8924-a1ea91137ba9\r\n
         # Timestamp: 2018-11-13 11:37:56Z\r\n']
-        error_description = request.GET.get('error_description', None)
 
-        if error == "access_denied" and error_description is not None:
-            if 'AADB2C90118' in error_description:
-                auth_class = CustomAzureADBBCOAuth2()
-                redirect_home = auth_class.get_redirect_uri()
+        if 'AADB2C90118' in (request.GET.get('error_description') or ''):
+            auth_class = CustomAzureADBBCOAuth2()
+            redirect_home = auth_class.get_redirect_uri()
 
-                url_kwargs = {
-                    'p': settings.SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_PW_RESET_POLICY,
-                    'client_id': settings.SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_KEY,
-                    'nonce': 'defaultNonce',
-                    'redirect_uri': redirect_home,
-                    'scope': 'openid+email',
-                    'response_type': 'code',
-                }
-
-                return auth_class.authorization_url() + '?' + urlencode(url_kwargs)
+            url_kwargs = {
+                'p': settings.SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_PW_RESET_POLICY,
+                'client_id': settings.SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_KEY,
+                'nonce': 'defaultNonce',
+                'redirect_uri': redirect_home,
+                'scope': 'openid+email',
+                'response_type': 'code',
+            }
+            return auth_class.authorization_url() + '?' + urlencode(url_kwargs)
 
         # TODO: In case of password reset the state can't be verified figure out a way to log the user in after reset
-        if error is None:
+        if request.GET.get('error') is None:
             return f'https://{settings.FRONTEND_HOST}'
 
         strategy = getattr(request, 'social_strategy', None)
