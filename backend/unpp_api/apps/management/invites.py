@@ -10,7 +10,13 @@ def send_partner_user_invite(invited_user, inviting_user, partner=None):
         'login_url': f'{settings.FRONTEND_HOST}/login',
     }
 
-    send_mail('management/invite_partner_user.tpl', context, settings.DEFAULT_FROM_EMAIL, [invited_user.email])
+    send_mail(
+        'management/invite_partner_user.tpl',
+        context,
+        settings.DEFAULT_FROM_EMAIL,
+        [invited_user.email],
+        fail_silently=True,
+    )
 
 
 def send_agency_user_invite(invited_user, inviting_user):
@@ -20,4 +26,10 @@ def send_agency_user_invite(invited_user, inviting_user):
         'login_url': f'{settings.FRONTEND_HOST}/login',
     }
 
-    send_mail('management/invite_agency_user.tpl', context, settings.DEFAULT_FROM_EMAIL, [invited_user.email])
+    send_mail(
+        'management/invite_agency_user.tpl',
+        context,
+        settings.DEFAULT_FROM_EMAIL,
+        [invited_user.email],
+        fail_silently=True,
+    )
