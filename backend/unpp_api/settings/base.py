@@ -98,6 +98,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'account.authentication.CustomSocialAuthExceptionMiddleware',
     'common.middleware.ActivePartnerMiddleware',
     'common.middleware.ActiveAgencyOfficeMiddleware',
     'common.middleware.ClientTimezoneMiddleware',
