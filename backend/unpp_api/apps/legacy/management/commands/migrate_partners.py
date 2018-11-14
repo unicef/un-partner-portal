@@ -556,10 +556,15 @@ class Command(BaseCommand):
 
     def migrate_agency_user(self, source: legacy_models.UNHCRUser):
         self.stdout.write(f'Migrating AgencyUser {source.Email}')
+        email = source.Email.strip()
+        if not email:
+            self.stderr.write('Missing email for user, skipping...')
+            return
 
         user, _ = get_user_model().objects.update_or_create(
-            email=source.Email,
+            email__iexact=email,
             defaults={
+                'email': email,
                 'fullname': source.DisplayName or 'N/A',
             }
         )
