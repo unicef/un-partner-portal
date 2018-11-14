@@ -27,3 +27,9 @@ class PartnerVendorNumberSerializer(CreateOnlyFieldsMixin, serializers.ModelSeri
         create_only_fields = (
             'partner',
         )
+        extra_kwargs = {
+            'business_area': {
+                'required': False,
+                'default': None,
+            }
+        }

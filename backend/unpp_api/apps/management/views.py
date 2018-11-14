@@ -54,7 +54,7 @@ class UserViewSet(CreateAPIView, ListAPIView, UpdateAPIView):
 
             queryset = User.objects.filter(query).distinct('id')
 
-        return queryset
+        return queryset.order_by('-id')
 
 
 class OfficeListView(ListAPIView):
