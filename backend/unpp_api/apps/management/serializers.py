@@ -109,6 +109,7 @@ class PartnerMemberManagementSerializer(serializers.ModelSerializer):
     office = PartnerOfficeManagementSerializer(read_only=True, source='partner')
     office_id = CurrentPartnerFilteredPKField(queryset=Partner.objects.all(), write_only=True)
     role_display = serializers.CharField(source='get_role_display', read_only=True)
+    current_user_can_edit = serializers.SerializerMethodField()
 
     class Meta:
         model = PartnerMember
@@ -118,7 +119,15 @@ class PartnerMemberManagementSerializer(serializers.ModelSerializer):
             'role_display',
             'office',
             'office_id',
+            'current_user_can_edit',
         )
+
+    def get_current_user_can_edit(self, member: PartnerMember):
+        request = self.context.get('request')
+        if not request:
+            return False
+
+        return member.partner == request.active_partner or member.partner.hq == request.active_partner
 
 
 class PartnerUserManagementSerializer(serializers.ModelSerializer):
