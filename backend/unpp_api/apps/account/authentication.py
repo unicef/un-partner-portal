@@ -53,7 +53,7 @@ class CustomSocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
                 'client_id': settings.SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_KEY,
                 'nonce': 'defaultNonce',
                 'redirect_uri': redirect_home,
-                'scope': 'openid+email',
+                'scope': 'openid',
                 'response_type': 'code',
             }
             return auth_class.authorization_url() + '?' + urlencode(url_kwargs)
