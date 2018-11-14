@@ -47,6 +47,10 @@ steps:
         stage: 'test'
         type: composition
         composition: 'unicef-unpp'
+        when:
+            condition:
+                all:
+                    noSkipTestInCommitMessage: 'includes(lower("${{CF_COMMIT_MESSAGE}}"), "skip tests") == false'
         composition_candidates:
             test:
                 image: ${{build_backend}}
