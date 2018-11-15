@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from operator import attrgetter
 
 from datetime import date
-import os
 import logging
 
 from cached_property import threaded_cached_property
@@ -23,7 +22,6 @@ from common.base_models import MigratedTimeStampedModel
 from common.database_fields import FixedTextField
 from common.validators import MaxCurrentYearValidator, PastDateValidator, FutureDateValidator
 from common.countries import COUNTRIES_ALPHA2_CODE
-from common.utils import Thumbnail
 from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
@@ -997,7 +995,6 @@ class PartnerOtherInfo(TimeStampedModel):
     org_logo = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="others_info"
     )
-    org_logo_thumbnail = models.ImageField(null=True, blank=True)
 
     other_doc_1 = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name='other_info_doc_1'
@@ -1017,33 +1014,9 @@ class PartnerOtherInfo(TimeStampedModel):
     def __str__(self):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
 
-    def save(self, *args, **kwargs):
-        thumbnail_missing = bool(self.org_logo and not self.org_logo_thumbnail.name)
-        logo_has_changed = bool(
-            self.org_logo and self.org_logo_thumbnail.name and
-            self.org_logo.file_field.name not in self.org_logo_thumbnail.name
-        )
-
-        if thumbnail_missing or logo_has_changed:
-            try:
-                image_generator = Thumbnail(source=open(self.org_logo.file_field.path, 'rb'))
-                img = image_generator.generate()
-                new_filename = "thumbnail_{}".format(self.org_logo.file_field.name)
-                new_filepath = "{}/{}".format(
-                    os.path.dirname(self.org_logo.file_field.path), new_filename
-                )
-                os.mknod(new_filepath)
-                self.org_logo_thumbnail.name = new_filename
-                with open(new_filepath, "wb") as thumb:
-                    thumb.write(img.read())
-                os.chmod(new_filepath, 0o644)
-
-            except Exception as exp:
-                logger.exception(exp)
-        elif self.org_logo in ['', None] and self.org_logo_thumbnail.name is not None:
-            self.org_logo_thumbnail.delete()
-
-        super(PartnerOtherInfo, self).save(*args, **kwargs)
+    @property
+    def org_logo_thumbnail(self):
+        return self.org_logo and self.org_logo.thumbnail_url
 
 
 class PartnerMember(TimeStampedModel):

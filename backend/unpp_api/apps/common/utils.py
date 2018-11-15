@@ -1,17 +1,9 @@
 from django.conf import settings
-from imagekit import ImageSpec
-from imagekit.processors import ResizeToFill
 
 
 def get_countries_code_from_queryset(queryset):
     from common.serializers import CountryPointSerializer
     return list(set(map(lambda x: x.get("country_code"), CountryPointSerializer(queryset, many=True).data)))
-
-
-class Thumbnail(ImageSpec):
-    processors = [ResizeToFill(100, 50)]
-    format = 'JPEG'
-    options = {'quality': 80}
 
 
 def confirm(prompt='Confirm', default=False):

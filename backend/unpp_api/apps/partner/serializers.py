@@ -132,7 +132,7 @@ class PartnerSerializer(serializers.ModelSerializer):
 
     is_hq = serializers.BooleanField(read_only=True)
     logo = CommonFileSerializer(source='other_info.org_logo', read_only=True)
-    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
+    org_logo_thumbnail = serializers.CharField(source='other_info.org_logo_thumbnail', read_only=True, allow_null=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
     country_display = serializers.CharField(source='get_country_code_display', read_only=True)
@@ -401,6 +401,7 @@ class PartnerOtherInfoSerializer(serializers.ModelSerializer):
     other_doc_1 = CommonFileSerializer(allow_null=True)
     other_doc_2 = CommonFileSerializer(allow_null=True)
     other_doc_3 = CommonFileSerializer(allow_null=True)
+    org_logo_thumbnail = serializers.CharField(allow_null=True, read_only=True)
 
     class Meta:
         model = PartnerOtherInfo
@@ -1162,7 +1163,7 @@ class PartnerProfileOtherInfoSerializer(
     info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
                                           allow_blank=True)
     org_logo = CommonFileSerializer(source="other_info.org_logo", allow_null=True)
-    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
+    org_logo_thumbnail = serializers.CharField(source='other_info.org_logo_thumbnail', read_only=True, allow_null=True)
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
     other_doc_1 = CommonFileSerializer(source='other_info.other_doc_1', allow_null=True)
