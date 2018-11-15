@@ -20,7 +20,7 @@ function loggedOrg(props) {
       <Typography style={{ whiteSpace: 'pre-line' }} type="caption">
         {`${messages.logged} \n ${name}`}
       </Typography>
-      {logo && <img alt={name} src={logo} />}
+      {logo && <img style={{ maxHeight: '120px' }} alt={name} src={logo} />}
       {role === ROLES.AGENCY && <AgencySwitch />}
       {role === ROLES.PARTNER && <PartnerSwitch />}
     </GridColumn>
