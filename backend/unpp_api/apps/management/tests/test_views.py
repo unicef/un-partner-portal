@@ -6,6 +6,7 @@ from agency.roles import AgencyRole
 from common.consts import PARTNER_TYPES
 from common.factories import AgencyFactory, UserFactory, PartnerFactory, AgencyOfficeFactory, AgencyMemberFactory, \
     PartnerMemberFactory
+from common.headers import CustomHeader
 from common.tests.base import BaseAPITestCase
 from rest_framework import status
 
@@ -87,10 +88,6 @@ class TestAgencyUserManagement(BaseAPITestCase):
 class TestPartnerUserManagement(BaseAPITestCase):
 
     quantity = 1
-    initial_factories = [
-        UserFactory,
-        PartnerFactory,
-    ]
     user_type = BaseAPITestCase.USER_PARTNER
     partner_role = PartnerRole.ADMIN
 
@@ -169,3 +166,57 @@ class TestPartnerUserManagement(BaseAPITestCase):
         url = reverse('management:user-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
+
+    def test_user_with_permissions_in_one_office_only(self):
+        partner1 = PartnerFactory()
+        partner2 = PartnerFactory()
+
+        user = UserFactory()
+        member_admin = PartnerMemberFactory(
+            partner=partner1,
+            user=user,
+            role=PartnerRole.ADMIN.name,
+        )
+        member_reader = PartnerMemberFactory(
+            partner=partner2,
+            user=user,
+            role=PartnerRole.READER.name,
+        )
+
+        with self.login_as_user(user):
+            # Disallow access to management endpoint when toggled under profile with reader permissions
+            self.client.set_headers({
+                CustomHeader.PARTNER_ID.value: member_reader.partner.id
+            })
+
+            url = reverse('management:user-list')
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, msg=response.data)
+
+            # Allow access to management endpoint when toggled under profile with admin permissions
+            self.client.set_headers({
+                CustomHeader.PARTNER_ID.value: member_admin.partner.id
+            })
+
+            url = reverse('management:user-list')
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
+            # Check that only offices that user can manage are returned
+            self.assertEqual(
+                len(response.data['results'][0]['office_memberships']), 1
+            )
+
+            self.assertEqual(
+                user.partner_members.all().count(), 2
+            )
+            url = reverse('management:user-details', kwargs={'pk': user.id})
+            patch_payload = response.data['results'][0]['office_memberships']
+            patch_payload[0]['role'] = PartnerRole.EDITOR.name
+            patch_payload[0]['office_id'] = patch_payload[0]['office']['id']
+            response = self.client.patch(url, data={
+                'office_memberships': patch_payload
+            })
+            self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
+            self.assertEqual(
+                user.partner_members.all().count(), 2
+            )
