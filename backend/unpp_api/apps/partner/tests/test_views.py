@@ -51,7 +51,10 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
     user_type = BaseAPITestCase.USER_PARTNER
 
     def test_create_country_profile(self):
-        partner = PartnerFactory(display_type=PARTNER_TYPES.international)
+        partner = PartnerFactory(
+            legal_name='Test International Partner HQ',
+            display_type=PARTNER_TYPES.international
+        )
         PartnerMemberFactory(partner=partner, user=self.user)
         self.client.set_headers({
             CustomHeader.PARTNER_ID.value: partner.id

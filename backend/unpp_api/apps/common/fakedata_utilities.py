@@ -27,6 +27,7 @@ from common.factories import (
     UserFactory,
     get_partner_name,
     DirectEOIFactory,
+    FinalizedEOIFactory,
 )
 from common.models import (
     AdminLevel1,
@@ -278,3 +279,5 @@ def generate_fake_data(country_count=3):
             else:
                 focal_point_role = AgencyRole.EDITOR_ADVANCED
             AgencyMemberFactory.create_batch(random.randint(5, 10), office=office, role=focal_point_role.name)
+
+        FinalizedEOIFactory.create_batch(5, agency=agency)
