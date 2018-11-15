@@ -535,9 +535,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
 class EOIApplicationsListAPIView(ListAPIView):
     permission_classes = (
         HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_APPLICATIONS,
-            ]
+            agency_permissions=[]
         ),
     )
     queryset = Application.objects.select_related(
@@ -554,11 +552,21 @@ class EOIApplicationsListAPIView(ListAPIView):
     lookup_field = lookup_url_kwarg = 'pk'
 
     def get_queryset(self, *args, **kwargs):
-        valid_eoi_ids = EOI.objects.filter(
-            Q(created_by=self.request.user) | Q(focal_points=self.request.user) | Q(reviewers=self.request.user)
-        ).values_list('id', flat=True).distinct()
+        eoi = get_object_or_404(EOI, pk=self.kwargs['pk'])
+        if eoi.is_completed:
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
+            ], raise_exception=True)
+            queryset = super(EOIApplicationsListAPIView, self).get_queryset()
+        else:
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ], raise_exception=True)
+            valid_eoi_ids = EOI.objects.filter(
+                Q(created_by=self.request.user) | Q(focal_points=self.request.user) | Q(reviewers=self.request.user)
+            ).values_list('id', flat=True).distinct()
 
-        queryset = super(EOIApplicationsListAPIView, self).get_queryset().filter(eoi_id__in=valid_eoi_ids)
+            queryset = super(EOIApplicationsListAPIView, self).get_queryset().filter(eoi_id__in=valid_eoi_ids)
 
         return queryset.filter(eoi_id=self.kwargs.get(self.lookup_field))
 
@@ -786,16 +794,23 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
     """
     permission_classes = (
         HasUNPPPermission(
-            agency_permissions=[
-                AgencyPermission.CFEI_VIEW_APPLICATIONS,
-            ]
+            agency_permissions=[]
         ),
     )
     serializer_class = ReviewSummarySerializer
     queryset = EOI.objects.all()
 
-    def check_object_permissions(self, request, obj):
+    def check_object_permissions(self, request, obj: EOI):
         super(ReviewSummaryAPIView, self).check_object_permissions(request, obj)
+        if obj.is_completed:
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
+            ], raise_exception=True)
+        else:
+            current_user_has_permission(self.request, agency_permissions=[
+                AgencyPermission.CFEI_VIEW_APPLICATIONS,
+            ], raise_exception=True)
+
         if request.method == 'GET':
             return
 
