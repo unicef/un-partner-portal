@@ -768,6 +768,7 @@ class FinalizedEOIFactory(OpenEOIFactory):
     end_date = factory.LazyAttribute(
         lambda o: o.start_date + relativedelta(days=random.randint(60, 120))
     )
+    justification = factory.LazyFunction(fake.text)
     review_summary_comment = factory.LazyFunction(fake.text)
     review_summary_attachment = factory.LazyFunction(get_new_common_file)
     completed_reason = ALL_COMPLETED_REASONS.partners
