@@ -22,13 +22,6 @@ steps:
                     - env=${{ENV}}
                     - GIT_VERSION=${{CF_REVISION}}
 
-            build_db:
-                type: build
-                image_name: unicef/unpp-db
-                dockerfile: Dockerfile
-                working_directory: ${{main_clone}}/db
-                tag: ${{CF_BRANCH}}
-
             build_frontend:
                 type: build
                 image_name: unicef/unpp-frontend
@@ -87,16 +80,6 @@ steps:
                 title: Pushing backend image to docker hub
                 registry: unicef-dockerhub
                 candidate: ${{build_backend}}
-                tags:
-                    - ${{CF_BRANCH}}
-                    - ${{CF_SHORT_REVISION}}
-                    - latest
-
-            push_db_to_hub:
-                type: push
-                title: Pushing db image to docker hub
-                registry: unicef-dockerhub
-                candidate: ${{build_db}}
                 tags:
                     - ${{CF_BRANCH}}
                     - ${{CF_SHORT_REVISION}}

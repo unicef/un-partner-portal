@@ -120,7 +120,7 @@ class PartnerShortListAPIView(ListAPIView):
             ]
         ),
     )
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.filter(is_locked=False).order_by('legal_name_length', 'legal_name')
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )
     filter_class = PartnersListFilter

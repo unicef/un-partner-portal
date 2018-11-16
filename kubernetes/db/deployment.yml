@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: db
-          image: unicef/unpp-db
+          image: postgres:9.5.15-alpine
           ports:
             - containerPort: 5432
           volumeMounts:
