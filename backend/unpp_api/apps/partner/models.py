@@ -52,8 +52,10 @@ logger = logging.getLogger(__name__)
 class Partner(MigratedTimeStampedModel):
     legal_name = models.TextField(max_length=255, validators=[
         MinLengthValidator(1),
-    ])
-    legal_name_length = models.IntegerField(default=0, editable=False)  # Maintained in DB, see migration 0091
+    ], db_index=True)
+    legal_name_length = models.IntegerField(
+        default=0, editable=False, db_index=True
+    )  # Maintained in DB, see migration 0091
     display_type = models.CharField(max_length=3, choices=PARTNER_TYPES, verbose_name='Organization Type')
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
