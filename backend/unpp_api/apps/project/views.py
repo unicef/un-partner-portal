@@ -485,6 +485,10 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
         else:
             return PartnerApplicationSerializer
 
+    def check_object_permissions(self, request, obj: Application):
+        if self.request.user.agency and obj.eoi.is_completed and not obj.agency == self.request.user.agency:
+            raise PermissionDenied
+
     def get_queryset(self):
         queryset = super(ApplicationAPIView, self).get_queryset()
         if self.request.active_partner:
@@ -554,10 +558,13 @@ class EOIApplicationsListAPIView(ListAPIView):
     def get_queryset(self, *args, **kwargs):
         eoi = get_object_or_404(EOI, pk=self.kwargs['pk'])
         if eoi.is_completed:
-            current_user_has_permission(self.request, agency_permissions=[
-                AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
-            ], raise_exception=True)
-            queryset = super(EOIApplicationsListAPIView, self).get_queryset()
+            if eoi.agency == self.request.user.agency:
+                current_user_has_permission(self.request, agency_permissions=[
+                    AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
+                ], raise_exception=True)
+                queryset = super(EOIApplicationsListAPIView, self).get_queryset()
+            else:
+                raise PermissionDenied
         else:
             current_user_has_permission(self.request, agency_permissions=[
                 AgencyPermission.CFEI_VIEW_APPLICATIONS,
@@ -803,9 +810,12 @@ class ReviewSummaryAPIView(RetrieveUpdateAPIView):
     def check_object_permissions(self, request, obj: EOI):
         super(ReviewSummaryAPIView, self).check_object_permissions(request, obj)
         if obj.is_completed:
-            current_user_has_permission(self.request, agency_permissions=[
-                AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
-            ], raise_exception=True)
+            if obj.agency == request.user.agency:
+                current_user_has_permission(self.request, agency_permissions=[
+                    AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
+                ], raise_exception=True)
+            else:
+                raise PermissionDenied
         else:
             current_user_has_permission(self.request, agency_permissions=[
                 AgencyPermission.CFEI_VIEW_APPLICATIONS,
@@ -840,7 +850,11 @@ class EOIReviewersAssessmentsListAPIView(ListAPIView):
     lookup_field = 'eoi_id'
 
     def get_queryset(self):
-        return get_object_or_404(EOI, id=self.kwargs['eoi_id']).reviewers.all()
+        eoi: EOI = get_object_or_404(EOI, id=self.kwargs['eoi_id'])
+        if not eoi.agency == self.request.user.agency:
+            raise PermissionDenied
+
+        return eoi.reviewers.all()
 
 
 class EOIReviewersAssessmentsNotifyAPIView(APIView):

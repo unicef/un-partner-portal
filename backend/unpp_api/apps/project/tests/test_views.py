@@ -14,6 +14,7 @@ from django.core import mail
 from rest_framework import status
 
 from account.models import User
+from agency.agencies import UNICEF, WFP
 from agency.models import Agency
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from common.headers import CustomHeader
@@ -34,7 +35,7 @@ from common.factories import (
     UserFactory,
     PartnerFactory,
     get_new_common_file,
-    DirectEOIFactory)
+    DirectEOIFactory, FinalizedEOIFactory)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -1534,3 +1535,50 @@ class TestEOIPDFExport(BaseAPITestCase):
         response = self.client.get(url)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEqual(response.content_type, 'application/pdf')
+
+
+class TestFinalizedCFEIDetailsViewPermissions(BaseAPITestCase):
+
+    def test_applications_details_view(self):
+        eoi: EOI = FinalizedEOIFactory(agency=UNICEF.model_instance)
+        winning_application = eoi.applications.filter(did_win=True).first()
+        application_url = reverse('projects:application', kwargs={"pk": winning_application.id})
+        review_summary_url = reverse('projects:review-summary', kwargs={"pk": eoi.id})
+        reviewers_url = reverse('projects:eoi-reviewers-assessments', kwargs={"eoi_id": eoi.id})
+        applications_url = reverse('projects:applications', kwargs={"pk": eoi.id})
+
+        unicef_member = AgencyMemberFactory(
+            office=AgencyOfficeFactory(agency=UNICEF.model_instance),
+            role=AgencyRole.EDITOR_ADVANCED.name
+        )
+
+        with self.login_as_user(unicef_member.user):
+            application_details_response = self.client.get(application_url)
+            self.assertResponseStatusIs(application_details_response)
+
+            review_summary_response = self.client.get(review_summary_url)
+            self.assertResponseStatusIs(review_summary_response)
+
+            reviewers_response = self.client.get(reviewers_url)
+            self.assertResponseStatusIs(reviewers_response)
+
+            applications_response = self.client.get(applications_url)
+            self.assertResponseStatusIs(applications_response)
+
+        wfp_member = AgencyMemberFactory(
+            office=AgencyOfficeFactory(agency=WFP.model_instance),
+            role=AgencyRole.EDITOR_ADVANCED.name
+        )
+
+        with self.login_as_user(wfp_member.user):
+            application_details_response = self.client.get(application_url)
+            self.assertResponseStatusIs(application_details_response, status.HTTP_403_FORBIDDEN)
+
+            review_summary_response = self.client.get(review_summary_url)
+            self.assertResponseStatusIs(review_summary_response, status.HTTP_403_FORBIDDEN)
+
+            reviewers_response = self.client.get(reviewers_url)
+            self.assertResponseStatusIs(reviewers_response, status.HTTP_403_FORBIDDEN)
+
+            applications_response = self.client.get(applications_url)
+            self.assertResponseStatusIs(applications_response, status.HTTP_403_FORBIDDEN)

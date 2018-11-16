@@ -198,6 +198,15 @@ class EOI(TimeStampedModel):
 
         return applications.count() == applications.filter(assessments__completed=True).distinct().count()
 
+    @property
+    def winning_partners(self):
+        if self.is_completed:
+            winners = []
+            for application in self.applications.filter(did_win=True).prefetch_related('partner'):
+                winners.append(application.partner)
+
+            return winners
+
 
 class EOIAttachment(TimeStampedModel):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eoi_attachments")

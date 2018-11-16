@@ -651,6 +651,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
     attachments = EOIAttachmentSerializer(many=True, read_only=True)
     current_user_finished_reviews = serializers.SerializerMethodField(allow_null=True, read_only=True)
     current_user_marked_reviews_completed = serializers.SerializerMethodField(allow_null=True, read_only=True)
+    winning_partners = PartnerSimpleSerializer(many=True, allow_null=True)
 
     class Meta:
         model = EOI
@@ -704,6 +705,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'current_user_marked_reviews_completed',
             'assessments_marked_as_completed',
             'contains_recommended_applications',
+            'winning_partners',
         )
         read_only_fields = (
             'created',
