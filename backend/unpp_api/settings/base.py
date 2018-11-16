@@ -46,8 +46,8 @@ UPLOADS_DIR_NAME = 'uploads'
 MEDIA_URL = f'/api/{UPLOADS_DIR_NAME}/'
 MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, UPLOADS_DIR_NAME))
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
-
+FILE_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024  # 25mb
+DATA_UPLOAD_MAX_MEMORY_SIZE = FILE_UPLOAD_MAX_MEMORY_SIZE + 1024 * 1024
 
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
