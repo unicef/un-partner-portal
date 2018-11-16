@@ -11,7 +11,8 @@ import SelectionCriteria from './selectionCriteria';
 import PartnerClarificationRequests from './partnerClarificationRequests';
 import AgencyClarificationAnswers from './agencyClarificationAnswers';
 import InformedPartners from './informedPartners';
-import SelectedPartners from './selectedPartners/selectedPartnersContainer';
+import SelectedPartners from './selectedPartners';
+import SelectedPartnersDirect from './selectedPartners/selectedPartnersContainer';
 import SelectedPartnerJustification from './selectedPartners/selectedPartnerJustification';
 import { selectCfeiDetails } from '../../../../store';
 import { ROLES, PROJECT_TYPES } from '../../../../helpers/constants';
@@ -24,7 +25,7 @@ const messages = {
 
 const CfeiOverview = (props) => {
   const { params: { id, type }, role, cn, isComplete, cn_template,
-    partner, partnerId, displayGoal, loading } = props;
+    partner, partnerId, displayGoal, loading, agency, agencyId } = props;
 
   return (
     <form >
@@ -58,9 +59,11 @@ const CfeiOverview = (props) => {
               {role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN
                 && <InformedPartners id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT
-                && <SelectedPartners id={id} />}
+                && <SelectedPartnersDirect id={id} />}
               {role === ROLES.AGENCY && type === PROJECT_TYPES.DIRECT && isComplete
                 && <SelectedPartnerJustification id={id} />}
+              {role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN && isComplete
+                && agency !== agencyId && <SelectedPartners id={id} />}
             </GridColumn>
           </Grid>
         </Grid>
@@ -79,6 +82,8 @@ CfeiOverview.propTypes = {
   displayGoal: PropTypes.bool,
   isComplete: PropTypes.bool,
   loading: PropTypes.bool,
+  agencyId: PropTypes.number,
+  agency: PropTypes.number,
 };
 
 const formCfeiDetails = reduxForm({
@@ -88,7 +93,9 @@ const formCfeiDetails = reduxForm({
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
-  const { cn = null,
+  const {
+    agency = null,
+    cn = null,
     is_completed = null,
     partner_id = null,
     partner_name = null,
@@ -107,6 +114,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: assoc('applications', applications, assoc('focal_points', pluck('name', focal_points_detail), cfei)),
     loading: state.cfeiDetails.status.loading,
     isComplete: is_completed,
+    agency,
     cn,
     cn_template,
     partner: partner_name,
@@ -114,6 +122,7 @@ const mapStateToProps = (state, ownProps) => {
     role: state.session.role,
     displayGoal: true,
     cfei,
+    agencyId: state.session.agencyId,
   };
 };
 

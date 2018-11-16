@@ -354,6 +354,9 @@ export const selectCfeiDetails = (state, id) =>
 export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.data, id);
 
+export const selectCfeiAgency = (state, id) =>
+  cfeiDetailsSelector.selectCfeiAgency(state.cfeiDetails.data, id);
+
 export const selectCfeiCriteria = (state, id) =>
   cfeiDetailsSelector.selectCfeiCriteria(state.cfeiDetails.data, id);
 

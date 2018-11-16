@@ -16,8 +16,10 @@ import {
   isUserAReviewer,
   isUserACreator,
   isUserAFocalPoint,
+  selectCfeiAgency,
+  isCfeiCompleted,
 } from '../../../store';
-import { loadCfei, loadUnsolicitedCfei, isCfeiCompleted } from '../../../reducers/cfeiDetails';
+import { loadCfei, loadUnsolicitedCfei } from '../../../reducers/cfeiDetails';
 import { clearLocalState, projectApplicationExists } from '../../../reducers/conceptNote';
 import CfeiDetailsHeaderProjectType from './cfeiDetailsHeaderProjectType';
 import { ROLES, PROJECT_TYPES, DETAILS_ITEMS } from '../../../helpers/constants';
@@ -56,18 +58,18 @@ class CfeiHeader extends Component {
     const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint, isReviewer } = this.props;
 
     return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint || isReviewer))
-    || (hasActionPermission && isBasEd && (isCreator || isReviewer))
-    || (hasActionPermission && isMFT && isFocalPoint)
-    || (hasActionPermission && isPAM && isCreator));
+      || (hasActionPermission && isBasEd && (isCreator || isReviewer))
+      || (hasActionPermission && isMFT && isFocalPoint)
+      || (hasActionPermission && isPAM && isCreator));
   }
 
   hasPermissionToViewApplications(hasActionPermission) {
     const { isAdvEd, isPAM, isBasEd, isMFT, isCreator, isFocalPoint } = this.props;
 
     return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
-    || (hasActionPermission && isBasEd && (isCreator))
-    || (hasActionPermission && isMFT && isFocalPoint)
-    || (hasActionPermission && isPAM && isCreator));
+      || (hasActionPermission && isBasEd && (isCreator))
+      || (hasActionPermission && isMFT && isFocalPoint)
+      || (hasActionPermission && isPAM && isCreator));
   }
 
   updatePath() {
@@ -88,7 +90,10 @@ class CfeiHeader extends Component {
   }
 
   filterTabs() {
-    const { tabs,
+    const {
+      agencyId,
+      agency,
+      tabs,
       role,
       isCompleted,
       hasReviewPermission,
@@ -130,6 +135,11 @@ class CfeiHeader extends Component {
       if (!hasViewAllPermission || !hasViewWinnerPermission) {
         tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.RESULTS, tabsToRender);
       }
+    }
+
+    if (role === ROLES.AGENCY && type === PROJECT_TYPES.OPEN
+      && isCompleted && agencyId !== agency) {
+      tabsToRender = R.reject(item => item.path === DETAILS_ITEMS.RESULTS, tabsToRender);
     }
 
     return tabsToRender;
@@ -230,6 +240,8 @@ CfeiHeader.propTypes = {
   isPAM: PropTypes.bool,
   isBasEd: PropTypes.bool,
   isCompleted: PropTypes.bool,
+  agencyId: PropTypes.number,
+  agency: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -255,6 +267,8 @@ const mapStateToProps = (state, ownProps) => ({
   isPAM: isRoleOffice(AGENCY_ROLES.PAM_USER, state),
   isBasEd: isRoleOffice(AGENCY_ROLES.EDITOR_BASIC, state),
   isCompleted: isCfeiCompleted(state, ownProps.params.id),
+  agencyId: state.session.agencyId,
+  agency: selectCfeiAgency(state, ownProps.params.id),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

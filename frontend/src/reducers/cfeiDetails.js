@@ -146,6 +146,11 @@ export function selectCfeiTitle(state, id) {
   return title;
 }
 
+export function selectCfeiAgency(state, id) {
+  const { [id]: { agency = 0 } = {} } = state;
+  return agency;
+}
+
 export function selectCfeiStatus(state, id) {
   const { [id]: { status = null } = {} } = state;
   return status;
