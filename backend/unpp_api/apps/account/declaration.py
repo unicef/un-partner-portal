@@ -110,7 +110,7 @@ class PartnerDeclarationPDFCreator:
         ]
         for index, declaration in enumerate(self.declarations_list):
             declarations_rows.append((
-                CustomParagraph(f'<b>{index}</b>', self.style_h3),
+                CustomParagraph(f'<b>{index + 1}</b>', self.style_h3),
                 CustomParagraph(declaration['question'], self.style_h3),
                 CustomParagraph(declaration['answer'], self.style_normal),
             ))
