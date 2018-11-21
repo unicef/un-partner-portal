@@ -1,4 +1,5 @@
 from django.conf import settings
+from rest_framework import serializers
 
 
 def get_countries_code_from_queryset(queryset):
@@ -76,8 +77,13 @@ def update_m2m_relation(obj, related_name, related_data_list, serializer_class, 
         related_serializer = serializer_class(
             instance=related_object, data=related_object_data, partial=is_update, context=context or {}
         )
-        if related_serializer.is_valid(raise_exception=not is_update):
+
+        if related_serializer.is_valid():
             related_serializer.save(**(save_kwargs or {}))
+        elif not is_update:
+            raise serializers.ValidationError({
+                related_name: related_serializer.errors
+            })
         valid_ids.append(related_serializer.instance.id)
 
     related_manager = getattr(obj, related_name)

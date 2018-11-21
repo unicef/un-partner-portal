@@ -121,3 +121,10 @@ def clean_pyc():
     Create admin user for the backend
     """
     local('docker-compose exec backend find . -name \'*.pyc\' -delete')
+
+
+def compose():
+    """
+    Run docker-compose with reasonable defaults
+    """
+    local('docker-compose up --build --abort-on-container-exit --remove-orphans')
