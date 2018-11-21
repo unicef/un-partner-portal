@@ -571,7 +571,7 @@ export class AutocompleteRenderer extends Component {
             // attribute is set to off. The trick to really enforcing non-autocompletion is to assign an invalid value
             // to the attribute.
             // https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion#Disabling_autocompletion
-            autocomplete: 'none',
+            autoComplete: 'none',
             placeholder,
             value: fieldValue,
             multiValues,

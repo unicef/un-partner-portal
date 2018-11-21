@@ -85,7 +85,7 @@ const Fields = ({ type, role, partnerId, displayGoal, formName }) => {
   return (<PaddedContent>
     <GridColumn >
       <TitleField readOnly />
-      <FocalPoint readOnly />
+      {role === ROLES.AGENCY ? <FocalPoint readOnly /> : null}
       <LocationFieldReadOnlyArray formName={formName} />
       <SectorForm readOnly />
       <Agencies

@@ -209,6 +209,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = User
+        django_get_or_create = ('email', )
 
 
 class AdminLevel1Factory(factory.django.DjangoModelFactory):
@@ -612,6 +613,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = AgencyMember
+        django_get_or_create = ('user', 'office')
 
 
 class OpenEOIFactory(factory.django.DjangoModelFactory):

@@ -223,19 +223,10 @@ class CFEIPDFExporter:
         paragraphs.append(Paragraph(self.cfei.title, self.style_h1))
         paragraphs.append(Spacer(1, self.margin))
 
-        focal_points_display = [
-            f'{focal_point.fullname} ({focal_point.email})' for focal_point in self.cfei.focal_points.all()
-        ]
-
         main_content = [
             ListItem([
                 Paragraph('Timeline', style=self.style_h4),
                 self.get_timeline_table(),
-                Spacer(1, self.margin / 2)
-            ]),
-            ListItem([
-                Paragraph(f'Focal Point{"s" if len(focal_points_display) > 1 else ""}', style=self.style_h4),
-                *map(lambda fc: Paragraph(fc, style=self.style_normal), focal_points_display),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([

@@ -238,7 +238,7 @@ export function selectCfeiWinnersStatus(state, id) {
 
 export function isUserAReviewer(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
-  if (cfei) return cfei.reviewers.includes(userId);
+  if (cfei && cfei.reviewers) return cfei.reviewers.includes(userId);
   return false;
 }
 
@@ -260,14 +260,14 @@ export function cfeiHasPartnerAccepted(state, cfeId) {
 
 export function isUserACreator(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
-  if (cfei) return cfei.created_by === userId;
+  if (cfei && cfei.created_by) return cfei.created_by === userId;
   return false;
 }
 
 export function isUserAFocalPoint(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
 
-  if (cfei) {
+  if (cfei && cfei.focal_points) {
     return cfei.focal_points.includes(userId);
   }
   return false;

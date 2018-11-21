@@ -580,8 +580,6 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
     locations = PointSerializer(many=True)
     is_pinned = serializers.SerializerMethodField()
     application = serializers.SerializerMethodField()
-    focal_points_detail = BasicUserSerializer(source='focal_points', read_only=True, many=True)
-    reviewers_detail = BasicUserSerializer(source='reviewers', read_only=True, many=True)
     attachments = EOIAttachmentSerializer(many=True, read_only=True)
 
     # TODO - cut down on some of these fields. partners should not get back this data
@@ -608,17 +606,12 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'status',
             'title',
             'agency',
-            'created_by',
-            'focal_points',
-            'focal_points_detail',
             'agency_office',
             'cn_template',
             'description',
             'goal',
             'other_information',
             'has_weighting',
-            'reviewers',
-            'reviewers_detail',
             'selected_source',
             'is_pinned',
             'application',
