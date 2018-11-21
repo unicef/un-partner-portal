@@ -19,6 +19,5 @@ export const projectStatuses = {
   Dra: 'Draft',
   Ope: 'Published',
   Clo: 'Closed/Under Review',
-  Com: 'Completed',
-  Rev: 'Application Under Review',
+  Com: 'Finalized',
 };
