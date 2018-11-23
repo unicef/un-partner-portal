@@ -38,6 +38,11 @@ class CustomAzureADBBCOAuth2(AzureADB2COAuth2):
 
 class CustomSocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
 
+    IGNORABLE_ERRORS = {
+        'AADB2C90157',  # User as exceeded the maximum number for retries for a self-asserted step.
+        'AADB2C90091',  # The user has cancelled entering self-asserted information.
+    }
+
     def get_redirect_uri(self, request, exception):
         # This is what we should expect:
         # ['AADB2C90118: The user has forgotten their password.\r\n
@@ -57,6 +62,10 @@ class CustomSocialAuthExceptionMiddleware(SocialAuthExceptionMiddleware):
                 'response_type': 'code',
             }
             return auth_class.authorization_url() + '?' + urlencode(url_kwargs)
+
+        for code in self.IGNORABLE_ERRORS:
+            if code in (request.GET.get('error_description') or ''):
+                return f'https://{settings.FRONTEND_HOST}'
 
         # TODO: In case of password reset the state can't be verified figure out a way to log the user in after reset
         if request.GET.get('error') is None:
