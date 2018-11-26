@@ -53,6 +53,8 @@ export const STATUS_VAL = [
   },
 ];
 
+const FORM_NAME = 'unsolicitedFilter';
+
 class EoiFilter extends Component {
   constructor(props) {
     super(props);
@@ -151,7 +153,7 @@ class EoiFilter extends Component {
             <Grid item sm={4} xs={12}>
               <AdminOneLocation
                 fieldName="locations"
-                formName="tableFilter"
+                formName={FORM_NAME}
                 observeFieldName="country_code"
                 label={messages.labels.location}
                 optional
@@ -220,7 +222,7 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'unsolicitedFilter',
+  form: FORM_NAME,
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,
