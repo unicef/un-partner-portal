@@ -52,10 +52,6 @@ from project.serializers import ConvertUnsolicitedSerializer
 filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
 
 
-def partner_has_finished(*args, **kwargs):
-    return True
-
-
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
 
     user_type = BaseAPITestCase.USER_PARTNER
@@ -403,7 +399,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         OpenEOIFactory.create_batch(self.quantity, display_type='NoN')
         PartnerSimpleFactory.create_batch(self.quantity)
 
-    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_create(self):
         self.client.set_headers({
             CustomHeader.PARTNER_ID.value: self.user.partner_members.first().partner.id
@@ -452,7 +448,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
 
-    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_create(self):
         eoi = OpenEOIFactory(display_type='NoN', agency=self.user.agency)
         eoi.focal_points.add(self.user)
@@ -1044,6 +1040,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
         create_response = self.client.post(url, data=payload)
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_create_application(self):
         eoi = OpenEOIFactory(agency=self.user.agency)
         apply_url = reverse('projects:partner-applications', kwargs={'pk': eoi.pk})

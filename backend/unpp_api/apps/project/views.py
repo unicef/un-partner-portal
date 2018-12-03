@@ -358,7 +358,7 @@ class PartnerEOIApplicationCreateAPIView(CreateAPIView):
                 "You don't have the ability to submit an application if "
                 "you are currently toggled under the HQ profile."
             )
-        if not self.request.active_partner.has_finished:
+        if not self.request.active_partner.profile_is_complete:
             raise serializers.ValidationError(
                 "You don't have the ability to submit an application if Your profile is not completed."
             )

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import warnings
 from operator import attrgetter
 
 from datetime import date
@@ -194,7 +195,7 @@ class Partner(MigratedTimeStampedModel):
         return getattr(self.hq, 'declaration', self.declaration)
 
     @property
-    def has_finished(self):
+    def profile_is_complete(self):
         if not self.profile.identification_is_complete:
             return False
         if not self.profile.contact_is_complete:
@@ -211,7 +212,13 @@ class Partner(MigratedTimeStampedModel):
             return False
         return True
 
-    profile_is_complete = has_finished
+    @property
+    def has_finished(self):
+        warnings.warn(
+            'Partner.has_finished will be removed in the future, use Partner.profile_is_complete',
+            PendingDeprecationWarning
+        )
+        return self.profile_is_complete
 
     @property
     def org_head(self):
@@ -1113,6 +1120,18 @@ def create_partner_additional_models(sender, instance, created, **kwargs):
         PartnerMandateMission.objects.create(partner=instance)
         PartnerFunding.objects.create(partner=instance)
         PartnerOtherInfo.objects.create(partner=instance)
+
+        responsibilities = []
+        for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
+            responsibilities.append(
+                PartnerInternalControl(partner=instance, functional_responsibility=responsibility)
+            )
+        PartnerInternalControl.objects.bulk_create(responsibilities)
+
+        policy_areas = []
+        for policy_area in list(POLICY_AREA_CHOICES._db_values):
+            policy_areas.append(PartnerPolicyArea(partner=instance, area=policy_area))
+        PartnerPolicyArea.objects.bulk_create(policy_areas)
 
 
 post_save.connect(create_partner_additional_models, sender=Partner)
