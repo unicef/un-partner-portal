@@ -21,9 +21,9 @@ export default type => ({ row, column, value }) => {
     </TableCell>);
   } else if (column.name === 'title' || column.name === 'project_title') {
     return <EoiNameCell title={row.title || row.project_title} id={`${row.id}`} />;
-  } else if (column.name === 'country_code') {
+  } else if (column.name === 'country_code' || column.name === 'country') {
     return (
-      <CountriesCell countries={row.country_code} />
+      <CountriesCell countries={row.country_code || row.country} />
     );
   } else if (column.name === 'country_code_cfei') {
     return (

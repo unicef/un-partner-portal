@@ -38,7 +38,7 @@ const savePartnerData = (state, action) => R.assoc(action.agencyId, R.map((item)
     columns,
     items: R.map(row =>
       R.reduce((acc, obj) =>
-        R.assoc(columns[R.indexOf(obj, row)].name, obj, acc), [], row), item.rows),
+        R.assoc(columns[R.values(acc).length].name, obj, acc), [], row), item.rows),
     count: item.rows.length,
   };
 }, action.data.tables), state);
