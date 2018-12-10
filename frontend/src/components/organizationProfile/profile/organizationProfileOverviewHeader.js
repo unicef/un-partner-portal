@@ -1,3 +1,4 @@
+import R from 'ramda';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Button from 'material-ui/Button';
@@ -37,15 +38,15 @@ const styleSheet = (theme) => {
 };
 
 const OrganizationProfileOverviewHeader = (props) => {
-  const { classes, update, isHq, hasEditHqProfilePermission,
+  const { classes, update, hq, hasEditHqProfilePermission,
     hasEditProfilePermission, handleEditClick } = props;
 
   return (
     <div className={classes.root}>
       <div className={classes.text}>
-        <Typography type="body1" color="inherit"> {messages.lastUpdate} {update}</Typography>
+        {update && <Typography type="body1" color="inherit"> {messages.lastUpdate} {update}</Typography>}
       </div>
-      { ((isHq && hasEditHqProfilePermission) || (!isHq && hasEditProfilePermission)) ?
+      {((!hq && hasEditHqProfilePermission) || (hq && hasEditProfilePermission)) ?
         (<Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
           {messages.edit}
         </Button>) : null}
@@ -60,14 +61,14 @@ OrganizationProfileOverviewHeader.propTypes = {
   update: PropTypes.string.isRequired,
   hasEditProfilePermission: PropTypes.bool,
   hasEditHqProfilePermission: PropTypes.bool,
-  isHq: PropTypes.bool,
+  hq: PropTypes.number,
 };
 
 const mapStateToProps = (state, ownProps) => ({
   partner: state.agencyPartnerProfile.data[ownProps.partnerId] || {},
   hasEditProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE, state),
   hasEditHqProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE, state),
-  isHq: state.session.isHq,
+  hq: R.path(['partnerProfileDetails', 'partnerProfileDetails', 'identification', 'registration', 'hq'], state),
 });
 
 const connected = connect(mapStateToProps)(OrganizationProfileOverviewHeader);

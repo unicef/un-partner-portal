@@ -71,7 +71,7 @@ class OrganizationProfileOverview extends Component {
 
 
   render() {
-    const { completion, isHq, hasEditHqProfilePermission, hasEditProfilePermission } = this.props;
+    const { completion, hq, hasEditHqProfilePermission, hasEditProfilePermission } = this.props;
 
     return (
       <React.Fragment>
@@ -83,8 +83,8 @@ class OrganizationProfileOverview extends Component {
               warning={completion
                 ? completion[completionTabs[R.indexOf(item, messages.sections)]]
                 : false}
-              handleEditMode={((isHq && hasEditHqProfilePermission)
-                 || (!isHq && hasEditProfilePermission))
+              handleEditMode={((!hq && hasEditHqProfilePermission)
+                 || (hq && hasEditProfilePermission))
                 ? () => this.handleEditMode(R.indexOf(item, messages.sections))
                 : false
               }
@@ -104,7 +104,7 @@ OrganizationProfileOverview.propTypes = {
   partnerId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   loadPartnerProfileDetails: PropTypes.func,
   completion: PropTypes.object,
-  isHq: PropTypes.bool,
+  hq: PropTypes.number,
   hasEditHqProfilePermission: PropTypes.bool,
   hasEditProfilePermission: PropTypes.bool,
 };
@@ -118,7 +118,7 @@ const mapStateToProps = state => ({
   completion: state.partnerProfileDetails.partnerProfileDetails.completion,
   hasEditProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE, state),
   hasEditHqProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE, state),
-  isHq: state.session.isHq,
+  hq: R.path(['partnerProfileDetails', 'partnerProfileDetails', 'identification', 'registration', 'hq'], state),
 });
 
 const connectedOrganizationProfileOverview = connect(
