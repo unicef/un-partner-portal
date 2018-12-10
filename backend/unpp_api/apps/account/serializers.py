@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.db import transaction
 
 from rest_framework import serializers
@@ -9,8 +7,6 @@ from rest_framework.validators import UniqueValidator
 from account.declaration import PartnerDeclarationPDFCreator
 from account.forms import CustomPasswordResetForm
 from common.consts import (
-    FUNCTIONAL_RESPONSIBILITY_CHOICES,
-    POLICY_AREA_CHOICES,
     COLLABORATION_EVIDENCE_MODES,
 )
 from common.serializers import CommonFileBase64UploadSerializer
@@ -18,10 +14,7 @@ from partner.models import (
     Partner,
     PartnerProfile,
     PartnerHeadOrganization,
-    PartnerInternalControl,
     PartnerMember,
-    PartnerBudget,
-    PartnerPolicyArea,
     PartnerRegistrationDocument,
     PartnerGoverningDocument,
     PartnerCollaborationEvidence,
@@ -172,24 +165,6 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_head_org = validated_data['partner_head_organization']
         partner_head_org['partner_id'] = self.partner.pk
         PartnerHeadOrganization.objects.create(**partner_head_org)
-
-        responsibilities = []
-        for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
-            responsibilities.append(
-                PartnerInternalControl(partner=self.partner, functional_responsibility=responsibility)
-            )
-        PartnerInternalControl.objects.bulk_create(responsibilities)
-
-        policy_areas = []
-        for policy_area in list(POLICY_AREA_CHOICES._db_values):
-            policy_areas.append(PartnerPolicyArea(partner=self.partner, area=policy_area))
-
-        PartnerPolicyArea.objects.bulk_create(policy_areas)
-
-        budgets = []
-        for year in [date.today().year, date.today().year-1, date.today().year-2]:
-            budgets.append(PartnerBudget(partner=self.partner, year=year))
-        PartnerBudget.objects.bulk_create(budgets)
 
         partner_member, _ = PartnerMember.objects.get_or_create(
             partner=self.partner,

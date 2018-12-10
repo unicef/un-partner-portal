@@ -6,6 +6,7 @@ from django.core.management import call_command
 from django.test import override_settings
 from django.urls import reverse
 from django.core import mail
+import mock
 from rest_framework import status
 
 from account.models import User
@@ -157,6 +158,7 @@ class TestOpenCFEI(BaseAPITestCase):
         self.assertResponseStatusIs(response)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_recommendation_simple_flow(self):
         office = AgencyOfficeFactory(agency=UNICEF.model_instance)
         agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
@@ -286,6 +288,7 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(accept_response)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_recommendation_pick_2nd_application(self):
         office = AgencyOfficeFactory(agency=UNICEF.model_instance)
         agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
@@ -451,6 +454,7 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(accept_response)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_recommendation_pick_partner_declined(self):
         office = AgencyOfficeFactory(agency=UNICEF.model_instance)
         agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)

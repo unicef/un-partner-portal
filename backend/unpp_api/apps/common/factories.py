@@ -266,6 +266,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.LazyFunction(get_partner_name)
     display_type = PARTNER_TYPES.cbo
     country_code = fuzzy.FuzzyChoice(COUNTRIES)
+    hq = None
 
     # hq information
     country_presence = factory.LazyFunction(get_country_list)
@@ -567,7 +568,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Partner
-        django_get_or_create = ('legal_name', 'country_code')
+        django_get_or_create = (
+            'legal_name', 'country_code', 'hq'
+        )
 
 
 class PartnerMemberFactory(factory.django.DjangoModelFactory):

@@ -7,9 +7,7 @@ from agency.serializers import AgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
-    FUNCTIONAL_RESPONSIBILITY_CHOICES,
     PARTNER_TYPES,
-    POLICY_AREA_CHOICES,
 )
 from common.defaults import ActivePartnerIDDefault
 from common.mixins.serializers import SkipUniqueTogetherValidationOnPatchMixin
@@ -1257,24 +1255,11 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
             id=self.context['request'].parser_context.get('kwargs', {}).get('pk')
         )
         for country_code in validated_data['chosen_country_to_create']:
-            partner = Partner.objects.create(
+            Partner.objects.create(
                 hq=hq,
                 legal_name=hq.legal_name,
                 country_code=country_code,
                 display_type=PARTNER_TYPES.international,
             )
-
-            responsibilities = []
-            for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
-                responsibilities.append(
-                    PartnerInternalControl(partner=partner, functional_responsibility=responsibility)
-                )
-            PartnerInternalControl.objects.bulk_create(responsibilities)
-
-            policy_areas = []
-            for policy_area in list(POLICY_AREA_CHOICES._db_values):
-                policy_areas.append(PartnerPolicyArea(partner=partner, area=policy_area))
-
-            PartnerPolicyArea.objects.bulk_create(policy_areas)
 
         return hq

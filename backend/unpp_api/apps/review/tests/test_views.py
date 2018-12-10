@@ -304,6 +304,7 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
             response = self.client.post(url, data=payload, format='json')
             self.assertEquals(response.data['is_verified'], False)
 
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_ingo_verification_permissions(self):
         partner = PartnerFactory(display_type=PARTNER_TYPES.international)
         self.assertTrue(partner.is_hq)
@@ -326,6 +327,7 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
             create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
 
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_other_country_verification_permissions(self):
         other_countries = [x for x in COUNTRIES if not x == self.user.agency_members.first().office.country.code]
         partner = PartnerFactory(country_code=random.choice(other_countries))
@@ -350,6 +352,7 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
             create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
 
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_own_country_verification_permissions(self):
         partner = PartnerFactory(country_code=self.user.agency_members.first().office.country.code)
         self.assertEqual(partner.country_code, self.user.agency_members.first().office.country.code)
@@ -372,6 +375,7 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
             create_response = self.client.post(url, data=payload)
             self.assertResponseStatusIs(create_response, status.HTTP_403_FORBIDDEN)
 
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_verify_sanctioned_partner(self):
         partner = PartnerFactory()
         sanction_match: SanctionedNameMatch = SanctionedNameMatchFactory(partner=partner)
@@ -386,6 +390,7 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         create_response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
 
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_verify_ingo_child_before_hq(self):
         hq = PartnerFactory(display_type=PARTNER_TYPES.international)
         self.assertTrue(hq.is_hq)
@@ -402,6 +407,7 @@ class TestPartnerVerificationAPITestCase(BaseAPITestCase):
         create_response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(create_response, status.HTTP_201_CREATED)
 
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_verify_flagged_partner(self):
         partner = PartnerFactory()
         flag = PartnerFlagFactory(partner=partner, flag_type=FLAG_TYPES.red)
