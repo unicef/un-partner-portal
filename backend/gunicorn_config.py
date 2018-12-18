@@ -10,7 +10,6 @@ accesslog = STDOUT_DESTINATION
 capture_output = IS_DEV
 bind = ':8000'
 loglevel = 'debug' if IS_DEV else 'info'
-worker_class = 'tornado'
 workers = 1
 syslog = True
 disable_redirect_access_to_syslog = False

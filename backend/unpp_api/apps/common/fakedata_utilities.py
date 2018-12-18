@@ -73,10 +73,6 @@ from review.models import (
     PartnerFlag,
     PartnerVerification,
 )
-from sanctionslist.models import (
-    SanctionedName,
-    SanctionedNameMatch,
-)
 
 
 def clean_up_data_in_db():
@@ -127,9 +123,6 @@ def clean_up_data_in_db():
 
         PartnerFlag,
         PartnerVerification,
-
-        SanctionedName,
-        SanctionedNameMatch,
     ]
 
     if not settings.IS_PROD:

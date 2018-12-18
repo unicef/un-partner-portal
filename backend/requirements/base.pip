@@ -46,7 +46,6 @@ Faker==0.8.16
 httmock==1.2.6
 
 gunicorn==19.9.0
-tornado==5.1.1
 
 # Sentry
 raven==6.4.0
