@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import warnings
-from operator import attrgetter
-
-from datetime import date
 import logging
+import warnings
+from datetime import date
+from operator import attrgetter
 
 from cached_property import threaded_cached_property
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MinValueValidator, MinLengthValidator
+from django.db import models
 from django.db.models import Q, Count
 from django.db.models.signals import post_save
 from django_countries.fields import Country
@@ -20,9 +19,6 @@ from model_utils.models import TimeStampedModel
 
 from account.models import User
 from common.base_models import MigratedTimeStampedModel
-from common.database_fields import FixedTextField
-from common.validators import MaxCurrentYearValidator, PastDateValidator, FutureDateValidator
-from common.countries import COUNTRIES_ALPHA2_CODE
 from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
@@ -44,6 +40,10 @@ from common.consts import (
     FLAG_TYPES,
     FLAG_CATEGORIES,
 )
+from common.countries import COUNTRIES_ALPHA2_CODE
+from common.database_fields import FixedTextField
+from common.validators import max_current_year_validator, past_date_validator, \
+    future_date_validator
 from partner.roles import PartnerRole, PARTNER_ROLE_PERMISSIONS
 from review.models import PartnerFlag
 
@@ -296,7 +296,7 @@ class PartnerProfile(TimeStampedModel):
         null=True,
         blank=True,
         validators=(
-            MaxCurrentYearValidator(),
+            max_current_year_validator,
             MinValueValidator(1800),  # red cross since 1863 year
         )
     )
@@ -908,7 +908,7 @@ class PartnerBudget(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
         help_text="Enter valid year.",
-        validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
+        validators=[max_current_year_validator, MinValueValidator(1800)]  # red cross since 1863 year
     )
     budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, null=True, blank=True)
 
@@ -1098,10 +1098,10 @@ class PartnerRegistrationDocument(TimeStampedModel):
     editable = models.BooleanField(default=True)
     issuing_authority = models.TextField()
     issue_date = models.DateField(validators=(
-        PastDateValidator(),
+        past_date_validator,
     ))
     expiry_date = models.DateField(validators=(
-        FutureDateValidator(),
+        future_date_validator,
     ), null=True, blank=True)
 
     class Meta:
