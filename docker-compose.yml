@@ -46,18 +46,6 @@ services:
     env_file:
       - .env
 
-  legacy_db:
-    image: microsoft/mssql-server-linux:latest
-    env_file:
-      - .env
-    environment:
-      - ACCEPT_EULA=y
-    ports:
-      - "1433:1433"
-    command: bash -c "apt-get update && apt-get install -y curl && /opt/mssql/bin/sqlservr"
-    volumes:
-        - ~/Desktop/:/Desktop
-
   frontend:
     image: unicef/unpp-frontend
     env_file:
