@@ -38,7 +38,7 @@ const styleSheet = (theme) => {
 };
 
 const OrganizationProfileOverviewHeader = (props) => {
-  const { classes, update, hq, hasEditHqProfilePermission,
+  const { classes, update, hq, hasEditHqProfilePermission, displayType,
     hasEditProfilePermission, handleEditClick } = props;
 
   return (
@@ -46,7 +46,7 @@ const OrganizationProfileOverviewHeader = (props) => {
       <div className={classes.text}>
         {update && <Typography type="body1" color="inherit"> {messages.lastUpdate} {update}</Typography>}
       </div>
-      {((!hq && hasEditHqProfilePermission) || (hq && hasEditProfilePermission)) ?
+      {((!hq && hasEditHqProfilePermission) || (hq && hasEditProfilePermission) || (displayType === 'NGO' && hasEditProfilePermission)) ?
         (<Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
           {messages.edit}
         </Button>) : null}
@@ -69,6 +69,7 @@ const mapStateToProps = (state, ownProps) => ({
   hasEditProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE, state),
   hasEditHqProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE, state),
   hq: R.path(['partnerProfileDetails', 'partnerProfileDetails', 'identification', 'registration', 'hq'], state),
+  displayType: R.path(['partnerProfileDetails', 'partnerProfileDetails', 'identification', 'basic', 'display_type'], state),
 });
 
 const connected = connect(mapStateToProps)(OrganizationProfileOverviewHeader);
