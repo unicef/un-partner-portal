@@ -30,7 +30,7 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
     'Cache-Control': 'no-cache',
     'Client-Timezone-Name': moment.tz.guess(),
   };
-  if (authorize) headers = { ...headers, Authorization: `token ${token}` };
+  if (authorize && token) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
   if (officeId) headers = { ...headers, 'Agency-Office-ID': officeId };
   

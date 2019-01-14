@@ -84,10 +84,6 @@ export const loadUserData = () => (dispatch, getState) => {
   const token = session.token;
   const partnerId = session.partnerId;
 
-  if (!token) {
-    window.location.href = '/landing/';
-    return Promise.resolve();
-  }
   dispatch(sessionInitializing());
   return getUserData(token)
     .then((response) => {
