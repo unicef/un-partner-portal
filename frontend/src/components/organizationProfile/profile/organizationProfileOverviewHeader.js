@@ -46,7 +46,7 @@ const OrganizationProfileOverviewHeader = (props) => {
       <div className={classes.text}>
         {update && <Typography type="body1" color="inherit"> {messages.lastUpdate} {update}</Typography>}
       </div>
-      {((!hq && hasEditHqProfilePermission) || (hq && hasEditProfilePermission) || (displayType === 'NGO' && hasEditProfilePermission)) ?
+      {((!hq && hasEditHqProfilePermission) || (hq && hasEditProfilePermission) || (displayType !== 'Int' && hasEditProfilePermission)) ?
         (<Button className={classes.noPrint} onClick={handleEditClick} raised color="accent">
           {messages.edit}
         </Button>) : null}
