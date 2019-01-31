@@ -1,14 +1,13 @@
 import hashlib
-import tempfile
-
 import os
+import tempfile
+from urllib.parse import quote
 from collections import defaultdict
 
 from babel.dates import get_timezone, format_datetime, format_date
 from django.http import HttpResponse
 from django.utils import timezone
 from reportlab.lib import colors
-
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, ListFlowable, ListItem, Image
@@ -131,7 +130,7 @@ class CFEIPDFExporter:
             *[
                 Paragraph(sector_name, style=self.style_normal),
                 ListFlowable([
-                     Paragraph(spec, style=self.style_normal) for spec in sorted(grouped[sector_name])
+                    Paragraph(spec, style=self.style_normal) for spec in sorted(grouped[sector_name])
                 ], bulletType='a'),
                 Spacer(1, self.margin / 3),
             ]
@@ -292,7 +291,7 @@ class CFEIPDFExporter:
         with open(self.file_path, 'rb') as content:
             response.write(content.read())
         self.cleanup()
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(f'{self.cfei.title}.pdf')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(f'{quote(self.cfei.title)}.pdf')
         return response
 
     def cleanup(self):
