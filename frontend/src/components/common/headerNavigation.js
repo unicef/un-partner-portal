@@ -32,6 +32,7 @@ const styleSheet = (theme) => {
     alignItems: {
       display: 'flex',
       alignItems: 'center',
+      maxWidth: '90%',
     },
     right: {
       alignItems: 'right',
@@ -39,6 +40,7 @@ const styleSheet = (theme) => {
     alignItemsPadding: {
       display: 'flex',
       alignItems: 'flex-end',
+      maxWidth: '90%',
     },
     flex: {
       alignItems: 'center',

@@ -89,7 +89,7 @@ const HeaderOptionsContainer = (props) => {
   }
 
   return (
-    <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={24}>
+    <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={8}>
       <Grid item>
         <div>
           {status}
