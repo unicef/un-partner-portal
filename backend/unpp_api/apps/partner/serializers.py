@@ -857,9 +857,6 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
             'engagement_operate_desc', instance.engagement_operate_desc
         )
 
-        if not location_field_offices:
-            raise serializers.ValidationError('Location office(s) needs to be pinned.')
-
         if location_of_office:
             point = Point.objects.get_point(**location_of_office)
             instance.location_of_office = point
