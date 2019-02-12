@@ -143,6 +143,7 @@ INSTALLED_APPS = [
     'social_django',
     'sequences.apps.SequencesConfig',
     'django_nose',
+    'background_task',
 
     'common',
     'account',
