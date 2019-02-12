@@ -84,7 +84,6 @@ class BaseXLSXExporter:
                 status=status.HTTP_400_BAD_REQUEST
             )
         elif object_count > ASYNC_EXPORT_SIZE_THRESHOLD:
-            print('ASYNC')
             export_task(
                 full_classpath(self),
                 f'{self.queryset.model._meta.app_label}.{self.queryset.model._meta.model_name}',
