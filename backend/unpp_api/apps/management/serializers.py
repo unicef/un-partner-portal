@@ -74,7 +74,9 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
                 request_user_country = request.user.get_agency_member().office.country.name
                 user_country = user[0].get_agency_member().office.country.name
                 if request_user_country != user_country:
-                    raise serializers.ValidationError('Administrator cannot change a user role for a user not in their country.')
+                    raise serializers.ValidationError(
+                        'Administrator cannot change a user role for a user not in their country.'
+                    )
 
         return validated_data
 
