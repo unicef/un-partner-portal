@@ -36,6 +36,7 @@ class AgencyRole(AutoNameEnum):
                 return role_name not in {
                     AgencyRole.PAM_USER,
                     AgencyRole.MFT_USER,
+                    AgencyRole.HQ_EDITOR,
                 }
         else:
             def filter_function(*args):
