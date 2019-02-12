@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from fabric.api import local
+from fabric.context_managers import shell_env
 
 
 def ssh(service):
@@ -11,58 +12,11 @@ def ssh(service):
     local('docker-compose exec %s bash' % service)
 
 
-def up_recreate():
-    """
-    Recreate containers even if their configuration and image haven't changed.
-    """
-    local('docker-compose down && docker-compose up')
-
-
-def up():
-    """
-    Create and start containers.
-    """
-    local('docker-compose up')
-
-
-def down():
-    """
-    Stop all containers.
-    """
-    local('docker-compose down')
-
-
-def rebuild():
-    """
-    Re-build docker images for containers.
-    """
-    local('docker-compose build')
-
-
-def ps():
-    """
-    Display all containers.
-    """
-    local('docker-compose ps')
-
-
-def stop():
-    """
-    Stop services.
-    """
-    local('docker-compose stop')
-
-
 def managepy(command=''):
     """
     Run specified manage.py command
     """
     cmd = 'docker-compose exec backend python manage.py {}'.format(command)
-    local(cmd)
-
-
-def preview_gunicorn_log():
-    cmd = 'docker-compose exec backend tail -f /data/unpp_api/logs/gunicorn_error.log'
     local(cmd)
 
 
@@ -109,22 +63,26 @@ def lint():
     local('docker-compose exec backend flake8 ./ --count')
 
 
-def make_admin():
-    """
-    Create admin user for the backend
-    """
-    local('docker-compose exec backend python manage.py createsuperuser')
-
-
 def clean_pyc():
     """
-    Create admin user for the backend
+    Cleanup pyc files
     """
     local('docker-compose exec backend find . -name \'*.pyc\' -delete')
 
 
 def compose():
-    """
-    Run docker-compose with reasonable defaults
-    """
-    local('docker-compose up --build --abort-on-container-exit --remove-orphans')
+    with shell_env(DOCKER_CLIENT_TIMEOUT='300', COMPOSE_HTTP_TIMEOUT='300'):
+        local(
+            'docker-compose stop '
+            '&& '
+            'docker-compose up --build --abort-on-container-exit --remove-orphans'
+        )
+
+
+def restart():
+    with shell_env(DOCKER_CLIENT_TIMEOUT='300', COMPOSE_HTTP_TIMEOUT='300'):
+        local(
+            'docker-compose stop '
+            '&& '
+            'docker-compose up'
+        )

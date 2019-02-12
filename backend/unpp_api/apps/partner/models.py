@@ -467,6 +467,7 @@ class PartnerProfile(TimeStampedModel):
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
             'country_presence': len(self.partner.country_presence) > 0 if self.partner.is_hq else True,
+            'pinned_location_office_on_map': self.partner.location_field_offices.exists(),
             'experiences': all([
                 exp.is_complete for exp in self.partner.experiences.all()
             ]) if self.partner.experiences.exists() else False,
