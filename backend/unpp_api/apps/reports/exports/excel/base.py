@@ -1,9 +1,10 @@
 import hashlib
-
 import os
 import tempfile
 
 from background_task import background
+from django.apps import apps
+from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.module_loading import import_string
@@ -11,8 +12,8 @@ from rest_framework import status
 
 from common.excel import AutoWidthWorkBook
 
-MAX_EXPORT_SIZE = 100
-ASYNC_EXPORT_SIZE_THRESHOLD = 10
+MAX_EXPORT_SIZE = 200
+ASYNC_EXPORT_SIZE_THRESHOLD = 50
 
 
 def full_classpath(obj):
@@ -24,18 +25,26 @@ def full_classpath(obj):
 
 
 @background(schedule=5)
-def export_task(exporter_class_name, model_class_name, ids, send_to):
+def export_task(exporter_class_name, model_path, ids, send_to):
     exporter_class = import_string(exporter_class_name)
-    model_class = import_string(model_class_name)
+    model_class = apps.get_model(model_path)
 
     queryset = model_class.objects.filter(id__in=ids)
 
     exporter = exporter_class(queryset, to_file=True)
     filepath = exporter.get_as_file()
-    print(filepath)
 
+    subject = 'Your UN Partner Portal Report'
+    message = f'Attached you\'ll find the requested UNPP Report: "{exporter.get_display_name()}"'
+    to = [send_to]
+    mail = EmailMessage(
+        subject,
+        message,
+        to=to,
+    )
 
-export_task = export_task.now  # DEBUG
+    mail.attach_file(filepath)
+    mail.send()
 
 
 class BaseXLSXExporter:
@@ -68,27 +77,26 @@ class BaseXLSXExporter:
         raise NotImplementedError
 
     def get_as_response(self, request):
-        print(full_classpath(self))
-        print(self.queryset.model)
-        module = import_string(full_classpath(self))
-        print(module)
-
         object_count = self.queryset.count()
         if object_count > MAX_EXPORT_SIZE:
             return HttpResponse(
                 'Too many objects selected for export. Use filters to narrow down the search.',
                 status=status.HTTP_400_BAD_REQUEST
             )
-        elif object_count > MAX_EXPORT_SIZE:
-            export_task =
+        elif object_count > ASYNC_EXPORT_SIZE_THRESHOLD:
+            print('ASYNC')
+            export_task(
+                full_classpath(self),
+                f'{self.queryset.model._meta.app_label}.{self.queryset.model._meta.model_name}',
+                list(self.queryset.values_list('id', flat=True)),
+                request.user.email
+            )
 
-            # TODO: trigger async task
             return HttpResponse(
                 f'Report is being generated. Will be sent to {request.user.email} once it\'s completed.',
                 status=status.HTTP_202_ACCEPTED
             )
         else:
-
             self.fill_worksheet()
             self.response['Content-Disposition'] = 'attachment; filename="{}"'.format(
                 f"[{timezone.now().strftime('%H.%M.%S %d %b %Y')}] {self.get_display_name()}.xlsx"
@@ -97,4 +105,5 @@ class BaseXLSXExporter:
 
     def get_as_file(self):
         self.fill_worksheet()
+        self.workbook.close()
         return self.file_path

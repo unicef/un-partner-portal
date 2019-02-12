@@ -85,6 +85,7 @@ class ProjectReportAPIView(ListAPIView):
 class ProjectDetailsXLSXReportAPIView(ProjectReportAPIView):
 
     def get(self, request, *args, **kwargs):
+        print(self.filter_queryset(self.get_queryset()).count())
         return ProjectDetailsXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response(
             self.request
         )
