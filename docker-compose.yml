@@ -1,4 +1,7 @@
-version: '2.1'
+version: '3'
+
+volumes:
+    backend-data:
 
 services:
     proxy:
@@ -15,8 +18,8 @@ services:
         depends_on:
             - backend
             - frontend
-        volumes_from:
-            - backend
+        volumes:
+            - backend-data:/data
 
     redis:
         restart: always
@@ -35,8 +38,8 @@ services:
                 ENV: dev
                 REQUIREMENT_FILE: dev.pip
         volumes:
-            - './backend:/code/'
-            - '/data'
+            - ./backend:/code/
+            - backend-data:/data
         depends_on:
             - db
             - redis
@@ -54,7 +57,7 @@ services:
                 ENV: dev
                 REQUIREMENT_FILE: dev.pip
         volumes:
-            - './backend:/code/'
+            - ./backend:/code/
         depends_on:
             - backend
         command: bash -c "/./worker-entrypoint.sh"
