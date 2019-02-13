@@ -1,4 +1,3 @@
-from django.db.models import Q
 from rest_framework import serializers
 
 from agency.roles import AgencyRole
@@ -25,10 +24,8 @@ class CurrentPartnerFilteredPKField(serializers.PrimaryKeyRelatedField):
     def get_queryset(self):
         queryset = super(CurrentPartnerFilteredPKField, self).get_queryset()
         request = self.context.get('request')
+
         if queryset and request and request.active_partner:
-            query = Q(id=request.active_partner.id)
-            if request.active_partner.is_hq:
-                query |= Q(hq=request.active_partner)
-            return queryset.filter(query)
+            return queryset.filter(id__in=request.user.partner_ids)
 
         return queryset.none()

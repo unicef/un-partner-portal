@@ -89,7 +89,7 @@ class Partner(MigratedTimeStampedModel):
         )
 
     def __str__(self):
-        return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
+        return f"[{self.pk}] {self.legal_name} ({self.display_type}) in {self.get_country_code_display()}"
 
     @property
     def is_international(self):
@@ -1043,7 +1043,7 @@ class PartnerMember(TimeStampedModel):
         )
 
     def __str__(self):
-        return "PartnerMember: {} <pk:{}>".format(self.title, self.id)
+        return f"<{self.pk}>[{self.user}] `{self.get_role_display()}` in `{self.partner}`"
 
     def get_role_display(self):
         # This is one of the "magical" django methods and cannot be called directly using super call
