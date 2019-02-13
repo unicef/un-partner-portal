@@ -68,7 +68,7 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
         self.context['agency_members'] = validated_data.pop('agency_members', None)
         request = self.context.get('request')
 
-        if request.user.get_agency_member().role == 'ADMINISTRATOR':
+        if request.user.get_agency_member().role == AgencyRole.ADMINISTRATOR.name:
             user = User.objects.filter(email=request.data['email'])
             if user:
                 request_user_country = request.user.get_agency_member().office.country.name
