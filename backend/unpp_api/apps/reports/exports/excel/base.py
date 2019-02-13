@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.module_loading import import_string
 from rest_framework import status, serializers
+from rest_framework.response import Response
 
 from common.excel import AutoWidthWorkBook
 
@@ -90,8 +91,8 @@ class BaseXLSXExporter:
                 request.user.email
             )
 
-            return HttpResponse(
-                f'Report is being generated. Will be sent to {request.user.email} once it\'s completed.',
+            return Response(
+                data=[f'Report is being generated. Will be sent to {request.user.email} once it\'s completed.'],
                 status=status.HTTP_202_ACCEPTED
             )
         else:
