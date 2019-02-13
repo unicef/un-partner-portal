@@ -8,7 +8,7 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.module_loading import import_string
-from rest_framework import status
+from rest_framework import status, serializers
 
 from common.excel import AutoWidthWorkBook
 
@@ -79,9 +79,8 @@ class BaseXLSXExporter:
     def get_as_response(self, request):
         object_count = self.queryset.count()
         if object_count > MAX_EXPORT_SIZE:
-            return HttpResponse(
-                'Too many objects selected for export. Use filters to narrow down the search.',
-                status=status.HTTP_400_BAD_REQUEST
+            raise serializers.ValidationError(
+                'Too many objects selected for export. Use filters to narrow down the search.'
             )
         elif object_count > ASYNC_EXPORT_SIZE_THRESHOLD:
             export_task(
