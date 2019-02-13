@@ -107,7 +107,7 @@ class PartnerInfoContainer extends Component {
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading || loading} />
+        <Loader fullscreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <PartnerInfoFilter
             clearSelections={() => this.listRef

@@ -71,7 +71,7 @@ class CfeiManagementContainer extends Component {
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading || loading} />
+        <Loader fullscreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <CfeiManagementFilter
             clearSelections={() => this.listRef
