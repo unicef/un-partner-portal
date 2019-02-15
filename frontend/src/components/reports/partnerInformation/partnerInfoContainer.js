@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
+import Checkbox from 'material-ui/Checkbox';
 import { TableCell } from 'material-ui/Table';
+import { withStyles } from 'material-ui/styles';
 import { withRouter } from 'react-router';
 import PartnerInfoFilter from './partnerInfoFilter';
 import CustomGridColumn from '../../common/grid/customGridColumn';
@@ -21,6 +23,45 @@ const messages = {
   partnerMappingReport: 'Export partner mapping report',
   partnerMapping: 'Map of Partners',
 };
+
+const styleSheet = () => ({
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  root: {
+    color: '#FFF',
+    '&$checked': {
+      color: '#FFF',
+    },
+  },
+  checked: {},
+});
+
+const HeaderActionsBase = (props) => {
+  const { classes, listRef, checked } = props;
+
+  return (
+    <div className={classes.container}>{'Select All'}
+      <Checkbox
+        checked={checked}
+        onChange={(e, checked) => {
+          if (checked) {
+            listRef.getWrappedInstance().getWrappedInstance().selectAll();
+          } else {
+            listRef.getWrappedInstance().getWrappedInstance().clearSelections();
+          }
+        }}
+        classes={{
+          root: checked ? classes.root : null,
+          checked: classes.checked,
+        }}
+      />
+    </div>
+  );
+};
+
+export const HeaderActions = withStyles(styleSheet, { name: 'HeaderActionsBase' })(HeaderActionsBase);
 
 class PartnerInfoContainer extends Component {
   componentWillMount() {
@@ -101,6 +142,7 @@ class PartnerInfoContainer extends Component {
       hasCSOMappingPermission,
       hasCSOContactPermission,
       query,
+      selectionIds,
       hasCSOProfilePermission } = this.props;
 
     const queryParams = R.omit(['page', 'page_size'], query);
@@ -143,6 +185,7 @@ class PartnerInfoContainer extends Component {
             items={items}
             columns={columns}
             loading={loading}
+            componentHeaderAction={<HeaderActions checked={items.length === selectionIds.length} listRef={this.listRef} />}
             hideList={R.isEmpty(queryParams)}
             itemsCount={totalCount}
             templateCell={this.tableCell}
@@ -191,9 +234,9 @@ const mapDispatch = dispatch => ({
 });
 
 const connectedPartnerInfoContainer =
-connect(
-  mapStateToProps,
-  mapDispatch,
-)(PartnerInfoContainer);
+  connect(
+    mapStateToProps,
+    mapDispatch,
+  )(PartnerInfoContainer);
 
 export default withRouter(connectedPartnerInfoContainer);
