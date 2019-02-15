@@ -156,7 +156,6 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
             'email',
             'status',
             'office_memberships',
-            'offices',
         )
         extra_kwargs = {
             'fullname': {
@@ -185,12 +184,13 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
         if self.context['partner_members'] is not None:
             memberships = []
             for member_data in self.context['partner_members']:
-                print(member_data)
-                memberships.append(PartnerMember.objects.update_or_create(
-                    user=user,
-                    partner=member_data.pop('office_id'),
-                    defaults=member_data
-                )[0].pk)
+                partner = member_data.pop('office_id', None)
+                if partner:
+                    memberships.append(PartnerMember.objects.update_or_create(
+                        user=user,
+                        partner=partner,
+                        defaults=member_data
+                    )[0].pk)
 
             if update:
                 PartnerMember.objects.filter(user=user).filter(
@@ -207,6 +207,5 @@ class PartnerUserManagementSerializer(serializers.ModelSerializer):
                 self.context['request'].user,
                 partner=getattr(self.context.get('request'), 'active_partner', None)
             )
-        user.refresh_from_db()
 
         return user
