@@ -478,6 +478,7 @@ class PartnerProfile(TimeStampedModel):
             required_fields.pop('staff_globally')
         else:
             required_fields.pop('staff_in_country')
+            required_fields.pop('pinned_location_office_on_map')
         return all(required_fields.values())
 
     @property
