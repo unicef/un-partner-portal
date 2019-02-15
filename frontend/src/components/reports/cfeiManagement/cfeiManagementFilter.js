@@ -51,12 +51,20 @@ const styleSheet = theme => ({
   },
 });
 
-export const YEARS_VAL = [
-  {
-    value: '2018',
-    label: '2018',
-  },
-];
+export const YEARS_VAL = () => {
+  const currentYear = new Date().getFullYear();
+  const FROM = 2018;
+  const years = [];
+
+  for (let year = FROM; year < currentYear + 1; year += 1) {
+    years.push({
+      value: String(year),
+      label: String(year),
+    });
+  }
+
+  return years;
+};
 
 class CfeiManagementFilter extends Component {
   constructor(props) {
@@ -162,7 +170,7 @@ class CfeiManagementFilter extends Component {
                 fieldName="posted_year"
                 label={messages.labels.year}
                 placeholder={messages.labels.yearPlaceholder}
-                values={YEARS_VAL}
+                values={YEARS_VAL()}
                 optional
               />
             </Grid>
@@ -238,7 +246,7 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { display_type } = {} } = ownProps.location;
 
   const specializationsQ = specializations &&
-  R.map(Number, specializations.split(','));
+    R.map(Number, specializations.split(','));
 
   return {
     pathName: ownProps.location.pathname,
