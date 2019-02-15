@@ -1,6 +1,7 @@
 import random
 
 from django.urls import reverse
+from rest_framework import status
 
 from agency.roles import AgencyRole
 from common.consts import PARTNER_TYPES
@@ -8,13 +9,10 @@ from common.factories import AgencyFactory, UserFactory, PartnerFactory, AgencyO
     PartnerMemberFactory
 from common.headers import CustomHeader
 from common.tests.base import BaseAPITestCase
-from rest_framework import status
-
 from partner.roles import PartnerRole
 
 
 class TestAgencyUserManagement(BaseAPITestCase):
-
     quantity = 1
     initial_factories = [
         AgencyFactory,
@@ -56,6 +54,23 @@ class TestAgencyUserManagement(BaseAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
         self.assertEqual(len(response.data['office_memberships']), 2)
 
+    def test_invite_existing_user(self):
+        email = 'john.doe23@test.com'
+        AgencyMemberFactory(user=UserFactory(email=email))
+
+        url = reverse('management:user-add')
+        payload = {
+            'fullname': 'John Doe',
+            'email': email,
+            'office_memberships': [{
+                'office_id': AgencyOfficeFactory(agency=self.user.agency).id,
+            }]
+        }
+
+        response = self.client.post(url, data=payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
+        self.assertEqual(len(response.data['office_memberships']), 2)
+
     def test_deactivate_user(self):
         url = reverse('management:user-add')
         payload = {
@@ -86,7 +101,6 @@ class TestAgencyUserManagement(BaseAPITestCase):
 
 
 class TestPartnerUserManagement(BaseAPITestCase):
-
     quantity = 1
     user_type = BaseAPITestCase.USER_PARTNER
     partner_role = PartnerRole.ADMIN
@@ -128,6 +142,25 @@ class TestPartnerUserManagement(BaseAPITestCase):
         url = reverse('management:user-details', kwargs={'pk': response.data['id']})
         response = self.client.patch(url, data=payload, HTTP_PARTNER_ID=active_partner.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
+        self.assertEqual(len(response.data['office_memberships']), 2)
+
+    def test_invite_existing_user(self):
+        email = 'john.doe233@test.com'
+        PartnerMemberFactory(user=UserFactory(email=email))
+        new_partner = PartnerFactory(country_code='PL')
+        PartnerMemberFactory(user=self.user, partner=new_partner)
+
+        url = reverse('management:user-add')
+        payload = {
+            'fullname': 'John Doe',
+            'email': email,
+            'office_memberships': [{
+                'office_id': new_partner.id,
+            }]
+        }
+
+        response = self.client.post(url, data=payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.data)
         self.assertEqual(len(response.data['office_memberships']), 2)
 
     def test_deactivate_user(self):
@@ -201,10 +234,6 @@ class TestPartnerUserManagement(BaseAPITestCase):
             url = reverse('management:user-list')
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
-            # Check that only offices that user can manage are returned
-            self.assertEqual(
-                len(response.data['results'][0]['office_memberships']), 1
-            )
 
             self.assertEqual(
                 user.partner_members.all().count(), 2
