@@ -41,19 +41,25 @@ class PartnerProfileReportAPIView(ListAPIView):
 class PartnerProfileReportXLSXReportAPIView(PartnerProfileReportAPIView):
 
     def get(self, request, *args, **kwargs):
-        return PartnerProfileReportXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
+        return PartnerProfileReportXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response(
+            self.request
+        )
 
 
 class PartnerContactInformationReportXLSXReportAPIView(PartnerProfileReportAPIView):
 
     def get(self, request, *args, **kwargs):
-        return PartnerContactInformationXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
+        return PartnerContactInformationXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response(
+            self.request
+        )
 
 
 class PartnerMappingReportXLSXReportAPIView(PartnerProfileReportAPIView):
 
     def get(self, request, *args, **kwargs):
-        return PartnerMappingReportXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
+        return PartnerMappingReportXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response(
+            self.request
+        )
 
 
 class ProjectReportAPIView(ListAPIView):
@@ -79,7 +85,9 @@ class ProjectReportAPIView(ListAPIView):
 class ProjectDetailsXLSXReportAPIView(ProjectReportAPIView):
 
     def get(self, request, *args, **kwargs):
-        return ProjectDetailsXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response()
+        return ProjectDetailsXLSLExporter(self.filter_queryset(self.get_queryset())).get_as_response(
+            self.request
+        )
 
 
 class VerificationsAndObservationsReportAPIView(ListAPIView):
@@ -104,4 +112,6 @@ class PartnerVerificationsObservationsXLSXReportAPIView(VerificationsAndObservat
     def get(self, request, *args, **kwargs):
         return PartnerVerificationsObservationsReportXLSLExporter(
             self.filter_queryset(self.get_queryset())
-        ).get_as_response()
+        ).get_as_response(
+            self.request
+        )

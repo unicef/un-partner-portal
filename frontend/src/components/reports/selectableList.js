@@ -31,9 +31,15 @@ const styleSheet = (theme) => {
 
   return {
     container: {
+      display: 'flex',
+      alignItems: 'center',
       padding: `${paddingSmall}px 0 ${paddingSmall}px ${paddingMedium}px`,
       backgroundColor: theme.palette.primary[100],
     },
+    select: {
+      marginLeft: 'auto',
+      marginRight: `${paddingSmall}px`,
+    }
   };
 };
 
@@ -66,6 +72,7 @@ class SelectableList extends Component {
     this.onPageSize = this.onPageSize.bind(this);
     this.tableRowTemplate = this.tableRowTemplate.bind(this);
     this.clearSelections = this.clearSelections.bind(this);
+    this.selectAll = this.selectAll.bind(this);
     this.selectionCell = this.selectionCell.bind(this);
   }
 
@@ -116,7 +123,7 @@ class SelectableList extends Component {
     this.setState({ hoveredRow: null });
   }
 
-  navigationHeader(selected, rows, HeaderAction) {
+  navigationHeader(selected, rows, HeaderAction, componentHeaderAction) {
     const { classes, itemsCount = 0, pageSize, pageNumber } = this.props;
 
     const firstRange = (pageSize * (pageNumber - 1)) + 1;
@@ -126,11 +133,14 @@ class SelectableList extends Component {
     return (<div>
       {selected.length > 0
         ? <SelectedHeader numSelected={selected.length} >
-          {HeaderAction && <HeaderAction rows={R.values(R.pick(selected, rows))} />}
+          {componentHeaderAction || (HeaderAction && <HeaderAction rows={R.values(R.pick(selected, rows))} />)}
         </SelectedHeader>
-        : <div className={classes.container}><Typography type="title">
-          {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
-        </Typography></div>
+        : <div className={classes.container}>
+          <Typography type="title">
+            {`${isNaN(firstRange) ? 0 : firstRange}-${isNaN(secondRange) ? 0 : secondRange} of ${itemsCount} results`}
+          </Typography>
+          <div className={classes.select}>{componentHeaderAction}</div>
+        </div>
       }
     </div>);
   }
@@ -152,6 +162,12 @@ class SelectableList extends Component {
     saveSelectedItems([]);
   }
 
+  selectAll() {
+    const { items, saveSelectedItems } = this.props;
+
+    saveSelectedItems(items.map(item => item.id));
+  }
+
   selectionCell(rowIndex) {
     const { selections } = this.props;
 
@@ -169,6 +185,7 @@ class SelectableList extends Component {
       columns,
       templateCell,
       headerAction,
+      componentHeaderAction,
       pageSize,
       pageNumber,
       itemsCount,
@@ -190,7 +207,8 @@ class SelectableList extends Component {
             headerPlaceholderComponent={() => this.navigationHeader(
               selections,
               items,
-              headerAction)}
+              headerAction,
+              componentHeaderAction)}
           >
             <PagingState
               currentPage={pageNumber - 1}
@@ -260,6 +278,7 @@ SelectableList.propTypes = {
     PropTypes.number,
   ]),
   headerAction: PropTypes.func,
+  componentHeaderAction: PropTypes.object,
   loading: PropTypes.bool,
   pathName: PropTypes.string.isRequired,
   query: PropTypes.object,

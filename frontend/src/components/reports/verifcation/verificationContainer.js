@@ -69,7 +69,7 @@ class VerificationContainer extends Component {
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading || loading} />
+        <Loader fullscreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <VerificationFilter />
           {!R.isEmpty(queryParams)

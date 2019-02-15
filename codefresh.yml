@@ -114,17 +114,6 @@ steps:
                     - develop
                     - master
         steps:
-#            deploy_legacydb:
-#                title: Deploying Legacy DB
-#                image: codefresh/cf-deploy-kubernetes
-#                tag: latest
-#                working_directory: ${{main_clone}}
-#                commands:
-#                  - /cf-deploy-kubernetes ./kubernetes/legacy_db/deployment.yml
-#                environment:
-#                  - KUBECONTEXT=${{KUBECONTEXT}}
-#                  - KUBERNETES_NAMESPACE=${{NAMESPACE}}
-#                  - KUBERNETES_DEPLOYMENT_TIMEOUT=500
 
             deploy_redis:
                 title: Deploying Redis
@@ -180,22 +169,6 @@ steps:
                   - KUBERNETES_NAMESPACE=${{NAMESPACE}}
                   - ENV=${{ENV}}
                   - KUBERNETES_DEPLOYMENT_TIMEOUT=500
-
-            deploy_cronjobs:
-                title: Creating backend cronjobs
-                image: codefresh/cf-deploy-kubernetes
-                tag: ${{CF_SHORT_REVISION}}
-                working_directory: ${{main_clone}}
-                commands:
-                  - /cf-deploy-kubernetes ./kubernetes/backend/cronjobs.yml
-                environment:
-                  - KUBECONTEXT=${{KUBECONTEXT}}
-                  - KUBERNETES_NAMESPACE=${{NAMESPACE}}
-                  - ENV=${{ENV}}
-                  - DJANGO_ALLOWED_HOST=${{DJANGO_ALLOWED_HOST}}
-                  - POSTGRES_USER=${{POSTGRES_USER}}
-                  - POSTGRES_DB=${{POSTGRES_DB}}
-                  - POSTGRES_HOST=${{POSTGRES_HOST}}
 
     delete_jobs:
         stage: 'run_jobs'
