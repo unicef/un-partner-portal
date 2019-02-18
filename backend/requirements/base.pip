@@ -9,6 +9,7 @@ django-mail-templated==2.6.5
 django-imagekit==4.0.1
 dj-static==0.0.6
 django-redis==4.10.0
+django-background-tasks==1.2.0
 
 # REST framework
 djangorestframework==3.7.7

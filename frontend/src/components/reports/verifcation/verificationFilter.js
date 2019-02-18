@@ -79,12 +79,20 @@ export const STATUS_VAL = [
   },
 ];
 
-export const YEARS_VAL = [
-  {
-    value: '2018',
-    label: '2018',
-  },
-];
+export const YEARS_VAL = () => {
+  const currentYear = new Date().getFullYear();
+  const FROM = 2018;
+  const years = [];
+
+  for (let year = FROM; year < currentYear + 1; year += 1) {
+    years.push({
+      value: String(year),
+      label: String(year),
+    });
+  }
+
+  return years;
+};
 
 class VerificationFilter extends Component {
   constructor(props) {

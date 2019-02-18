@@ -2,11 +2,12 @@ import R from 'ramda';
 import React from 'react';
 import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
+import classname from 'classnames';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import { formValueSelector } from 'redux-form';
 import TextFieldForm from '../../../../forms/textFieldForm';
 import AddressMapField from './addressMapField';
-
 
 const styleSheet = theme => ({
   innerPaper: {
@@ -21,6 +22,9 @@ const styleSheet = theme => ({
     padding: theme.spacing.unit * 2,
     width: '100%',
   },
+  error: {
+    border: '2px solid red',
+  },
 });
 
 const messages = {
@@ -29,14 +33,17 @@ const messages = {
 };
 
 const LocationFieldArray = (props) => {
-  const { classes, formName, readOnly, name, country } = props;
-  
+  const { classes, formName, readOnly, name, country, currentLocations } = props;
+  const paperClass = classname(
+    classes.container,
+    { [classes.error]: currentLocations.length === 0 },
+  );
+
   return (
-    <div className={classes.container}>
+    <div className={paperClass}>
       <TextFieldForm
         label={messages.country}
         fieldName={'countryName'}
-        optional
         textFieldProps={{
           InputProps: {
             inputProps: {
@@ -62,6 +69,7 @@ LocationFieldArray.propTypes = {
   country: PropTypes.string,
   readOnly: PropTypes.bool,
   classes: PropTypes.object,
+  currentLocations: PropTypes.array,
 };
 
 const connected = connect(
@@ -69,7 +77,11 @@ const connected = connect(
     const partner = R.find(item => item.id === Number(ownProps.params.id), state.session.partners
       || state.agencyPartnersList.data.partners);
     const country = partner.is_hq ? messages.hqProfile : state.countries[partner.country_code];
+    const selector = formValueSelector(ownProps.formName);
+    const locations = selector(state, ownProps.name);
+    const currentLocations = locations ? R.filter(item => !R.isEmpty(item), locations) : [];
     return {
+      currentLocations,
       country,
     };
   },

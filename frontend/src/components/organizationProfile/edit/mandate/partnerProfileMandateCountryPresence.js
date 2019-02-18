@@ -44,7 +44,7 @@ const PartnerProfileMandateCountryPresence = (props) => {
             profileId={profileId}
             formName={'partnerProfile'}
             readOnly={readOnly}
-            optional
+            required
             name={'mandate_mission.country_presence.location_field_offices'}
           />
           : null}
