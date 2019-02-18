@@ -3,11 +3,12 @@ import { withRouter } from 'react-router';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { FormHelperText } from 'material-ui/Form';
 import { arrayPush, arrayRemove, formValueSelector } from 'redux-form';
 import Typography from 'material-ui/Typography';
 import GridColumn from '../../../../common/grid/gridColumn';
 import LocationsMap from './locationsMap';
-
+import { selectCountriesWithOptionalLocations } from '../../../../../store';
 
 const messages = {
   label: 'Location of office(s) in the country of operation - pick location(s) from the map.',
@@ -33,7 +34,7 @@ class LocationsMapField extends Component {
   }
 
   render() {
-    const { countryCode, currentCountry, readOnly, currentLocations } = this.props;
+    const { countryCode, currentCountry, readOnly, currentLocations, optionalLocations } = this.props;
     return (
       <GridColumn>
         <Typography type="caption">{messages.label}</Typography>
@@ -47,6 +48,10 @@ class LocationsMapField extends Component {
           removeLocation={this.removeLocation}
           removeAllLocations={() => {}}
         />
+        {!readOnly && currentCountry
+          && R.isEmpty(currentLocations)
+          && !optionalLocations.includes(countryCode)
+          && <FormHelperText error>{'Select locations'}</FormHelperText>}
       </GridColumn>
     );
   }
@@ -56,6 +61,7 @@ LocationsMapField.propTypes = {
   countryCode: PropTypes.string,
   currentCountry: PropTypes.string,
   currentLocations: PropTypes.array,
+  optionalLocations: PropTypes.array,
   name: PropTypes.string,
   readOnly: PropTypes.bool,
   formName: PropTypes.string,
@@ -72,8 +78,10 @@ const connected = connect(
     || state.agencyPartnersList.data.partners);
     const currentCountry = partner ? state.countries[partner.country_code] : null;
     const countryCode = partner ? partner.country_code : {};
-
+    const optionalLocations = selectCountriesWithOptionalLocations(state);
+    
     return {
+      optionalLocations,
       countryCode,
       currentCountry,
       currentLocations,
