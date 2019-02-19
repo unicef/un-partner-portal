@@ -24,19 +24,33 @@ class AgencyRole(AutoNameEnum):
     MFT_USER = auto()
 
     @classmethod
-    def get_choices(cls, agency=None):
+    def get_choices(cls, agency=None, user_role=None):
         if agency and agency.name == UNHCR.name:
             def filter_function(role_name):
-                return role_name not in {
-                    AgencyRole.EDITOR_BASIC,
-                    AgencyRole.EDITOR_ADVANCED,
-                }
+                if user_role == AgencyRole.HQ_EDITOR.name or user_role is None:
+                    return role_name not in {
+                        AgencyRole.EDITOR_BASIC,
+                        AgencyRole.EDITOR_ADVANCED,
+                    }
+                else:
+                    return role_name not in {
+                        AgencyRole.EDITOR_BASIC,
+                        AgencyRole.EDITOR_ADVANCED,
+                        AgencyRole.HQ_EDITOR,
+                    }
         elif agency:
             def filter_function(role_name):
-                return role_name not in {
-                    AgencyRole.PAM_USER,
-                    AgencyRole.MFT_USER,
-                }
+                if user_role == AgencyRole.HQ_EDITOR.name or user_role is None:
+                    return role_name not in {
+                        AgencyRole.PAM_USER,
+                        AgencyRole.MFT_USER,
+                    }
+                else:
+                    return role_name not in {
+                        AgencyRole.PAM_USER,
+                        AgencyRole.MFT_USER,
+                        AgencyRole.HQ_EDITOR,
+                    }
         else:
             def filter_function(*args):
                 return True
