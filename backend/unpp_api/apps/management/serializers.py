@@ -68,18 +68,6 @@ class AgencyUserManagementSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         validated_data = super(AgencyUserManagementSerializer, self).validate(attrs)
         self.context['agency_members'] = validated_data.pop('agency_members', None)
-        request = self.context.get('request')
-
-        if request.user.get_agency_member().role == AgencyRole.ADMINISTRATOR.name:
-            user = User.objects.filter(email=request.data['email'])
-            if user:
-                request_user_country = request.user.get_agency_member().office.country.name
-                user_country = user[0].get_agency_member().office.country.name
-                if request_user_country != user_country:
-                    raise serializers.ValidationError(
-                        'Administrator cannot change a user role for a user not in their country.'
-                    )
-
         return validated_data
 
     @transaction.atomic

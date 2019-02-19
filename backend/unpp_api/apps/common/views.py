@@ -97,9 +97,16 @@ class GeneralConfigAPIView(APIView):
         if self.request.active_partner:
             choices = dict(PartnerRole.get_choices())
         elif self.request.agency_member:
-            choices = dict(AgencyRole.get_choices(self.request.user.agency))
+            choices = dict(AgencyRole.get_choices(self.request.user.agency, self.request.agency_member.role))
         else:
             choices = {}
+
+        if self.request.active_partner:
+            user_role_filter = dict(PartnerRole.get_choices())
+        elif self.request.agency_member:
+            user_role_filter = dict(AgencyRole.get_choices(self.request.user.agency))
+        else:
+            user_role_filter = {}
 
         if self.request.agency_member and self.request.user.agency.name == UNHCR.name:
             dsr_completed_reason_choices = UNHCR_DSR_COMPLETED_REASONS
@@ -138,6 +145,7 @@ class GeneralConfigAPIView(APIView):
             "direct-justifications": JUSTIFICATION_FOR_DIRECT_SELECTION,
             "extended-application-statuses": EXTENDED_APPLICATION_STATUSES,
             "countries-with-optional-location": LOCATION_OPTIONAL_COUNTRIES,
+            "user-role-filter": user_role_filter,
             "user-role-choices": choices,
             "flag-type-choices": flag_type_choices,
             "flag-types": FLAG_TYPES,

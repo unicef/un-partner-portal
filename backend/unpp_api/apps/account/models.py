@@ -140,11 +140,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def set_random_password(self):
         self.set_password(''.join(random.choices(string.printable, k=256)))
 
-    def get_agency_member(self):
-        from agency.models import AgencyMember
-        agency_members = AgencyMember.objects.filter(user=self.pk)
-        return agency_members[0] if agency_members else None
-
 
 class UserProfile(TimeStampedModel):
     """
