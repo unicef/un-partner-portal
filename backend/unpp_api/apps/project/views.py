@@ -486,7 +486,7 @@ class ApplicationAPIView(RetrieveUpdateAPIView):
             return PartnerApplicationSerializer
 
     def check_object_permissions(self, request, obj: Application):
-        if self.request.user.agency and obj.eoi.is_completed and not obj.agency == self.request.user.agency:
+        if self.request.user.agency and not obj.agency == self.request.user.agency and obj.eoi and obj.eoi.is_completed:
             raise PermissionDenied
 
     def get_queryset(self):
@@ -771,9 +771,10 @@ class ApplicationFeedbackListCreateAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         application = get_object_or_404(Application, id=self.kwargs['pk'])
-        eoi = application.eoi
-        if eoi.created_by == self.request.user or eoi.focal_points.filter(id=self.request.user.id).exists():
-            return serializer.save(provider=self.request.user, application=application)
+        if application.eoi:
+            eoi = application.eoi
+            if eoi.created_by == self.request.user or eoi.focal_points.filter(id=self.request.user.id).exists():
+                return serializer.save(provider=self.request.user, application=application)
         raise PermissionDenied(
             'Only CFEI creator or focal point can input comments in the “Feedback to partner” section'
         )
