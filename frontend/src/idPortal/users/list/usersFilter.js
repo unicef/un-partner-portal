@@ -10,7 +10,7 @@ import Button from 'material-ui/Button';
 import SelectForm from '../../../components/forms/selectForm';
 import TextFieldForm from '../../../components/forms/textFieldForm';
 import resetChanges from '../../../components/eois/filters/eoiHelper';
-import { selectNormalizedRoleChoices, selectNormalizedOffices } from '../../../store';
+import { selectNormalizedRoleFilter, selectNormalizedOfficesFilter } from '../../../store';
 
 const messages = {
   choose: 'Choose',
@@ -160,8 +160,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     pathName: ownProps.location.pathname,
-    roleChoices: selectNormalizedRoleChoices(state),
-    offices: selectNormalizedOffices(state),
+    roleChoices: selectNormalizedRoleFilter(state),
+    offices: selectNormalizedOfficesFilter(state),
     query: ownProps.location.query,
     initialValues: {
       name,
