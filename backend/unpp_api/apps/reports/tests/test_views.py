@@ -209,51 +209,6 @@ class TestVerificationsAndObservationsReportAPIView(BaseAPITestCase):
             self.assertEqual(list_response.data['count'], partners.filter(flags__category=flag_category).count())
 
 
-class TestBasicExportAPIViews(BaseAPITestCase):
-
-    user_type = BaseAPITestCase.USER_AGENCY
-    agency_role = AgencyRole.EDITOR_ADVANCED
-    initial_factories = []
-
-    def test_profile_report(self):
-        PartnerFactory.create_batch(40)
-        url = reverse('reports:partner-profile-export-xlsx')
-        response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-    def test_contact_report(self):
-        PartnerFactory.create_batch(40)
-        url = reverse('reports:partner-contact-export-xlsx')
-        response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-    def test_mapping_report(self):
-        PartnerFactory.create_batch(40)
-        url = reverse('reports:partner-mapping-export-xlsx')
-        response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-    def test_project_report(self):
-        OpenEOIFactory.create_batch(20, is_published=True)
-        DirectEOIFactory.create_batch(20, is_published=True)
-        url = reverse('reports:projects-details-export-xlsx')
-        response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-    def test_verifications_observations_report(self):
-        PartnerFactory.create_batch(40)
-        PartnerVerificationFactory.create_batch(40)
-        PartnerFlagFactory.create_batch(80)
-        url = reverse('reports:verifications-observations-export-xlsx')
-        response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-
 class TestBackgroundExportAPIViews(BaseAPITestCase):
     # TODO: This only check if the jobs have been scheduled, test execution too
 

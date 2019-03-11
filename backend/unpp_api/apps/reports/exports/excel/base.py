@@ -6,15 +6,11 @@ from background_task import background
 from django.apps import apps
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
-from django.utils import timezone
 from django.utils.module_loading import import_string
-from rest_framework import status, serializers
+from rest_framework import status
 from rest_framework.response import Response
 
 from common.excel import AutoWidthWorkBook
-
-MAX_EXPORT_SIZE = 200
-ASYNC_EXPORT_SIZE_THRESHOLD = 50
 
 
 def full_classpath(obj):
@@ -78,29 +74,17 @@ class BaseXLSXExporter:
         raise NotImplementedError
 
     def get_as_response(self, request):
-        object_count = self.queryset.count()
-        if object_count > MAX_EXPORT_SIZE:
-            raise serializers.ValidationError(
-                'Too many objects selected for export. Use filters to narrow down the search.'
-            )
-        elif object_count > ASYNC_EXPORT_SIZE_THRESHOLD:
-            export_task(
-                full_classpath(self),
-                f'{self.queryset.model._meta.app_label}.{self.queryset.model._meta.model_name}',
-                list(self.queryset.values_list('id', flat=True)),
-                request.user.email
-            )
+        export_task(
+            full_classpath(self),
+            f'{self.queryset.model._meta.app_label}.{self.queryset.model._meta.model_name}',
+            list(self.queryset.values_list('id', flat=True)),
+            request.user.email
+        )
 
-            return Response(
-                data=[f'Report is being generated. Will be sent to {request.user.email} once it\'s completed.'],
-                status=status.HTTP_202_ACCEPTED
-            )
-        else:
-            self.fill_worksheet()
-            self.response['Content-Disposition'] = 'attachment; filename="{}"'.format(
-                f"[{timezone.now().strftime('%H.%M.%S %d %b %Y')}] {self.get_display_name()}.xlsx"
-            )
-            return self.response
+        return Response(
+            data=[f'Report is being generated. Will be sent to {request.user.email} once it\'s completed.'],
+            status=status.HTTP_202_ACCEPTED
+        )
 
     def get_as_file(self):
         self.fill_worksheet()
