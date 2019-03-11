@@ -25,10 +25,8 @@ RAVEN_CONFIG = {
 AZURE_ACCOUNT_NAME = os.environ.get('AZURE_ACCOUNT_NAME', None)  # noqa: F405
 AZURE_ACCOUNT_KEY = os.environ.get('AZURE_ACCOUNT_KEY', None)  # noqa: F405
 AZURE_CONTAINER = os.environ.get('AZURE_CONTAINER', None)  # noqa: F405
-AZURE_SSL = True
-AZURE_AUTO_SIGN = True  # flag for automatically signing urls
-AZURE_ACCESS_POLICY_EXPIRY = 10800  # length of time before signature expires in seconds
-AZURE_ACCESS_POLICY_PERMISSION = 'r'  # read permission
+
+AZURE_URL_EXPIRATION_SECS = 10800
 
 if AZURE_ACCOUNT_NAME and AZURE_ACCOUNT_KEY and AZURE_CONTAINER:
     DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'

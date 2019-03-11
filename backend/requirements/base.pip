@@ -21,7 +21,6 @@ django-countries==5.3
 Pillow==5.2.0
 python-memcached==1.59
 ipython==5.4.1
-azure-storage==0.20.2
 psycopg2==2.7.5
 python-json-logger==0.1.7
 xmltodict==0.11.0
@@ -54,7 +53,4 @@ raven==6.4.0
 # New Relic
 newrelic==2.106.1.88
 
--e git+https://github.com/robertavram/django-storages.git@1.6.5.3#egg=django-storages
-
-# For accessing legacy MSSQL DB
--e git+https://github.com/denisenkom/django-sqlserver.git#egg=django-sqlserver
+django-storages[azure]==1.7.1
