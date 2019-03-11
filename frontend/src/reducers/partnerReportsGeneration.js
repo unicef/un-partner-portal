@@ -36,7 +36,6 @@ const initialState = {
 };
 
 const handleError = (dispatch, error) => {
-  debugger;
   if (error.response.status === 400) {
     dispatch(errorToBeAdded(error, 'export_report', messages.tooManyResults));
   } else if (error.response.status === 202) {

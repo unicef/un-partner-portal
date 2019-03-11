@@ -7,7 +7,7 @@ import { updateCfei } from '../../../../reducers/newCfei';
 import CompleteCfeiForm from './completeCfeiForm';
 
 const messages = {
-  title: 'Are you sure you want to finalize this direct selection/retention?',
+  title: 'Are you sure you want to finalize this CFEI?',
   header: { title: 'E-mail will be sent to participating partner.' },
   save: 'finalize',
 };
