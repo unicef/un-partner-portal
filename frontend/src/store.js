@@ -320,8 +320,14 @@ export const selectCountriesWithOptionalLocations = state =>
 export const selectNormalizedRoleChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['user-role-choices']);
 
+export const selectNormalizedRoleFilter = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['user-role-filter']);
+
 export const selectNormalizedOffices = state =>
-  mapArrayForSelectionField(state.offices);
+  mapArrayForSelectionField(state.offices['user-offices-choices']);
+
+export const selectNormalizedOfficesFilter = state =>
+  mapArrayForSelectionField(state.offices['user-offices-filter']);
 
 export const selectNormalizedSpecializations = state =>
   mapValuesForSelectionField(state.sectors.allSpecializations);
