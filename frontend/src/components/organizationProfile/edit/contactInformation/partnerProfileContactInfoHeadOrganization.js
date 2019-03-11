@@ -28,7 +28,7 @@ const authorisedOfficerForm = (head, index, readOnly, isHq) => (
       <TextFieldForm
         label={messages.fullname}
         fieldName={`${head}.fullname`}
-        readOnly={readOnly || (isHq && index === 0)}
+        readOnly={readOnly}
       />
       <TextFieldForm
         label={messages.jobTitle}
@@ -62,7 +62,7 @@ const authorisedOfficerForm = (head, index, readOnly, isHq) => (
         label={messages.email}
         fieldName={`${head}.email`}
         validation={[email]}
-        readOnly={readOnly || (isHq && index === 0)}
+        readOnly={readOnly}
         textFieldProps={{
           "type": "email"
         }}
