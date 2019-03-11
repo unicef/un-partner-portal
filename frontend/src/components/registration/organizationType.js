@@ -101,7 +101,7 @@ const OrganizationTypes = (props) => {
         values={organizationTypes}
         infoText={messages.tooltip}
       />
-      {(organization === 'Int' || organization === 'RCC') && (
+      {(organization === 'Int') && (
         <RadioForm
           fieldName="office"
           label={messages.labels.office}
