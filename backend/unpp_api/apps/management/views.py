@@ -107,8 +107,8 @@ class OfficeListView(APIView):
         offices_filter = serializer(query_filter, many=True)
 
         data = {
-            "user_offices_choices": offices_choices.data,
-            "user_offices_filter": offices_filter.data
+            "user-offices-choices": offices_choices.data,
+            "user-offices-filter": offices_filter.data
         }
 
         return Response(data, status=status.HTTP_200_OK)
