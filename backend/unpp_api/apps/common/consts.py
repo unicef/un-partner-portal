@@ -19,9 +19,9 @@ PARTNER_REVIEW_TYPES = Choices(
 PARTNER_TYPES = Choices(
     ('CBO', 'cbo', 'Community Based Organization (CBO)'),
     ('NGO', 'national', 'National NGO'),
-    ('Int', 'international', 'International NGO (INGO)'),
+    ('Int', 'international', 'International Civil Society Organization'),
     ('Aca', 'academic', 'Academic Institution'),
-    ('RCC', 'red_cross', 'Red Cross/Red Crescent Movement'),
+    ('RCC', 'red_cross', 'Red Cross/Red Crescent National Society'),
 )
 
 CFEI_TYPES = Choices(
