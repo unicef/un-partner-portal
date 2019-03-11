@@ -183,7 +183,7 @@ class VerificationFilter extends Component {
               <SelectForm
                 fieldName="verification_year"
                 label={messages.labels.verificationYear}
-                values={YEARS_VAL}
+                values={YEARS_VAL()}
                 optional
               />
             </Grid>
