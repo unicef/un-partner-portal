@@ -46,10 +46,11 @@ const handleError = (dispatch, error) => {
 export const getPartnerProfileReport = params => (dispatch) => {
   dispatch(reportsGenerateLoadStarted());
 
-  return getPartnerProfileReports(params, { responseType: 'blob' })
+  return getPartnerProfileReports(params)
     .then((data) => {
-      download(data, `Profile Report - ${formatDateForPrint(new Date())}.xlsx`);
       dispatch(reportsGenerateLoadEnded());
+
+      return data;
     })
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
@@ -62,10 +63,11 @@ export const getPartnerProfileReport = params => (dispatch) => {
 export const getPartnerContactReport = params => (dispatch) => {
   dispatch(reportsGenerateLoadStarted());
 
-  return getPartnerContactReports(params, { responseType: 'blob' })
-    .then((data) => {
-      download(data, `Contact Report - ${formatDateForPrint(new Date())}.xlsx`);
+  return getPartnerContactReports(params)
+    .then((data) => { 
       dispatch(reportsGenerateLoadEnded());
+
+      return data;
     })
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
@@ -78,10 +80,11 @@ export const getPartnerContactReport = params => (dispatch) => {
 export const getPartnerMappingReport = params => (dispatch) => {
   dispatch(reportsGenerateLoadStarted());
 
-  return getPartnerMappingReports(params, { responseType: 'blob' })
+  return getPartnerMappingReports(params)
     .then((data) => {
-      download(data, `Mapping Report - ${formatDateForPrint(new Date())}.xlsx`);
       dispatch(reportsGenerateLoadEnded());
+
+      return data;
     })
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
@@ -94,10 +97,11 @@ export const getPartnerMappingReport = params => (dispatch) => {
 export const getProjectReport = params => (dispatch) => {
   dispatch(reportsGenerateLoadStarted());
 
-  return getProjectDetailsReports(params, { responseType: 'blob' })
-    .then((data) => {
-      download(data, `Project Report - ${formatDateForPrint(new Date())}.xlsx`);
+  return getProjectDetailsReports(params)
+    .then((data) => { 
       dispatch(reportsGenerateLoadEnded());
+
+      return data;
     })
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
@@ -110,10 +114,11 @@ export const getProjectReport = params => (dispatch) => {
 export const getVerificationReport = params => (dispatch) => {
   dispatch(reportsGenerateLoadStarted());
 
-  return getPartnerVerificationReports(params, { responseType: 'blob' })
-    .then((data) => {
-      download(data, `Observation Report - ${formatDateForPrint(new Date())}.xlsx`);
+  return getPartnerVerificationReports(params)
+    .then((data) => { 
       dispatch(reportsGenerateLoadEnded());
+
+      return data;
     })
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());

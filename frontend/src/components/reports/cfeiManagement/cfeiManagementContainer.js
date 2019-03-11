@@ -4,11 +4,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
 import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
-import { withStyles } from 'material-ui/styles';
 import CfeiManagementFilter from './cfeiManagementFilter';
+import AlertDialog from '../../common/alertDialog';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import SelectableList from '../selectableList';
 import { loadCfeiReportsList } from '../../../reducers/reportsCfeiManagementList';
@@ -24,23 +23,19 @@ import { HeaderActions } from '../partnerInformation/partnerInfoContainer';
 const messages = {
   exportReport: 'Export report',
   projectMapping: 'Map of Partnership Opportunities',
+  report: 'Report download',
 };
 
-const styleSheet = () => ({
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  root: {
-    color: '#FFF',
-    '&$checked': {
-      color: '#FFF',
-    },
-  },
-  checked: {},
-});
-
 class CfeiManagementContainer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showDownloadInfo: false,
+      downloadInfo: null,
+    };
+  }
+
   componentWillMount() {
     const { query } = this.props;
     this.props.loadReports(query);
@@ -74,9 +69,19 @@ class CfeiManagementContainer extends Component {
     const queryPageSize = R.dissoc('page_size', queryPage);
 
     if (R.isEmpty(selectionIds)) {
-      getProjectReports(queryPageSize);
+      getProjectReports(queryPageSize).then((data) => {
+        this.setState({
+          showDownloadInfo: true,
+          downloadInfo: data.length > 0 && data[0],
+        });
+      });
     } else {
-      getProjectReports({ ids: selectionIds.join(',') });
+      getProjectReports({ ids: selectionIds.join(',') }).then((data) => {
+        this.setState({
+          showDownloadInfo: true,
+          downloadInfo: data.length > 0 && data[0],
+        });
+      });
     }
   }
 
@@ -122,6 +127,12 @@ class CfeiManagementContainer extends Component {
             templateCell={this.tableCell}
           />
         </CustomGridColumn>
+        <AlertDialog
+          trigger={!!this.state.showDownloadInfo}
+          title={messages.report}
+          text={this.state.downloadInfo}
+          handleDialogClose={() => this.setState({ showDownloadInfo: false })}
+        />
       </React.Fragment>
     );
   }
