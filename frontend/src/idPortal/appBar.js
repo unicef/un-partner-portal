@@ -9,6 +9,7 @@ import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import AccountIcon from 'material-ui-icons/AccountCircle';
 import Logout from '../components/layout/logout';
+import logo from '../img/logo.png';
 
 const styleSheet = theme => ({
   leftHeader: {
@@ -37,6 +38,9 @@ const styleSheet = theme => ({
     '@media print': {
       display: 'none',
     },
+  },
+  logo: {
+    maxWidth: '170px',
   },
 });
 
@@ -70,7 +74,7 @@ class MainAppBar extends Component {
           color="accent"
         >
           <Typography type="display1" color="inherit">
-              UNPP
+            <img className={classes.logo} src={logo} alt="logo" />
           </Typography>
         </AppBar>
         <AppBar
