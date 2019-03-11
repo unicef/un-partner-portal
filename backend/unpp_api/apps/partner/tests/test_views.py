@@ -565,3 +565,15 @@ class TestPartnerPDFExport(BaseAPITestCase):
         response = self.client.get(url)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEqual(response.content_type, 'application/pdf')
+
+    def test_layout_error(self):
+        partner: Partner = Partner.objects.first()
+        partner.mandate_mission.security_desc = 5000 * 'A '
+        partner.mandate_mission.ethic_safeguard_comment = 5000 * 'A '
+        partner.mandate_mission.ethic_fraud_comment = 5000 * 'A '
+        partner.mandate_mission.save()
+
+        url = reverse('partners:partner-profile', kwargs={'pk': partner.pk}) + '?export=pdf'
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertEqual(response.content_type, 'application/pdf')
