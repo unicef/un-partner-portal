@@ -39,7 +39,7 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             'Status',
             'Date of Finalization',
             'Total # of Applicants',
-            '# of INGO\nApplicants',
+            '# of ICSO\nApplicants',
             '# of NNGO\nApplicants',
             '# of CBO\nApplicants',
             '# of Academic\nApplicants',

@@ -23,7 +23,7 @@ const messages = {
     typeOfOrganization: 'Type of Organization',
     sectorArea: 'Sector & Area of Specialization',
     populations: 'Populations of concern',
-    show: 'Show INGO HQ only',
+    show: 'Show International Civil Society Organization HQ only',
   },
   clear: 'clear',
   submit: 'submit',

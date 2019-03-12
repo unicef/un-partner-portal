@@ -27,7 +27,7 @@ ROLE_LABELS = {
 
 # HQ Roles have different permission scopes than ordinary roles
 PARTNER_ROLE_PERMISSIONS = {
-    True: {  # INGO HQ
+    True: {  # INGO HQ (International Civil Society Organization HQ)
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.REGISTER,
             PartnerPermission.CREATE_COUNTRY_OFFICE,

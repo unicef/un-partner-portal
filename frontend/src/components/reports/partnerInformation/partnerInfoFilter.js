@@ -30,7 +30,7 @@ const messages = {
     typePlaceholder: 'Select type',
     sector: 'Sector & Area of Specialization',
     experience: 'UN Experience',
-    show: 'Show INGO HQ only',
+    show: 'Show International Civil Society Organization HQ only',
   },
 };
 

@@ -40,7 +40,7 @@ class PartnerReportFilter(django_filters.FilterSet):
         choices=FLAG_CATEGORIES, name='flags__category', label='Has Flag Category'
     )
     is_hq = django_filters.BooleanFilter(
-        method='filter_is_hq', widget=BooleanWidget, label='Is INGO HQ'
+        method='filter_is_hq', widget=BooleanWidget, label='Is ICSO HQ'
     )
 
     class Meta:

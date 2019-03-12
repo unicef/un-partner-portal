@@ -34,7 +34,7 @@ class PartnerVerificationsObservationsReportXLSLExporter(BaseXLSXExporter):
             'Partner Name',
             'Partner Acronym / Alias',
             'Partner Type',
-            'INGO HQ?',
+            'International Civil Society Organization  HQ?',
             'UNHCR-Entered\nPartner Code',
             'UNICEF-Entered\nVendor Number',
             'WFP-Entered\nVendor Number',

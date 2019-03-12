@@ -15,9 +15,9 @@ import AlertDialog from '../common/alertDialog';
 import { selectNormalizedOrganizationTypes } from '../../store';
 
 const messages = {
-  header: 'The UN Partner Portal is solely intended for use by national NGOs, international NGOs, community based organizations, ' +
-  'academic institutes, and Red Cross/Red Crescent societies. The UN Partner Portal ' +
-  'is NOT intended for use by private sector companies, government ministries, or individuals.',
+  header: 'The UN Partner Portal is solely intended for use by national NGOs, international civil society ' +
+  'organizations, community based organizations, academic institutes, and Red Cross/Red Crescent National Society. ' +
+  'The UN Partner Portal is NOT intended for use by private sector companies, government ministries, or individuals.',
   learn: ' Learn more.',
   tooltip: ['Community Based Organization (CBO): A community-based ' +
   'organization is a grass-root association with small organizational' +
@@ -28,7 +28,7 @@ const messages = {
   'varying mandates, structures and systems depending on the country ' +
   'context and specific organization history, but are structured ' +
   'according to areas of common interest and concern by citizens.',
-  'International NGO: An international NGO is a non-governmental ' +
+  '(ICSO)International NGO: An international NGO is a non-governmental ' +
   'organization that has offices in more than one country. ' +
   'International NGOs are generally highly structured in terms of ' +
   'mandate, technical expertise and management systems, and are ' +
