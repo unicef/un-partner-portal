@@ -83,7 +83,7 @@ class Partner(MigratedTimeStampedModel):
     declaration = models.ForeignKey('common.CommonFile', null=True, blank=True)
 
     class Meta:
-        ordering = ('-created', )
+        ordering = ('legal_name', 'country_code')
         unique_together = (
             'legal_name', 'country_code', 'hq'
         )
