@@ -132,7 +132,7 @@ class LocationsMapBase extends Component {
             if (region && country && country.properties && currentCountryCode === country.properties.short_code.toUpperCase()) {
               const newLocation = {
                 admin_level_1: {
-                  name: region.place_name,
+                  name: region.text_en,
                   country_code: currentCountryCode
                 },
                 lat: clickEvent.lngLat.lat.toFixed(5),
