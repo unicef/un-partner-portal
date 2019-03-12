@@ -458,7 +458,7 @@ class PartnerProfile(TimeStampedModel):
             'ethic_safeguard_comment': ethic_safeguard_comment if ethic_safeguard is False else True,
             'ethic_fraud': ethic_fraud is not None,
             'ethic_fraud_policy': ethic_fraud_policy if ethic_fraud is True else True,
-            'ethic_fraud_comment': ethic_fraud_comment if ethic_fraud is False else True,
+            'ethic_fraud_comment': ethic_fraud_comment,
             'population_of_concern': population_of_concern is not None,
             'concern_groups': len(self.partner.mandate_mission.concern_groups) > 0 if population_of_concern else True,
             'security_high_risk_locations': self.partner.mandate_mission.security_high_risk_locations is not None,
