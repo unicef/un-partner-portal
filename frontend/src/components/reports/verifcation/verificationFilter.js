@@ -27,7 +27,7 @@ const messages = {
     observationType: 'Observation Type',
     categoryOfRisk: 'Category of risk',
     year: 'Year',
-    show: 'Show International Civil Society Organization HQ only',
+    show: 'Show International CSO HQ only',
     status: 'Status',
     typoOfOrg: 'Type of organization',
   },

@@ -43,7 +43,7 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             '# of NNGO\nApplicants',
             '# of CBO\nApplicants',
             '# of Academic\nApplicants',
-            '# of Red Cross/Red\nCrescent Applicants',
+            '# of Red Cross/Red\nCrescent National Society Applicants',
             '# of Applicants\nwithout UN Experience',
             'Name of Selected Partner(s)',
             'Selected Partner\'s\nVendor Number/Partner Code',

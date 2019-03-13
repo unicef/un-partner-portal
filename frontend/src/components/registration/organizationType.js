@@ -15,9 +15,10 @@ import AlertDialog from '../common/alertDialog';
 import { selectNormalizedOrganizationTypes } from '../../store';
 
 const messages = {
-  header: 'The UN Partner Portal is solely intended for use by national NGOs, international civil society ' +
-  'organizations, community based organizations, academic institutes, and Red Cross/Red Crescent National Society. ' +
-  'The UN Partner Portal is NOT intended for use by private sector companies, government ministries, or individuals.',
+  header: 'The UN Partner Portal is solely intended for use by national NGOs, International Civil Society ' +
+  'Organizations (International CSO), community based organizations, academic institutes, and Red Cross/Red ' +
+  'Crescent National Society. The UN Partner Portal is NOT intended for use by private sector companies, government ' +
+  'ministries, or individuals.',
   learn: ' Learn more.',
   tooltip: ['Community Based Organization (CBO): A community-based ' +
   'organization is a grass-root association with small organizational' +
@@ -28,21 +29,19 @@ const messages = {
   'varying mandates, structures and systems depending on the country ' +
   'context and specific organization history, but are structured ' +
   'according to areas of common interest and concern by citizens.',
-  '(ICSO)International NGO: An international NGO is a non-governmental ' +
-  'organization that has offices in more than one country. ' +
-  'International NGOs are generally highly structured in terms of ' +
-  'mandate, technical expertise and management systems, and are ' +
-  'comprised of a headquarters office and varying networks of ' +
-  'regional and/or country-based offices.',
+  'International CSOs are generally highly structured in terms of mandate,' +
+  ' technical expertise and management systems, and are comprised of ' +
+  'a headquarters office and varying networks of regional and/or ' +
+  'country-based offices.',
   'Academic institution: An academic institution is an educational ' +
   'institution with degree-conferring authority that is dedicated to ' +
   'education and research.',
-  'Red Cross/Red Crescent Movement: The International Red Cross and ' +
+  'Red Cross/Red Crescent National Society: The International Red Cross and ' +
   'Red Crescent Movement is an international humanitarian network ' +
   'composed of the International Committee of the Red Cross (ICRC), ' +
   'the International Federation of Red Cross and Red Crescent ' +
   'Societies (IFRC) and 190 member Red Cross and Red Crescent Societies.'].join('\n\n'),
-  alertDialog: 'Access to the UN Partner Portal for country (local) offices of international NGOs is granted by the offices’ headquarters, ' +
+  alertDialog: 'Access to the UN Partner Portal for country (local) offices of international CSOs is granted by the offices’ headquarters, ' +
    'who must first register an account for the organization. Please liaise with your organization’s headquarters for access.',
   labels: {
     organizationType: 'Type of organization',
