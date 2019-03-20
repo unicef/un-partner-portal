@@ -14,6 +14,7 @@ const SelectPopulationOfConcern = (props) => {
     label={messages.label}
     fieldName="population"
     values={values}
+    multiple
     optional
   />);
 };
