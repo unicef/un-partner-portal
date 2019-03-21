@@ -614,6 +614,7 @@ class PartnerProjectSerializer(serializers.ModelSerializer):
             'deadline_passed',
             'clarification_request_deadline_passed',
             'attachments',
+            'population',
         )
         read_only_fields = fields
 
@@ -694,6 +695,7 @@ class AgencyProjectSerializer(serializers.ModelSerializer):
             'assessments_marked_as_completed',
             'contains_recommended_applications',
             'winning_partners',
+            'population',
         )
         read_only_fields = (
             'created',
