@@ -113,8 +113,6 @@ spec:
                             value: "{{WFP_API_TOKEN}}"
                         -   name: SA_PASSWORD
                             value: "{{SA_PASSWORD}}"
-                        -   name: LEGACY_DB_HOST
-                            value: "{{LEGACY_DB_HOST}}"
                         -   name: AZURE_B2C_CLIENT_ID
                             value: "{{AZURE_B2C_CLIENT_ID}}"
                         -   name: AZURE_B2C_CLIENT_SECRET
@@ -188,8 +186,6 @@ spec:
                             value: "{{WFP_API_TOKEN}}"
                         -   name: SA_PASSWORD
                             value: "{{SA_PASSWORD}}"
-                        -   name: LEGACY_DB_HOST
-                            value: "{{LEGACY_DB_HOST}}"
                         -   name: AZURE_B2C_CLIENT_ID
                             value: "{{AZURE_B2C_CLIENT_ID}}"
                         -   name: AZURE_B2C_CLIENT_SECRET
