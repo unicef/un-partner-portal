@@ -313,24 +313,6 @@ UNICEF_API_PASSWORD = os.getenv('UNICEF_API_PASSWORD')
 WFP_API_HOST = os.getenv('WFP_API_HOST')
 WFP_API_TOKEN = os.getenv('WFP_API_TOKEN')
 
-
-LEGACY_DB_HOST = os.getenv('LEGACY_DB_HOST')
-if LEGACY_DB_HOST and 'test' not in sys.argv:
-    # bit of an ugly hack, to stop creating legacy DB when testing
-    DATABASES['legacy'] = {
-        'ENGINE': 'sqlserver',
-        'NAME': os.getenv('LEGACY_DB_NAME', 'UNPP'),
-        'USER': os.getenv('LEGACY_DB_USER', 'SA'),
-        'PASSWORD': os.getenv('SA_PASSWORD'),
-        'HOST': LEGACY_DB_HOST,
-        'PORT': int(os.getenv('LEGACY_DB_PORT', 1433)),
-    }
-    DATABASE_ROUTERS = [
-        'legacy.database_routers.LegacyDatabaseRouter',
-    ]
-    INSTALLED_APPS += ['legacy']
-
-
 GIT_VERSION = os.getenv('GIT_VERSION', 'UNKNOWN')
 
 REDIS_INSTANCE = os.getenv('REDIS_INSTANCE')
