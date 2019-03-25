@@ -18,7 +18,7 @@ const messages = {
 
 const columns = [
   { name: 'cn_id', title: 'Application ID' },
-  { name: 'project_title', title: 'Project Title' },
+  { name: 'project_title', title: 'Project Title', width: 250 },
   { name: 'cfei_type', title: 'Application Type' },
   { name: 'agency_name', title: 'UN Agency' },
   { name: 'countries', title: 'Country' },
@@ -26,7 +26,7 @@ const columns = [
   { name: 'application_status', title: 'Status' },
 ];
 
-const renderCells = ({ row, column }) => {
+const renderCells = ({ row, column, value }) => {
   if (column.name === 'cn_id') {
     return (<ApplicationIDCell type={row.cfei_type} eoiId={`${row.eoi_id}`} cnId={`${row.cn_id}`} />);
   } else if (column.name === 'countries') {
@@ -52,7 +52,7 @@ const renderCells = ({ row, column }) => {
         id={row.id}
       />);
   }
-  return undefined;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 renderCells.propTypes = {
@@ -64,7 +64,7 @@ const ListOfSubmittedCN = (props) => {
   const { loading, data = [], loadCN, itemsCount } = props;
   return (
     <HeaderList
-      header={<Typography type="headline" >{messages.title}</Typography>}
+      header={<Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>}
       loading={loading}
     >
       <TableWithLocalState

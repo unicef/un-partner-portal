@@ -7,6 +7,7 @@ import { browserHistory as history, withRouter } from 'react-router';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
+import CheckboxForm from '../forms/checkboxForm';
 import SelectForm from '../forms/selectForm';
 import TextFieldForm from '../forms/textFieldForm';
 import CountryField from '../forms/fields/projectFields/locationField/countryField';
@@ -22,6 +23,7 @@ const messages = {
     typeOfOrganization: 'Type of Organization',
     sectorArea: 'Sector & Area of Specialization',
     populations: 'Populations of concern',
+    show: 'Show INGO HQ only',
   },
   clear: 'clear',
   submit: 'submit',
@@ -41,15 +43,15 @@ const styleSheet = theme => ({
 const VERIFICATION_MENU = [
   {
     value: 'pending',
-    label: 'Pending verification',
+    label: 'Verification Pending',
   },
   {
     value: 'verified',
-    label: 'Verified',
+    label: 'Verification Passed',
   },
   {
     value: 'unverified',
-    label: 'Unverified',
+    label: 'Verification Failed',
   },
 ];
 
@@ -88,7 +90,7 @@ class PartnersFilter extends Component {
     const { pathName, query } = this.props;
 
     const { legal_name, is_verified, display_type,
-      country_code, specializations, concern } = values;
+      country_code, specializations, concern, is_hq } = values;
 
     history.push({
       pathname: pathName,
@@ -100,6 +102,7 @@ class PartnersFilter extends Component {
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
         concern,
+        is_hq,
       }),
     });
   }
@@ -177,6 +180,15 @@ class PartnersFilter extends Component {
               />
             </Grid>
           </Grid>
+          <Grid container direction="row" >
+            <Grid item sm={4} xs={12}>
+              <CheckboxForm
+                label={messages.labels.show}
+                fieldName="is_hq"
+                optional
+              />
+            </Grid>
+          </Grid>
           <Grid item className={classes.button}>
             <Button
               color="accent"
@@ -225,9 +237,10 @@ const mapStateToProps = (state, ownProps) => {
   const { query: { country_code } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { concern } = {} } = ownProps.location;
+  const { query: { is_hq } = {} } = ownProps.location;
 
   const specializationsQ = specializations &&
-      R.map(Number, specializations.split(','));
+    R.map(Number, specializations.split(','));
 
   return {
     countries: selectNormalizedCountries(state),
@@ -244,6 +257,7 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       specializations: specializationsQ,
       concern,
+      is_hq,
     },
   };
 };

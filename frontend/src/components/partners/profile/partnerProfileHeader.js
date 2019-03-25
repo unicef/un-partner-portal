@@ -1,8 +1,7 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-import { withStyles } from 'material-ui/styles';
-import Flag from 'material-ui-icons/Flag';
 import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
@@ -16,12 +15,22 @@ import {
 } from '../../../reducers/partnerVerifications';
 import VerificationIcon from '../profile/icons/verificationIcon';
 import FlaggingStatus from '../profile/common/flaggingStatus';
+import PotentialMatch from '../profile/icons/potentialMatch';
+import HqProfile from '../profile/icons/hqProfile';
+import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
+
+const messages = {
+  observationTab: 'observations',
+  verificationTab: 'verification',
+};
 
 const PartnerTitle = (props) => {
   const {
     partner: {
-      name,
+      isHq = false,
+      name = '',
       partnerStatus: { is_verified, flagging_status: flags = {},
+        has_potential_sanction_match,
       } = {},
     } = {},
   } = props;
@@ -32,12 +41,19 @@ const PartnerTitle = (props) => {
           {name}
         </Typography>
       </Grid>
+      {isHq && <Grid item>
+        <HqProfile />
+      </Grid>}
       <Grid item>
         <VerificationIcon verified={is_verified} />
       </Grid>
       <Grid item>
         <FlaggingStatus flags={flags} />
       </Grid>
+      {has_potential_sanction_match
+        && <Grid item>
+          <PotentialMatch />
+        </Grid>}
     </Grid>);
 };
 
@@ -56,31 +72,59 @@ class PartnerProfileHeader extends Component {
   }
 
   updatePath() {
-    const { tabs, location, partnerId } = this.props;
-    if (tabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`)) === -1) {
+    const { tabs, location, partnerId, hasViewObservationPermission, hasVerifySeeCommentsPermission } = this.props;
+
+    let filterTabs = (hasViewObservationPermission)
+      ? tabs
+      : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    filterTabs = (hasVerifySeeCommentsPermission)
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
+
+    if (filterTabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`)) === -1) {
       history.push('/');
     }
 
-    return tabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`));
+    return filterTabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`));
   }
 
   handleChange(event, index) {
-    const { tabs, partnerId } = this.props;
-    history.push(`/partner/${partnerId}/${tabs[index].path}`);
+    const { tabs, partnerId, hasViewObservationPermission, hasVerifySeeCommentsPermission } = this.props;
+
+    let filterTabs = (hasViewObservationPermission)
+      ? tabs
+      : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    filterTabs = (hasVerifySeeCommentsPermission)
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
+
+    history.push(`/partner/${partnerId}/${filterTabs[index].path}`);
   }
 
   render() {
     const {
       tabs,
       children,
+      hasViewObservationPermission,
+      hasVerifySeeCommentsPermission,
     } = this.props;
+
+    let filterTabs = (hasViewObservationPermission)
+      ? tabs
+      : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    filterTabs = (hasVerifySeeCommentsPermission)
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
 
     const index = this.updatePath();
     return (
       <div>
         <HeaderNavigation
           backButton
-          tabs={tabs}
+          tabs={filterTabs}
           index={index}
           defaultReturn="/partner"
           header={<PartnerProfileHeaderMenu handleMoreClick={() => { }} />}
@@ -97,6 +141,8 @@ class PartnerProfileHeader extends Component {
 PartnerProfileHeader.propTypes = {
   tabs: PropTypes.array.isRequired,
   children: PropTypes.node,
+  hasVerifySeeCommentsPermission: PropTypes.bool,
+  hasViewObservationPermission: PropTypes.bool,
   location: PropTypes.string.isRequired,
   partnerId: PropTypes.string.isRequired,
   loadPartnerSummary: PropTypes.func,
@@ -112,6 +158,9 @@ const mapStateToProps = (state, ownProps) => ({
   partner: state.agencyPartnerProfile.data[ownProps.params.id] || {},
   partnerId: ownProps.params.id,
   location: ownProps.location.pathname,
+  hasViewObservationPermission:
+    checkPermission(AGENCY_PERMISSIONS.VIEW_PROFILE_OBSERVATION_FLAG_COMMENTS, state),
+  hasVerifySeeCommentsPermission: checkPermission(AGENCY_PERMISSIONS.VERIFY_SEE_COMMENTS, state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

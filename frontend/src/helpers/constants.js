@@ -1,5 +1,5 @@
 
-// roles 
+// roles
 export const ROLES = {
   AGENCY: 'agency',
   PARTNER: 'partner',
@@ -20,6 +20,7 @@ export const DETAILS_ITEMS = {
   SUBMISSION: 'submission',
   RESULTS: 'results',
   PRESELECTED: 'preselected',
+  REQUESTS: 'requests',
   APPLICATIONS: 'applications',
   RESPONSE: 'response',
 };
@@ -28,6 +29,8 @@ export const APPLICATION_STATUSES = {
   PRE: 'Pre',
   REJ: 'Rej',
   PEN: 'Pen',
+  REC: 'Rec',
+  REV: 'Rev',
 };
 
 export const SESSION_STATUS = {
@@ -42,22 +45,21 @@ export const AGENCY_MEMBERS_POSITIONS = {
   READER: 'Reader',
 };
 
-// duplicates of above, but incoming role changes will not be symmetrical
-export const PARTNER_MEMBERS_POSITIONS = {
-  ADMIN: 'Administrator',
-  EDITOR: 'Editor',
-  READER: 'Reader',
-};
-
 export const PROJECT_STATUSES = {
   OPE: 'Ope',
   CLO: 'Clo',
   COM: 'Com',
+  DRA: 'Dra',
+  SEN: 'Sen',
+  REV: 'Rev',
 };
 
 export const FLAGS = {
-  YELLOW: 'Yel',
-  RED: 'Red',
+  OBSERVATION: 'FL1_Obs',
+  YELLOW: 'FL2_Yel',
+  ESCALATED: 'FL3_Esc',
+  RED: 'FL4_Red',
+  SANCTION: 'C90_sanctions_match',
 };
 
 export const PLACEHOLDERS = {

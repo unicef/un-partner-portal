@@ -1,7 +1,5 @@
 
-
 class NotificationType(object):
-    # TODO: Investigate usage and replace references + improve naming
     ACTIVE_ACCOUNT_PROFILE_CREATE = 'account_active_profile_create'
     ACTIVE_ACCOUNT_SEND_TO_ORG_HEAD = 'account_active_send_to_org_head'
     DUPLICATE_ORGANIZATION_ACCOUNT = 'account_org_duplicate'
@@ -21,6 +19,18 @@ class NotificationType(object):
     CFEI_REVIEW_REQUIRED = 'cfei_review_required'
     PARTNER_DECISION_MADE = 'agency_application_decision_make'
     ADDED_AS_CFEI_FOCAL_POINT = 'added_as_cfei_local_point'
+    DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION = 'superadmin_new_cso_for_deletion'
+    NEW_ESCALATED_FLAG = 'new_escalated_flag'
+    CFEI_DRAFT_SENT_FOR_REVIEW = 'cfei_draft_sent_for_review'
+    DSR_DRAFT_SENT_FOR_REVIEW = 'dsr_draft_sent_for_review'
+    CFEI_SENT_FOR_DECISION_MAKING = 'cfei_sent_for_decision_making'
+    CFEI_CLARIFICATION_DEADLINE_PASSED = 'cfei_clarification_deadline_passed'
+
+    @classmethod
+    def get_choices(cls):
+        return [
+            (getattr(cls, name), name) for name in dir(cls) if name.isupper()
+        ]
 
 
 NOTIFICATION_DATA = {
@@ -70,7 +80,7 @@ NOTIFICATION_DATA = {
     },
     NotificationType.DIRECT_SELECTION_INITIATED: {
         'template_name': 'direct_selection_UN_initiated',
-        'subject': 'UN has identified your organization for a partnership opportunity via direct selection'
+        'subject': 'UN has identified your organization for a partnership opportunity via direct selection / retention'
     },
     NotificationType.DIRECT_SELECTION_FROM_NOTE_INITIATED: {
         'template_name': 'direct_selection_via_UCN',
@@ -82,7 +92,7 @@ NOTIFICATION_DATA = {
         'subject': 'UN New Partnership Opportunity'
     },
     NotificationType.CFEI_DEADLINE_UPDATE: {
-        'template_name': 'Update_CFEI_prev_invited_submited_app',
+        'template_name': 'Update_CFEI_prev_invited_submitted_app',
         'subject': 'CFEI Deadline Updated'
     },
     NotificationType.SELECTED_AS_CFEI_REVIEWER: {
@@ -100,5 +110,29 @@ NOTIFICATION_DATA = {
     NotificationType.ADDED_AS_CFEI_FOCAL_POINT: {
         'template_name': 'added_as_cfei_local_point',
         'subject': 'You have been added as a CFEI focal point'
+    },
+    NotificationType.DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION: {
+        'template_name': 'superadmin_new_csos_for_deletion',
+        'subject': 'CSO Profile Marked for deletion'
+    },
+    NotificationType.NEW_ESCALATED_FLAG: {
+        'template_name': 'new_escalated_flag',
+        'subject': 'CSO Profile Flagged'
+    },
+    NotificationType.CFEI_DRAFT_SENT_FOR_REVIEW: {
+        'template_name': 'cfei_draft_sent_for_review',
+        'subject': 'CFEI sent for review'
+    },
+    NotificationType.DSR_DRAFT_SENT_FOR_REVIEW: {
+        'template_name': 'cfei_draft_sent_for_review',
+        'subject': 'DSR sent for review'
+    },
+    NotificationType.CFEI_SENT_FOR_DECISION_MAKING: {
+        'template_name': 'cfei_sent_for_decision_making',
+        'subject': 'Prospective Partner Identified for CFEI'
+    },
+    NotificationType.CFEI_CLARIFICATION_DEADLINE_PASSED: {
+        'template_name': 'cfei_clarification_deadline_passed',
+        'subject': 'CFEI Clarification Request Deadline passed'
     },
 }

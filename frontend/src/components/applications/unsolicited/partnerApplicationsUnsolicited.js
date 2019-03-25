@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsUnsolicitedFilter';
 import DirectSelectionCell from './directSelectionCell';
@@ -15,15 +16,16 @@ import WrappedCell from '../../common/cell/wrappedCell';
 import EoiSectorCell from '../../eois/cells/eoiSectorCell';
 import { PROJECT_TYPES } from '../../../helpers/constants';
 import CountriesCell from '../../partners/countriesCell';
+import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
 
 /* eslint-disable react/prop-types */
-const applicationCell = ({ row, column }) => {
+const applicationCell = ({ row, column, value }) => {
   if (column.name === 'is_direct') {
     return (<DirectSelectionCell
       directSelection={row.is_direct}
     />);
   } else if (column.name === 'submission_date') {
-    return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
+    return <WrappedCell content={row.submission_date ? formatDateForPrint(row.submission_date) : '-'} />;
   } else if (column.name === 'id') {
     return (<ConceptNoteIDCell
       cfeiId={`${row.id}`}
@@ -34,9 +36,14 @@ const applicationCell = ({ row, column }) => {
     return <TableCell><EoiSectorCell data={row.specializations} id={row.id} /></TableCell>;
   } else if (column.name === 'country') {
     return <CountriesCell countries={row.country} />;
+  } else if (column.name === 'application_status') {
+    return (<ApplicationStatusCell
+      applicationStatus={row.application_status}
+      id={row.id}
+    />);
   }
 
-  return undefined;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 class PartnerApplicationsUnsolicited extends Component {

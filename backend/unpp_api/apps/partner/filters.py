@@ -5,7 +5,8 @@ import django_filters
 from django_filters.filters import CharFilter, ModelMultipleChoiceFilter
 from django_filters.widgets import CSVWidget
 
-from common.consts import PARTNER_TYPES
+from common.consts import PARTNER_TYPES, FLAG_TYPES
+from common.filter_fields import CommaSeparatedListFilter
 from common.models import Specialization
 from review.models import PartnerVerification
 from partner.models import Partner
@@ -13,26 +14,35 @@ from partner.models import Partner
 
 class PartnersListFilter(django_filters.FilterSet):
 
-    legal_name = CharFilter(method='get_legal_name')
-    is_verified = CharFilter(method='get_is_verified')
-    display_type = CharFilter(method='get_display_type')
-    country_code = CharFilter(method='get_country_code')
-    country_codes = CharFilter(method='get_country_codes')
+    legal_name = CharFilter(method='filter_legal_name')
+    is_verified = CharFilter(method='filter_is_verified')
+    display_type = CharFilter(method='filter_display_type')
+    country_code = CharFilter(method='filter_country_code')
+    country_codes = CharFilter(method='filter_country_codes')
     specializations = ModelMultipleChoiceFilter(
         widget=CSVWidget(), name='experiences__specialization', queryset=Specialization.objects.all()
     )
-    concern = CharFilter(method='get_concern')
-    limit = CharFilter(method='get_limit')
+    concern = CharFilter(method='filter_concern')
+    limit = CharFilter(method='filter_limit')
     is_hq = CharFilter(method='filter_is_hq')
+    no_flags = CommaSeparatedListFilter(choices=FLAG_TYPES, name='flags__flag_type', exclude=True)
+    exclude = CommaSeparatedListFilter(name='id', exclude=True)
 
     class Meta:
         model = Partner
-        fields = ['legal_name', 'country_code', 'display_type', 'specializations', 'concern']
+        fields = (
+            'legal_name',
+            'country_code',
+            'display_type',
+            'specializations',
+            'concern',
+            'exclude',
+        )
 
-    def get_legal_name(self, queryset, name, value):
+    def filter_legal_name(self, queryset, name, value):
         return queryset.filter(legal_name__icontains=value)
 
-    def get_is_verified(self, queryset, name, value):
+    def filter_is_verified(self, queryset, name, value):
         latest_verifications = PartnerVerification.objects.distinct('partner_id').order_by('partner_id', '-created')
         if value == 'verified':
             return queryset.filter(verifications__in=latest_verifications, verifications__is_verified=True)
@@ -41,20 +51,20 @@ class PartnersListFilter(django_filters.FilterSet):
         if value == 'pending':
             return queryset.filter(verifications__is_verified__isnull=True)
 
-    def get_country_code(self, queryset, name, value):
+    def filter_country_code(self, queryset, name, value):
         return queryset.filter(country_code=(value and value.upper()))
 
-    def get_country_codes(self, queryset, name, value):
+    def filter_country_codes(self, queryset, name, value):
         country_codes = filter(lambda x: x.isalpha() and len(x) == 2, value and value.upper().split(","))
         return queryset.filter(country_code__in=country_codes)
 
-    def get_display_type(self, queryset, name, value):
+    def filter_display_type(self, queryset, name, value):
         return queryset.filter(display_type=value)
 
-    def get_concern(self, queryset, name, value):
+    def filter_concern(self, queryset, name, value):
         return queryset.filter(mandate_mission__concern_groups__contains=[value])
 
-    def get_limit(self, queryset, name, value):
+    def filter_limit(self, queryset, name, value):
         if value.isdigit():
             return queryset[:value]
         return queryset

@@ -12,7 +12,8 @@ import apiMeta, {
   loadStarted,
   loadEnded,
   loadSuccess,
-  loadFailure } from './apiMeta';
+  loadFailure
+} from './apiMeta';
 
 import { amendPartnersCache } from '../reducers/cache';
 
@@ -43,6 +44,9 @@ export const loadPartnerNamesForAutoComplete = params => (dispatch, getState) =>
     .then((response) => {
       dispatch(loadEnded(PARTNER_NAMES));
       dispatch(amendPartnersCache(response.results));
+      R.map(partner =>
+        partner.legal_name = `${partner.legal_name} - ${getState().countries[partner.country_code]}`
+        , response.results);
       return toObject(flattenToObjectKey('legal_name'), response.results);
     }).catch((error) => {
       dispatch(loadEnded(PARTNER_NAMES));

@@ -8,7 +8,7 @@ import { TableCell } from 'material-ui/Table';
 const types = [
   { type: 'Open Selection', path: 'open' },
   { type: 'Unsolicited Concept Note', path: 'unsolicited' },
-  { type: 'Direct Selection', path: 'direct' },
+  { type: 'Direct Selection/Retention', path: 'direct' },
 ];
 
 const pathType = type => R.filter(item => item.type === type, types);
@@ -16,13 +16,17 @@ const pathType = type => R.filter(item => item.type === type, types);
 const path = (type, eoiId) => {
   const source = pathType(type)[0];
 
-  if (source.path === 'open') {
-    return `/cfei/open/${eoiId}/overview`;
-  } else if (source.path === 'direct') {
-    return `/cfei/direct/${eoiId}/overview`;
-  } else if (source.path === 'unsolicited') {
-    return `/cfei/unsolicited/${eoiId}/overview`;
+  if (source) {
+    if (source.path === 'open') {
+      return `/cfei/open/${eoiId}/overview`;
+    } else if (source.path === 'direct') {
+      return `/cfei/direct/${eoiId}/overview`;
+    } else if (source.path === 'unsolicited') {
+      return `/cfei/unsolicited/${eoiId}/overview`;
+    }
   }
+
+  return '-';
 };
 
 const TitleCell = (props) => {

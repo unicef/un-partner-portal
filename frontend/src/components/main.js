@@ -20,15 +20,14 @@ class Main extends Component {
   }
 
   componentDidMount() {
-    const { session,
-      loadCountries,
-      loadPartnerConfig,
-      loadSectors,
+    const { getCountries,
+      getPartnerConfig,
+      getSectors,
     } = this.props;
     const configPromises = [
-      loadCountries(),
-      loadPartnerConfig(),
-      loadSectors(),
+      getCountries(),
+      getPartnerConfig(),
+      getSectors(),
     ];
     Promise.all(configPromises).then(() => {
       this.setState({ configLoaded: true });
@@ -56,6 +55,9 @@ Main.propTypes = {
   loadSectors: PropTypes.func,
   children: PropTypes.node,
   session: PropTypes.object,
+  getCountries: PropTypes.func,
+  getSectors: PropTypes.func,
+  getPartnerConfig: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -64,11 +66,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadCountries: () => dispatch(loadCountries()),
-  loadSectors: () => dispatch(loadSectors()),
-  loadPartnerConfig: () => dispatch(loadPartnerConfig()),
+  getCountries: () => dispatch(loadCountries()),
+  getSectors: () => dispatch(loadSectors()),
+  getPartnerConfig: () => dispatch(loadPartnerConfig()),
 });
-
 
 export default connect(
   mapStateToProps,

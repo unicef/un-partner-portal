@@ -41,8 +41,8 @@ const messages = {
 
 const initialState = {
   columns: [
-    { name: 'title', title: 'Project Title' },
-    { name: 'id', title: 'CN ID' },
+    { name: 'title', title: 'Project Title', width: 250 },
+    { name: 'id', title: 'Application ID' },
     { name: 'cfei_type', title: 'Type of Application' },
     { name: 'name', title: 'UN Agency' },
     { name: 'country_code', title: 'Country' },

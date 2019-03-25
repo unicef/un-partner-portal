@@ -20,7 +20,6 @@ const OrganizationProfileOverviewPaper = ({ classes, partnerId }) => (
     <SwitchProfileOverview />
     <Paper className={classes.print}>
       <OrganizationProfileOverview partnerId={partnerId} />
-
     </Paper>
   </React.Fragment>
 );

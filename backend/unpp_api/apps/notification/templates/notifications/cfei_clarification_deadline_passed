@@ -1,0 +1,6 @@
+Dear UN staff member,
+
+the deadline for civil society applicants to submit clarification requests for {{ eoi.displayID }} "{{ eoi.title }}" has now passed.
+To access clarification requests and upload a document with responses, please visit: {{ eoi.get_absolute_url }}
+
+Thank you.

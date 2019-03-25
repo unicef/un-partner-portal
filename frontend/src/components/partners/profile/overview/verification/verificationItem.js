@@ -4,9 +4,7 @@ import R from 'ramda';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import GridColumn from '../../../../common/grid/gridColumn';
-import { countGoodAnswers } from '../../../../../helpers/verificationUtils';
 import { formatDateForPrint } from '../../../../../helpers/dates';
-import VerificationDetails from '../../buttons/viewVerificationSummaryButton';
 import VerificationText from '../../common/verificationText';
 
 const messages = {
@@ -26,7 +24,7 @@ const VerificationItem = (props) => {
           </Grid>
           <Grid item>
             <Typography>
-              {formatDateForPrint(verification.created)}
+              {formatDateForPrint(verification.created) || ''}
             </Typography>
           </Grid>
         </Grid>
@@ -35,14 +33,6 @@ const VerificationItem = (props) => {
             ? `${messages.by} ${R.path(['submitter', 'name'], verification)} ${R.path(['submitter', 'agency_name'], verification)}`
             : messages.neverVerified}
         </Typography>
-        {verification.is_verified === false && <Typography type="caption">
-          {`${messages.questions} ${countGoodAnswers(verification)}/5`}
-        </Typography>}
-        {!R.isEmpty(verification) && <Grid container justify="flex-end">
-          <Grid item>
-            <VerificationDetails verification={verification} />
-          </Grid>
-        </Grid> }
       </GridColumn>
     </Grid>
   );

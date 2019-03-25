@@ -20,7 +20,7 @@ import CnFileSection from './cnFileSection';
 import PaddedContent from '../../../common/paddedContent';
 import FileForm from '../../../forms/fileForm';
 import ProfileConfirmation from '../../../organizationProfile/common/profileConfirmation';
-import { isUserNotPartnerReader } from '../../../../helpers/authHelpers';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
 
 const messages = {
   confirm: 'I confirm that my profile is up to date',
@@ -92,7 +92,7 @@ class ConceptNoteSubmission extends Component {
       errorUpload,
       cnUploaded,
       handleSubmit,
-      displaySubmission,
+      hasUploadCnPermission,
       cn } = this.props;
     const { alert, errorMsg, checked } = this.state;
     return (
@@ -105,33 +105,32 @@ class ConceptNoteSubmission extends Component {
                 optional
                 deleteDisabled={cnUploaded}
               />}
+            showComponent={hasUploadCnPermission || cnUploaded}
             displayHint={!!cn}
           />
           <Typography className={classes.alignRight} type="caption">
             {`${messages.deadline} ${formatDateForPrint(deadlineDate)}`}
           </Typography>
-          {displaySubmission
-            ? <React.Fragment>
-              <ProfileConfirmation
-                checked={cnUploaded || this.state.checked}
-                disabled={cnUploaded}
-                onChange={(event, check) => this.handleCheck(event, check)}
-              />
-              <div className={classes.alignRight}>
-                {cnUploaded
-                  ? <Typography type="body1">
-                    {`${messages.submitted} ${formatDateForPrint(submitDate)}`}
-                  </Typography>
-                  : <Button
-                    onClick={handleSubmit(this.handleSubmit)}
-                    color="accent"
-                    disabled={!checked}
-                  >
-                    {messages.submit}
-                  </Button>}
-              </div>
-            </React.Fragment>
-            : null }
+          {(hasUploadCnPermission || cnUploaded) && <React.Fragment>
+            <ProfileConfirmation
+              checked={cnUploaded || this.state.checked}
+              disabled={cnUploaded}
+              onChange={(event, check) => this.handleCheck(event, check)}
+            />
+            <div className={classes.alignRight}>
+              {cnUploaded
+                ? <Typography type="body1">
+                  {`${messages.submitted} ${formatDateForPrint(submitDate)}`}
+                </Typography>
+                : <Button
+                  onClick={handleSubmit(this.handleSubmit)}
+                  color="accent"
+                  disabled={!checked}
+                >
+                  {messages.submit}
+                </Button>}
+            </div>
+          </React.Fragment>}
         </PaddedContent>
         <Snackbar
           anchorOrigin={{
@@ -141,7 +140,7 @@ class ConceptNoteSubmission extends Component {
           open={alert}
           message={errorMsg}
           autoHideDuration={6e3}
-          onRequestClose={this.handleDialogClose}
+          onClose={this.handleDialogClose}
         />
         <Snackbar
           anchorOrigin={{
@@ -151,7 +150,7 @@ class ConceptNoteSubmission extends Component {
           open={!R.isEmpty(errorUpload)}
           message={errorUpload ? errorUpload.message || '' : ''}
           autoHideDuration={6e3}
-          onRequestClose={this.handleDialogClose}
+          onClose={this.handleDialogClose}
         />
         <Loader loading={loader} fullscreen />
       </form >
@@ -168,23 +167,27 @@ ConceptNoteSubmission.propTypes = {
   cnUploaded: PropTypes.bool,
   deadlineDate: PropTypes.string,
   submitDate: PropTypes.string,
+  hasUploadCnPermission: PropTypes.bool,
   handleSubmit: PropTypes.func,
-  cn: PropTypes.string,
+  cn: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   onRef: PropTypes.func,
 };
 
 const formConceptNoteSubmission = reduxForm({
   form: 'CNSubmission',
+  destroyOnUnmount: true,
+  forceUnregisterOnUnmount: true,
+  enableReinitialize: true,
 })(ConceptNoteSubmission);
 const selector = formValueSelector('CNSubmission');
 
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.params.id);
   const application = selectPartnerApplicationDetails(state, ownProps.params.id);
-  const displaySubmission = isUserNotPartnerReader(state);
+  const hasUploadCnPermission = checkPermission(PARTNER_PERMISSIONS.CFEI_SUBMIT_CONCEPT_NOTE, state);
   const { cn, created } = application;
   let props = {
-    displaySubmission,
+    hasUploadCnPermission,
     loader: state.conceptNote.loading,
     cnUploaded: !!state.conceptNote.cnFile,
     errorUpload: state.conceptNote.error,
@@ -205,7 +208,8 @@ const mapDispatch = (dispatch, ownProps) => {
   };
 };
 
-const connectedConceptNoteSubmission = connect(mapStateToProps, mapDispatch)(formConceptNoteSubmission);
+const connectedConceptNoteSubmission = connect(mapStateToProps,
+  mapDispatch)(formConceptNoteSubmission);
 const withRouterConceptNoteSubmission = withRouter(connectedConceptNoteSubmission);
 
 export default withStyles(styleSheet, { name: 'ConceptNoteSubmission' })(withRouterConceptNoteSubmission);

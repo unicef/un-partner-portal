@@ -1,0 +1,7 @@
+Dear UN staff member,
+
+A {{ eoi.verbose_type }} {{ eoi.displayID }} "{{ eoi.title }}" has been sent sent to you for review.
+Please review the draft, make any necessary changes and publish it for viewing by civil society organizations/partners.
+To view the {{ eoi.verbose_type }}, please visit: {{ eoi.get_absolute_url }}
+
+Thank you.

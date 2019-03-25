@@ -1,6 +1,8 @@
+import R from 'ramda';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { isValid } from 'redux-form';
 import { browserHistory as history, withRouter } from 'react-router';
 import { submit, SubmissionError } from 'redux-form';
 import Grid from 'material-ui/Grid';
@@ -17,24 +19,20 @@ import { selectCountriesWithOptionalLocations } from '../../../../store';
 const messages = {
   title: {
     open: 'Create new Call for Expressions of Interests',
-    direct: 'Create new direct selection',
+    direct: 'Create new direct selection/retention',
     unsolicited: 'Create new Unsolicited Concept Note',
   },
   header: {
     open: {
       title: 'This CFEI is for open selections.',
     },
-    direct: {
-      title: 'This is a direct selection.',
-      body: 'In order to save this form, you will need to identify the partner(s).',
-    },
   },
   error: {
     open: 'Unable to create new Call for Expressions of Interests',
-    direct: 'Unable to create new direct selection',
+    direct: 'Unable to create new direct selection/retention',
     unsolicited: 'Unable to create new Unsolicited Concept Note',
   },
-
+  save: 'Save',
 };
 
 const getTitle = (type) => {
@@ -68,7 +66,7 @@ const getInfo = (type) => {
     default:
       return messages.header.open;
     case PROJECT_TYPES.DIRECT:
-      return messages.header.direct;
+      return null;
   }
 };
 
@@ -124,7 +122,17 @@ class NewCfeiModal extends Component {
   }
 
   handleSubmit(values) {
-    return this.props.postCfei(values).then(
+    let formValues = R.clone(values);
+
+    if (this.props.type === PROJECT_TYPES.OPEN) {
+      if (R.isEmpty(values.attachments[0])) {
+        formValues = R.dissoc('attachments', formValues);
+      }
+    } else if (this.props.type === PROJECT_TYPES.DIRECT) {
+      formValues.applications[0].partner = formValues.applications[0].partner[0];
+    }
+
+    return this.props.postCfei(formValues).then(
       (cfei) => {
         this.setState({ id: cfei && cfei.id });
         this.props.onDialogClose();
@@ -133,12 +141,12 @@ class NewCfeiModal extends Component {
           history.push(`/cfei/${this.props.type}/${cfei.id}/overview`);
         }
       }).catch((error) => {
-      this.props.postError(error, getErrorMessage(this.props.type));
-      throw new SubmissionError({
-        ...error.response.data,
-        _error: getErrorMessage(this.props.type),
+        this.props.postError(error, getErrorMessage(this.props.type));
+        throw new SubmissionError({
+          ...error.response.data,
+          _error: getErrorMessage(this.props.type),
+        });
       });
-    });
   }
 
   handleDialogSubmit() {
@@ -150,7 +158,7 @@ class NewCfeiModal extends Component {
   }
 
   render() {
-    const { open, type, onDialogClose, optionalLocations } = this.props;
+    const { open, type, onDialogClose, optionalLocations, isValid } = this.props;
     return (
       <Grid item>
         <ControlledModal
@@ -159,19 +167,22 @@ class NewCfeiModal extends Component {
           trigger={open}
           info={type === PROJECT_TYPES.UNSOLICITED ? null : getInfo(type)}
           handleDialogClose={onDialogClose}
+          topBottomPadding
           buttons={{
             flat: {
               handleClick: onDialogClose,
             },
             raised: {
+              label: messages.save,
               handleClick: this.handleDialogSubmit,
-              disabled: this.state.disabled,
+              disabled: this.state.disabled || isValid,
             },
           }}
           content={React.createElement(getModal(type), {
             optionalLocations,
             onSubmit: this.handleSubmit,
-            handleConfirmation: this.handleConfirmation })}
+            handleConfirmation: this.handleConfirmation
+          })}
         />
         {type === PROJECT_TYPES.OPEN && <CallPartnersModal id={this.state.id} />}
       </Grid>
@@ -181,6 +192,7 @@ class NewCfeiModal extends Component {
 
 NewCfeiModal.propTypes = {
   open: PropTypes.bool,
+  isValid: PropTypes.bool,
   type: PropTypes.string,
   onDialogClose: PropTypes.func,
   postCfei: PropTypes.func,
@@ -189,9 +201,16 @@ NewCfeiModal.propTypes = {
   optionalLocations: PropTypes.array,
 };
 
-const mapStateToProps = state => ({
-  optionalLocations: selectCountriesWithOptionalLocations(state),
-});
+const openSelector = isValid('newOpenCfei');
+const directSelector = isValid('newDirectCfei');
+const ucnSelector = isValid('newUnsolicitedCN');
+
+const mapStateToProps = state => {
+  return {
+    isValid: !openSelector(state) || !directSelector(state) || !ucnSelector(state),
+    optionalLocations: selectCountriesWithOptionalLocations(state),
+  }
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   postCfei: values => dispatch(getPostMethod(ownProps.type)(values)),

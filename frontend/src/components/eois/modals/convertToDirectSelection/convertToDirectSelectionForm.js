@@ -4,26 +4,26 @@ import { reduxForm, formValueSelector } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import PropTypes from 'prop-types';
 import TextFieldForm from '../../../forms/textFieldForm';
-import AgencyMembersField from '../../../forms/fields/projectFields/agencyMembersFields/agencyMembersField';
+import FocalPoints from '../../../forms/fields/projectFields/agencyMembersFields/focalPoints';
 import SelectForm from '../../../forms/selectForm';
-import DatePickerForm from '../../../forms/datePickerForm';
 import GridColumn from '../../../common/grid/gridColumn';
 import { selectNormalizedDirectJustification } from '../../../../store';
-import { endDate } from '../../../../helpers/validation';
 import { StartDate, EndDate } from '../../../forms/fields/projectFields/commonFields';
 
 const messages = {
   justification: 'Add justification for completing this CFEI',
   reason: 'Choose reason of completing this CFEI',
-  justificationFor: 'Justification for Direct Selection',
+  justificationFor: 'Justification for Direct Selection/Retention',
   pleaseState: 'Justification summary',
-  explain: 'Explain your justification for Direct Selection',
+  explain: 'Explain your justification for Direct Selection/Retention',
   briefBackground: 'Project Background',
   other: 'Other information (optional)',
   focal: 'Project / Programme Focal Point(s)',
   startDate: 'Estimated Start Date',
   endDate: 'Estimated End Date',
 };
+
+const FORM_NAME = 'convertToDS';
 
 const ConvertToDirectSelectionForm = (props) => {
   const { handleSubmit, directJustifications, startDate } = props;
@@ -42,14 +42,17 @@ const ConvertToDirectSelectionForm = (props) => {
           placeholder={messages.explain}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
         />
-        <AgencyMembersField
+        <FocalPoints
           fieldName="focal_points"
           label={messages.focal}
+          formName={FORM_NAME}
           selectFieldProps={{
             multiple: false,
           }}
@@ -59,8 +62,10 @@ const ConvertToDirectSelectionForm = (props) => {
           label={messages.briefBackground}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
         />
@@ -69,8 +74,10 @@ const ConvertToDirectSelectionForm = (props) => {
           label={messages.other}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           optional
@@ -100,10 +107,10 @@ ConvertToDirectSelectionForm.propTypes = {
   directJustifications: PropTypes.array,
   startDate: PropTypes.string,
 };
-const selector = formValueSelector('convertToDS');
+const selector = formValueSelector(FORM_NAME);
 
 const formConvertToDirectSelectionForm = reduxForm({
-  form: 'convertToDS',
+  form: FORM_NAME,
 })(ConvertToDirectSelectionForm);
 
 const mapStateToProps = state => ({

@@ -16,7 +16,7 @@ const initialState = {
     { name: 'legal_name', title: 'Organization\'s Legal Name' },
     { name: 'type_org', title: 'Type of Organization' },
     { name: 'id', title: 'Application ID' },
-    { name: 'status', title: 'Status', width: 300 },
+    { name: 'status', title: 'Status', width: 400 },
   ],
   applications: [],
   itemsCount: 0,
@@ -38,7 +38,7 @@ export const loadApplications = (id, filter) => sendRequest({
 
 export const changeAppStatus = (ids, status) => (dispatch) => {
   const promises = ids.map(id => changeApplicationStatus(id, status));
-  Promise.all(promises).then((values) => {
+  return Promise.all(promises).then((values) => {
     const changedIds = values.map(value => value.id);
     dispatch(applicationStatusChanged(changedIds, status));
   });

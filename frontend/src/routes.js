@@ -30,16 +30,36 @@ import partnerProfileEdit from './components/organizationProfile/edit/partnerPro
 import TabsContainer from './components/organizationProfile/edit/tabsContainer';
 import partnerProfileHeader from './components/partners/profile/partnerProfileHeader';
 import partnerOverview from './components/partners/profile/overview/partnerOverview';
+import partnerUnData from './components/partners/profile/overview/undata/partnerUnData';
+import partnerVerification from './components/partners/profile/overview/partnerVerification';
 import organizationProfileOverviewPaper from './components/organizationProfile/profile/organizationProfileOverviewPaper';
-import agencyMembersContainer from './components/settings/agencyMembersContainer';
 import registration from './components/registration/registration';
 import login from './components/login/login';
+import azureLogin from './components/login/azureLogin';
+import loginToken from './components/login/loginToken';
+import passwordReset from './components/passwordReset/passwordReset';
+import setPassword from './components/setPassword/setPassword';
 import mainContent from './components/common/mainContentWrapper';
 import dev from './components/dev';
 import cfeiOpenResults from './components/eois/details/overview/results/results';
 import cfeiDirectResponse from './components/eois/details/overview/results/response';
 import cfeiFeedback from './components/eois/details/overview/feedback';
 import partnerApplicationList from './components/agency/partnerApplicationList';
+import partnerObservationsList from './components/partners/profile/overview/observations/partnerObservationsList';
+import partnerInfoContainer from './components/reports/partnerInformation/partnerInfoContainer';
+import cfeiManagementContainer from './components/reports/cfeiManagement/cfeiManagementContainer';
+import verificationContainer from './components/reports/verifcation/verificationContainer';
+import reportsHeader from './components/reports/reportsHeader';
+import partnerUsersContainer from './components/partners/members/partnerUsersContainer';
+import userProfile from './components/user/userProfile';
+import openCfeiRequests from './components/eois/details/applications/openCfeiRequests';
+
+// ID portal
+import mainLayoutIdPortal from './idPortal/mainLayout';
+import mainIdPortal from './idPortal/main';
+import dashboardIdPortal from './idPortal/dashboard/dashboard';
+import usersIdPortal from './idPortal/users/list/usersContainer';
+
 
 const history = syncHistoryWithStore(browserHistory, store);
 
@@ -59,6 +79,7 @@ const allRoutes = () => (
         <Route path="/" component={mainLayout} >
           <IndexRedirect to="dashboard" />
           <Route path="dashboard" component={dashboard} />
+          <Route path="user" component={userProfile} />
           <Route path="cfei" component={eoiHeader} >
             <IndexRedirect to="open" />
             <Route component={mainContent} >
@@ -72,6 +93,7 @@ const allRoutes = () => (
               <Route path="feedback" component={cfeiFeedback} />
               <Route path="submission" component={cfeiSubmission} />
               <Route path="results" component={cfeiOpenResults} />
+              <Route path="requests" component={openCfeiRequests} />
               <Route path="preselected" component={openCfeiPreselected} />
               <Route path="applications" component={openCfeiApplications} />
               <Route path="response" component={cfeiDirectResponse} />
@@ -96,7 +118,10 @@ const allRoutes = () => (
             <Route component={mainContent} >
               <Route path="overview" component={partnerOverview} />
               <Route path="details" component={organizationProfileOverviewPaper} />
-              <Route path="users" component={null} />
+              <Route path="undata" component={partnerUnData} />
+              <Route path="users" component={partnerUsersContainer} />
+              <Route path="verification" component={partnerVerification} />
+              <Route path="observations" component={partnerObservationsList} />
               <Route path="applications" component={partnerApplicationList} />
             </Route>
           </Route>
@@ -119,17 +144,35 @@ const allRoutes = () => (
             <IndexRedirect to="overview" />
             <Route component={mainContent} >
               <Route path="overview" component={organizationProfileOverviewPaper} />
-              <Route path="users" component={null} />
+              <Route path="undata" component={partnerUnData} />
             </Route>
           </Route>
-          <Route path="settings" component={agencyMembersContainer} />
+          <Route path="reports" component={reportsHeader}>
+            <IndexRedirect to="information" />
+            <Route component={mainContent}>
+              <Route path="information" component={partnerInfoContainer} />
+              <Route path="management" component={cfeiManagementContainer} />
+              <Route path="verification" component={verificationContainer} />
+            </Route>
+          </Route>
+        </Route>
+      </Route>
+      <Route component={mainIdPortal}>
+        <Route path="/idp" component={mainLayoutIdPortal} >
+          <IndexRedirect to="dashboard" />
+          <Route path="dashboard" component={dashboardIdPortal} />
+          <Route path="users" component={usersIdPortal} />
         </Route>
       </Route>
     </Route>
     <Route component={nonAuth}>
-      <Route path="/login" component={login} />
+      <Route path="/login" component={azureLogin} />
       <Route path="/registration" component={registration} />
+      <Route path="/login/:token" component={loginToken} />
+      <Route path="/direct-login" component={login} />
+      <Route path="/password-reset/:uid/:token" component={passwordReset} />
+      <Route path="/set-password/:uid/:token" component={setPassword} />
     </Route>
-  </Router >
+  </Router>
 );
 export default allRoutes;

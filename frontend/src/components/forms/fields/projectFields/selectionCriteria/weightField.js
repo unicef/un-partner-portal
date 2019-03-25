@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { formValueSelector, clearFields } from 'redux-form';
+import { clearFields } from 'redux-form';
 import Grid from 'material-ui/Grid';
 import TextFieldForm from '../../../textFieldForm';
 import { weight } from '../../../../../helpers/validation';
@@ -25,10 +25,12 @@ class WeightField extends Component {
         label={messages.labels.weight}
         fieldName={`${name}.weight`}
         textFieldProps={{
-          inputProps: {
-            min: '1',
-            max: '100',
-            type: 'number',
+          InputProps: {
+            inputProps: {
+              min: '1',
+              max: '100',
+              type: 'number',
+            },
           },
           disabled,
         }}

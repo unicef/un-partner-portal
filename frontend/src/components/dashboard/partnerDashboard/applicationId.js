@@ -8,12 +8,13 @@ import { TableCell } from 'material-ui/Table';
 const types = [
   { type: 'Open Selection', path: 'open' },
   { type: 'Unsolicited Concept Note', path: 'unsolicited' },
-  { type: 'Direct Selection', path: 'direct' },
+  { type: 'Direct Selection / Retention', path: 'direct' },
 ];
 
 const pathType = type => R.filter(item => item.type === type, types);
 
 const path = (type, eoiId, cnId) => {
+  // debugger
   const source = pathType(type)[0];
   if (source.path === 'open') {
     return `/cfei/open/${eoiId}/`;
@@ -40,8 +41,10 @@ const CnCell = (props) => {
 };
 
 CnCell.propTypes = {
-  eoiId: PropTypes.string,
-  cnId: PropTypes.string,
+  eoiId: PropTypes.oneOfType([
+    PropTypes.string, PropTypes.number]),
+  cnId: PropTypes.oneOfType([
+    PropTypes.string, PropTypes.number]),
   type: PropTypes.string,
 };
 

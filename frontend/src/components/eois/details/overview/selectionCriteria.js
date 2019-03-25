@@ -13,20 +13,18 @@ const messages = {
 };
 
 const title = () => (
-  <Typography type="headline" >{messages.title}</Typography>
+  <Typography style={{ margin: 'auto 0' }} type="headline" >{messages.title}</Typography>
 );
 
-const renderRow = (criterias, allCriteria) => {
-  return criterias.map(selection => (<PaddedContent key={selection.selection_criteria}>
-    <Typography type="subheading">{allCriteria[selection.selection_criteria]}</Typography>
-    <Typography type="caption">{selection.description} </Typography>
-    {selection.weight && <Typography
-      type="caption"
-    >
-      {`${messages.weight}: ${selection.weight}`}
-    </Typography>}
-  </PaddedContent>));
-};
+const renderRow = (criterias, allCriteria) => criterias.map(selection => (<PaddedContent key={selection.selection_criteria}>
+  <Typography type="subheading">{allCriteria[selection.selection_criteria]}</Typography>
+  <Typography type="caption">{selection.description} </Typography>
+  {selection.weight && <Typography
+    type="caption"
+  >
+    {`${messages.weight}: ${selection.weight}`}
+  </Typography>}
+</PaddedContent>));
 
 const SelectionCriteria = (props) => {
   const { selectionCriteria, allCriteria } = props;

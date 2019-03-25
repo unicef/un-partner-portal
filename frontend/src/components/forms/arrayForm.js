@@ -8,6 +8,7 @@ import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
+import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import List, { ListItem } from 'material-ui/List';
 import classname from 'classnames';
@@ -38,7 +39,6 @@ const styleSheet = theme => ({
   },
   items: {
     flexFlow: 'column wrap',
-    display: 'flex',
     flexBasis: '90%',
   },
   delete: {
@@ -49,6 +49,9 @@ const styleSheet = theme => ({
   default: {
     paddingTop: '1em',
     paddingBottom: '1em',
+  },
+  emptyPadding: {
+    padding: '1em',
   },
   error: {
     border: '2px solid red',
@@ -85,6 +88,8 @@ class RenderArrayMembers extends Component {
     return (
       <Paper elevation={0} className={paperClass} >
         {error !== EMPTY_ERROR && error && <FormHelperText className={classes.errorText} error>{error}</FormHelperText>}
+
+        {(readOnly && fields.length === 0) && <Typography className={classes.emptyPadding} type="body1">{'-'}</Typography>}
         <List className={classes.list}>
           {fields.map((member, index) => (
             <div key={member}>
@@ -104,14 +109,13 @@ class RenderArrayMembers extends Component {
                     </div>}
                   </div>
                   {innerField && <Paper elevation={0} classes={{ root: classes.innerPaper }} className={classes.innerPaper}>
-                    {innerField(member, index, fields)}
+                    {innerField && innerField(member, index, fields)}
                   </Paper>}
                 </div>
               </ListItem>
-              <Divider />
+              {(limit > 1 && !(fields.length === 1 && readOnly)) && <Divider />}
             </div>
           ))}
-
           {fields.length < limit && !readOnly && !disableAdding &&
             <Button
               color="accent"
@@ -258,7 +262,7 @@ ArrayForm.propTypes = {
    * if form should not be able to delete items
    */
   disableDeleting: PropTypes.bool,
-  /** 
+  /**
    * validations for the entire array
    */
   validate: PropTypes.array,

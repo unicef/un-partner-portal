@@ -6,16 +6,26 @@ import sys
 ####
 # Change per project
 ####
+from django.urls import reverse_lazy
+from django.utils.text import slugify
+
 PROJECT_NAME = 'unpp_api'
 # project root and add "apps" to the path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 
+# domains/hosts etc.
+DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
+WWW_ROOT = 'http://%s/' % DOMAIN_NAME
+ALLOWED_HOSTS = [DOMAIN_NAME]
+FRONTEND_HOST = os.getenv('UNPP_FRONTEND_HOST', DOMAIN_NAME)
+
 ####
 # Other settings
 ####
 ADMINS = (
-    ('Alerts', os.getenv('ALERTS_EMAIL') or 'unicef-unpp@tivix.com'),
+    ('Alerts', os.getenv('ALERTS_EMAIL') or 'admin@unpartnerportal.com'),
+    ('Tivix', f'unicef-unpp+{slugify(DOMAIN_NAME)}@tivix.com'),
 )
 
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
@@ -27,26 +37,26 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEFAULT_CHARSET = 'utf-8'
 ROOT_URLCONF = 'unpp_api.urls'
 
-DATA_VOLUME = '/data'
+DATA_VOLUME = os.getenv('DATA_VOLUME', '/data')
 
+ALLOWED_EXTENSIONS = (
+    'pdf', 'doc', 'docx', 'xls', 'xlsx' 'img', 'png', 'jpg', 'jpeg', 'csv', 'zip'
+)
 UPLOADS_DIR_NAME = 'uploads'
-MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
-MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME))
+MEDIA_URL = f'/api/{UPLOADS_DIR_NAME}/'
+MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, UPLOADS_DIR_NAME))
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
-
+FILE_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024  # 25mb
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
 
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
-STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
+STATIC_ROOT = f'{DATA_VOLUME}/staticserve'
 
 # static serving
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-
-    # other finders..
-    "compressor.finders.CompressorFinder",
 )
 
 DEBUG = True
@@ -55,7 +65,7 @@ IS_STAGING = False
 IS_PROD = False
 
 UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
-DEFAULT_FROM_EMAIL = 'UNPP Stage <noreply@unpp.org>'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'UNPP Stage <noreply@unpartnerportal.org>')
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
@@ -67,19 +77,13 @@ ENV = os.getenv('ENV')
 if not ENV:
     raise Exception('Environment variable ENV is required!')
 
-# domains/hosts etc.
-DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
-WWW_ROOT = 'http://%s/' % DOMAIN_NAME
-ALLOWED_HOSTS = [DOMAIN_NAME]
-FRONTEND_HOST = os.getenv('UNPP_FRONTEND_HOST', DOMAIN_NAME)
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '%s' % os.getenv('POSTGRES_DB'),
-        'USER': '%s' % os.getenv('POSTGRES_USER'),
-        'PASSWORD': '%s' % os.getenv('POSTGRES_PASSWORD'),
-        'HOST': '%s' % os.getenv('POSTGRES_HOST'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': 5432,
     }
 }
@@ -94,7 +98,10 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'common.middleware.ActivePartnerMiddlewware',
+    'account.authentication.CustomSocialAuthExceptionMiddleware',
+    'common.middleware.ActivePartnerMiddleware',
+    'common.middleware.ActiveAgencyOfficeMiddleware',
+    'common.middleware.ClientTimezoneMiddleware',
 ]
 
 TEMPLATES = [
@@ -110,7 +117,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
-                'django_common.context_processors.common_settings',
                 'django.template.context_processors.request',
             ],
         },
@@ -131,9 +137,13 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'django_filters',
-    # 'compressor',
-    'django_common',
     'imagekit',
+    'django_countries',
+    'mail_templated',
+    'social_django',
+    'sequences.apps.SequencesConfig',
+    'django_nose',
+    'background_task',
 
     'common',
     'account',
@@ -144,28 +154,91 @@ INSTALLED_APPS = [
     'storages',
     'notification',
     'sanctionslist',
+    'management',
+    'reports',
+    'externals',
 ]
 
 # auth / django-registration params
 AUTH_USER_MODEL = 'account.User'
 
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 12,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+PASSWORD_RESET_TIMEOUT_DAYS = 31
+
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'account.authentication.CustomAzureADBBCOAuth2',
 ]
 
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+# Django-social-auth settings
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_SANITIZE_REDIRECTS = True
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_PW_RESET_POLICY = os.getenv(
+    'AZURE_B2C_PW_RESET_POLICY_NAME', "B2C_1_PasswordResetPolicy"
+)
+
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_SCOPE = [
+    'openid', 'email', 'profile',
+]
+IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('accounts:social-logged-in')
+SOCIAL_AUTH_PIPELINE = (
+    'account.authentication.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'account.authentication.require_email',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'account.authentication.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'account.authentication.user_details',
+)
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_USER_FIELDS = [
+    'email', 'fullname'
+]
+
+TEST_RUNNER = os.getenv('DJANGO_TEST_RUNNER', 'django.test.runner.DiscoverRunner')
+NOSE_ARGS = ['--with-timer', '--nocapture', '--nologcapture']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer',
-    'USER_DETAILS_SERIALIZER': 'account.serializers.RegisterSimpleAccountSerializer',
+    'USER_DETAILS_SERIALIZER': 'account.serializers.SimpleAccountSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'account.serializers.CustomPasswordResetSerializer',
 }
 
 
@@ -176,8 +249,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
-LOGS_PATH = os.getenv('UNPP_LOGS_PATH', os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs'))
-
+LOG_LEVEL = 'DEBUG' if DEBUG and 'test' not in sys.argv else 'INFO'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -196,27 +268,25 @@ LOGGING = {
     },
     'handlers': {
         'default': {
-            'level': 'DEBUG',
+            'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
-        },
-        'filesystem': {
-            'level': 'DEBUG',
-            'class': 'common.utils.DeferredRotatingFileHandler',
-            'filename': 'django.log',
-            'formatter': 'verbose',
         },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
             'include_html': True,
         }
     },
     'loggers': {
         '': {
-            'handlers': ['default', 'filesystem'],
+            'handlers': ['default'],
             'level': 'INFO',
+            'propagate': True
+        },
+        'console': {
+            'handlers': ['default'],
+            'level': 'DEBUG',
             'propagate': True
         },
         'django.request': {
@@ -232,5 +302,58 @@ LOGGING = {
     }
 }
 
-DEFAULT_FAKE_DATA_OPEN_APPLICATIONS_COUNT = 21
-DEFAULT_FAKE_DATA_DIRECT_APPLICATIONS_COUNT = 6
+UNHCR_API_HOST = os.getenv('UNHCR_API_HOST')
+UNHCR_API_USERNAME = os.getenv('UNHCR_API_USERNAME')
+UNHCR_API_PASSWORD = os.getenv('UNHCR_API_PASSWORD')
+
+UNICEF_PARTNER_DETAILS_URL = os.getenv('UNICEF_PARTNER_DETAILS_URL')
+UNICEF_API_USERNAME = os.getenv('UNICEF_API_USERNAME')
+UNICEF_API_PASSWORD = os.getenv('UNICEF_API_PASSWORD')
+
+WFP_API_HOST = os.getenv('WFP_API_HOST')
+WFP_API_TOKEN = os.getenv('WFP_API_TOKEN')
+
+
+LEGACY_DB_HOST = os.getenv('LEGACY_DB_HOST')
+if LEGACY_DB_HOST and 'test' not in sys.argv:
+    # bit of an ugly hack, to stop creating legacy DB when testing
+    DATABASES['legacy'] = {
+        'ENGINE': 'sqlserver',
+        'NAME': os.getenv('LEGACY_DB_NAME', 'UNPP'),
+        'USER': os.getenv('LEGACY_DB_USER', 'SA'),
+        'PASSWORD': os.getenv('SA_PASSWORD'),
+        'HOST': LEGACY_DB_HOST,
+        'PORT': int(os.getenv('LEGACY_DB_PORT', 1433)),
+    }
+    DATABASE_ROUTERS = [
+        'legacy.database_routers.LegacyDatabaseRouter',
+    ]
+    INSTALLED_APPS += ['legacy']
+
+
+GIT_VERSION = os.getenv('GIT_VERSION', 'UNKNOWN')
+
+REDIS_INSTANCE = os.getenv('REDIS_INSTANCE')
+
+if REDIS_INSTANCE:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': f'redis://{REDIS_INSTANCE}/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+            'TIMEOUT': 3600
+        }
+    }
+    DJANGO_REDIS_IGNORE_EXCEPTIONS = not DEBUG
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'common.cache_backends.DummyRedisCache',
+            'LOCATION': 'unpp'
+        }
+    }
+
+SESSION_COOKIE_HTTPONLY = True
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

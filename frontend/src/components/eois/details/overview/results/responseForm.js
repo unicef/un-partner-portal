@@ -12,7 +12,6 @@ import ResultRadio from './resultRadio';
 import ProfileConfirmation from '../../../../organizationProfile/common/profileConfirmation';
 import { PROJECT_STATUSES } from '../../../../../helpers/constants';
 import { formatDateForPrint } from '../../../../../helpers/dates';
-import { isUserNotPartnerReader } from '../../../../../helpers/authHelpers';
 
 const styleSheet = theme => ({
   container: {
@@ -34,7 +33,7 @@ const styleSheet = theme => ({
 
 const messages = {
   title: 'Result',
-  confirm: 'Your organization has been identified for a potential partnership via “direct selection”.',
+  confirm: 'Your organization has been identified for a potential partnership via “direct selection/retention”.',
   confirmQuestion: ' Would you like to accept and move forward?',
   confirmed: 'Selection confirmed',
   declined: 'Selection declined',
@@ -76,6 +75,7 @@ class ResultForm extends Component {
     const body = JSON.parse(values.confirmation)
       ? { did_accept: true, did_decline: false }
       : { did_accept: false, did_decline: true };
+      
     this.props.submitConfirmation(body);
     this.setState({ change: false, confirmed: false });
   }
@@ -99,9 +99,9 @@ class ResultForm extends Component {
   }
 
   showForm() {
-    const { accepted, declined, status, decisionDate, displayEdit } = this.props;
+    const { accepted, declined, status, decisionDate } = this.props;
     const { change } = this.state;
-    if (!displayEdit) return null;
+
     if (accepted) {
       return (<div>
         <Typography>{messages.confirmed}</Typography>
@@ -152,7 +152,6 @@ ResultForm.propTypes = {
   submitConfirmation: PropTypes.func,
   status: PropTypes.string,
   decisionDate: PropTypes.string,
-  displayEdit: PropTypes.string,
 };
 
 const formResult = reduxForm({
@@ -163,13 +162,11 @@ const mapStateToProps = (state, ownProps) => ({
   accepted: ownProps.application.did_accept,
   declined: ownProps.application.did_decline,
   decisionDate: formatDateForPrint(ownProps.application.decision_date),
-  displayEdit: isUserNotPartnerReader(state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  submitConfirmation: body => dispatch(updateApplication(ownProps.application.id, body)),
+  submitConfirmation: body => dispatch(updateApplication(ownProps.cfeiId, ownProps.application.id, body)),
 });
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   withStyles(styleSheet, { name: 'ResultForm' })(formResult));

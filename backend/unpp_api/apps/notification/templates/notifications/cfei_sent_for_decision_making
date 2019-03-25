@@ -1,0 +1,6 @@
+Dear UN staff member,
+
+The assessment process for {{ eoi.displayID }}, {{ eoi.title }} is now complete and a prospective partner has been identified.
+To confirm the selection of the proposed partner, please visit: {{ eoi.get_absolute_url }}.
+
+Thank you.

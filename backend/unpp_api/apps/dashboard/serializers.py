@@ -2,12 +2,13 @@
 from __future__ import unicode_literals
 
 from datetime import datetime, date, timedelta
+from functools import reduce
 
 from django.db.models import Count
 from rest_framework import serializers
 
-from common.consts import EOI_TYPES, PARTNER_TYPES
-from common.mixins import PartnerIdsMixin
+from common.consts import CFEI_TYPES, PARTNER_TYPES
+from common.mixins.views import PartnerIdsMixin
 from common.models import Sector
 from partner.models import Partner
 from agency.models import Agency
@@ -44,7 +45,7 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
 
     def get_new_cfei_last_15_by_day_count(self, obj):
         return EOI.objects.filter(created__gte=self._get_days_ago_date(),
-                                  display_type=EOI_TYPES.open).count()
+                                  display_type=CFEI_TYPES.open).count()
 
     def get_num_cn_to_score(self, obj):
         user = self.context['request'].user
@@ -60,7 +61,8 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
             PARTNER_TYPES.cbo: Partner.objects.filter(display_type=PARTNER_TYPES.cbo).count(),
             PARTNER_TYPES.national: Partner.objects.filter(display_type=PARTNER_TYPES.national).count(),
             PARTNER_TYPES.international: Partner.objects.filter(
-                display_type=PARTNER_TYPES.international).exclude(hq__isnull=False).count(),
+                display_type=PARTNER_TYPES.international
+            ).exclude(hq__isnull=False).count(),
             PARTNER_TYPES.academic: Partner.objects.filter(display_type=PARTNER_TYPES.academic).count(),
             PARTNER_TYPES.red_cross: Partner.objects.filter(display_type=PARTNER_TYPES.red_cross).count(),
 
@@ -68,11 +70,13 @@ class AgencyDashboardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agency
-        fields = ('new_partners_last_15_count',
-                  'new_partners_last_15_by_day_count',
-                  'new_cfei_last_15_by_day_count',
-                  'num_cn_to_score',
-                  'partner_breakdown',)
+        fields = (
+            'new_partners_last_15_count',
+            'new_partners_last_15_by_day_count',
+            'new_cfei_last_15_by_day_count',
+            'num_cn_to_score',
+            'partner_breakdown',
+        )
 
 
 class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
@@ -99,7 +103,7 @@ class PartnerDashboardSerializer(PartnerIdsMixin, serializers.ModelSerializer):
         cfei_new = EOI.objects.filter(
             start_date__gte=(date.today()-timedelta(days=self.DAYS_AGO))
         ).values_list('specializations__category__name', 'id').distinct()
-        mapped = map(lambda x: x[0], cfei_new)
+        mapped = list(map(lambda x: x[0], cfei_new))
         result = {}
         for sector in Sector.objects.all():
             result[sector.name] = mapped.count(sector.name)

@@ -38,7 +38,10 @@ export const patchPartnerProfile = (partnerId, tabName, body) => (dispatch, getS
   dispatch(patchDetailsStarted());
 
   return patchPartnerProfileTab(partnerId, tabName, body)
-    .then(() => dispatch(sessionChange(R.assoc('lastUpdate', new Date(), session))));
+    .then((response) => {
+      dispatch(sessionChange(R.assoc('lastUpdate', new Date(), session)));
+      return response;
+    });
 };
 
 export default function partnerProfileDetailsStatus(state = initialState, action) {

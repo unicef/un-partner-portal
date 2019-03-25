@@ -11,7 +11,9 @@ import HeaderList from '../../../common/list/headerList';
 import TextField from '../../../forms/textFieldForm';
 import ProjectPartners from '../../../forms/fields/projectFields/partnersField/ProjectPartners';
 import PaddedContent from '../../../common/paddedContent';
+import PartnersForm from '../../../forms/fields/projectFields/partnersField/partnersFieldArray';
 import {
+  Attachments,
   TitleField,
   FocalPoint,
   OtherInfo,
@@ -20,6 +22,7 @@ import {
   StartDate,
   EndDate,
   DeadlineDate,
+  ClarificationRequestDeadlineDate,
   NotifyDate,
 } from '../../../forms/fields/projectFields/commonFields';
 import LocationFieldReadOnlyArray from '../../../forms/fields/projectFields/locationField/locationFieldReadOnlyArray';
@@ -32,6 +35,7 @@ const messages = {
   title: 'Project Details',
   labels: {
     id: 'CFEI ID:',
+    dsrId: 'DSR ID:',
     issued: 'Issued by',
     goal: 'Expected Results',
     agency: 'Agency',
@@ -41,7 +45,7 @@ const messages = {
   },
 };
 
-const Fields = ({ type, role, partnerId, displayGoal }) => {
+const Fields = ({ type, role, partnerId, displayGoal, formName }) => {
   if (type === PROJECT_TYPES.UNSOLICITED) {
     return (<PaddedContent>
       <GridColumn >
@@ -63,7 +67,7 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
           fieldName="agency"
           readOnly
         />}
-        <LocationFieldReadOnlyArray />
+        <LocationFieldReadOnlyArray formName={formName} />
         <SectorForm readOnly />
         {role === ROLES.AGENCY && <Grid container justify="flex-end">
           <Grid item>
@@ -81,8 +85,8 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
   return (<PaddedContent>
     <GridColumn >
       <TitleField readOnly />
-      <FocalPoint readOnly />
-      <LocationFieldReadOnlyArray />
+      {role === ROLES.AGENCY ? <FocalPoint readOnly /> : null}
+      <LocationFieldReadOnlyArray formName={formName} />
       <SectorForm readOnly />
       <Agencies
         fieldName="agency"
@@ -92,7 +96,8 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
       <Background readOnly />
       {displayGoal && <Goal readOnly />}
       <OtherInfo readOnly />
-      {type === PROJECT_TYPES.OPEN && <GridRow columns={2} >
+      {type === PROJECT_TYPES.OPEN && <GridRow columns={3} >
+        <ClarificationRequestDeadlineDate readOnly />
         <DeadlineDate readOnly />
         <NotifyDate readOnly />
       </GridRow>}
@@ -100,6 +105,10 @@ const Fields = ({ type, role, partnerId, displayGoal }) => {
         <StartDate readOnly />
         <EndDate readOnly />
       </GridRow>
+      {type === PROJECT_TYPES.OPEN &&
+        <Attachments readOnly />}
+      {type === PROJECT_TYPES.DIRECT &&
+        <PartnersForm hidePartner readOnly />}
     </GridColumn>
   </PaddedContent>);
 };
@@ -108,6 +117,7 @@ Fields.propTypes = {
   type: PropTypes.string,
   role: PropTypes.string,
   partner: PropTypes.string,
+  formName: PropTypes.string,
   partnerId: PropTypes.number,
   displayGoal: PropTypes.bool,
 };
@@ -116,19 +126,20 @@ Fields.propTypes = {
 const title = type => () => (
   <SpreadContent>
     <Typography type="headline" >{messages.title}</Typography>
-    {type !== PROJECT_TYPES.UNSOLICITED && <TextField
-      fieldName="id"
-      label={messages.labels.id}
-      readOnly
-    />}
+    {type !== PROJECT_TYPES.UNSOLICITED &&
+      <TextField
+        fieldName="displayID"
+        label={(type === PROJECT_TYPES.OPEN || type === PROJECT_TYPES.PINNED) ? messages.labels.id : messages.labels.dsrId}
+        readOnly
+      />}
   </SpreadContent>
 );
 
-const ProjectDetails = ({ type, role, partner, partnerId, displayGoal }) => (
+const ProjectDetails = ({ type, role, partner, partnerId, displayGoal, formName }) => (
   <HeaderList
     header={title(type)}
   >
-    <Fields type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
+    <Fields formName={formName} type={type} role={role} partner={partner} partnerId={partnerId} displayGoal={displayGoal} />
   </HeaderList>
 );
 

@@ -3,11 +3,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import CnCell from './cnCell';
-import TitleCell from './titleCell';
-import MainContentWrapper from '../../components/common/mainContentWrapper';
 import PartnerApplicationListFilter from './partnerApplicationListFilter';
 import PaginatedList from '../common/list/paginatedList';
 import TableWithStateInUrl from '../common/hoc/tableWithStateInUrl';
@@ -19,7 +17,7 @@ import { isQueryChanged } from '../../helpers/apiHelper';
 import CountriesCell from '../partners/countriesCell';
 import CustomGridColumn from '../common/grid/customGridColumn';
 
-const applicationCell = ({ row, column }) => {
+const applicationCell = ({ row, column, value }) => {
   if (column.name === 'specializations') {
     return <SectorsCell specializations={row.specializations} />;
   } else if (column.name === 'did_win') {
@@ -31,12 +29,12 @@ const applicationCell = ({ row, column }) => {
   } else if (column.name === 'id') {
     return <CnCell type={row.cfei_type} cnId={`${row.id}`} eoiId={`${row.eoi_id}`} />;
   } else if (column.name === 'title') {
-    return <TitleCell type={row.cfei_type} eoiId={`${row.eoi_id}`} title={row.title} />;
+    return <TableCell><Typography>{value}</Typography></TableCell >;
   } else if (column.name === 'country_code') {
     return <CountriesCell countries={row.country_code} />;
   }
 
-  return undefined;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 class AgencyMembersContainer extends Component {

@@ -67,7 +67,7 @@ class PartnerProfileStepperContainer extends Component {
           open={!!error}
           message={error || []}
           autoHideDuration={6e3}
-          onRequestClose={this.handleErrorClose}
+          onClose={this.handleErrorClose}
         />
       </div>
     );
@@ -110,6 +110,7 @@ const connectedPartnerProfileRedux = reduxForm({
   form: 'partnerProfile', // a unique identifier for this form
   enableReinitialize: true,
   forceUnregisterOnUnmount: true,
+  destroyOnUnmount: false,
 })(PartnerProfileStepperContainer);
 
 const connectedPartnerProfileStepper = connect(

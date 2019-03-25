@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from fabric.api import local
+from fabric.context_managers import shell_env
 
 
 def ssh(service):
@@ -7,53 +8,8 @@ def ssh(service):
     ssh into running service container
     :param service: ['backend', 'frontend', 'proxy', 'db']
     """
-    assert service in ['backend', 'frontend', 'proxy', 'db'], "%s is unrecognized service"
-    if service == 'frontend':
-        local('docker-compose exec frontend ash')
-    else:
-        local('docker-compose exec %s bash' % service)
-
-
-def up_recreate():
-    """
-    Recreate containers even if their configuration and image haven't changed.
-    """
-    local('docker-compose down && docker-compose up')
-
-
-def up():
-    """
-    Create and start containers.
-    """
-    local('docker-compose up')
-
-
-def down():
-    """
-    Stop all containers.
-    """
-    local('docker-compose down')
-
-
-def rebuild():
-    """
-    Re-build docker images for containers.
-    """
-    local('docker-compose build')
-
-
-def ps():
-    """
-    Display all containers.
-    """
-    local('docker-compose ps')
-
-
-def stop():
-    """
-    Stop services.
-    """
-    local('docker-compose stop')
+    assert service in ['backend', 'frontend', 'proxy', 'db', 'legacy_db'], "%s is unrecognized service"
+    local('docker-compose exec %s bash' % service)
 
 
 def managepy(command=''):
@@ -64,16 +20,11 @@ def managepy(command=''):
     local(cmd)
 
 
-def preview_uwsgi_log():
-    cmd = 'docker-compose exec backend tail -f /var/log/uwsgi_global.log'
-    local(cmd)
-
-
-def fakedata(quantity=50, clean_before=True):
+def fakedata(clean_before=True):
     """
-    Load example data from fakedata management command.
+    Create mock data for the django backend.
     """
-    cmd = 'docker-compose exec backend python manage.py fakedata %d' % (int(quantity))
+    cmd = 'docker-compose exec backend python manage.py fakedata'
     if clean_before:
         cmd += ' --clean_before'
     local(cmd)
@@ -82,7 +33,7 @@ def fakedata(quantity=50, clean_before=True):
 def reset_db():
     """
     Reset db, migrate and generate fixtures.
-    Useful when changing branch with different migration.
+    Useful when changing branch with different migrations.
     """
     local('docker-compose exec backend python manage.py reset_db')
     local('docker-compose exec backend python manage.py migrate')
@@ -105,15 +56,33 @@ def remove_untagged_images():
     local('docker rmi $(docker images | grep "^<none>" | awk "{print $3}")')
 
 
-def pep8():
+def lint():
     """
     Run python code linter
     """
     local('docker-compose exec backend flake8 ./ --count')
 
 
-def make_admin():
+def clean_pyc():
     """
-    Create admin user for the backend
+    Cleanup pyc files
     """
-    local('docker-compose exec backend python manage.py createsuperuser')
+    local('docker-compose exec backend find . -name \'*.pyc\' -delete')
+
+
+def compose():
+    with shell_env(DOCKER_CLIENT_TIMEOUT='300', COMPOSE_HTTP_TIMEOUT='300'):
+        local(
+            'docker-compose stop '
+            '&& '
+            'docker-compose up --build --abort-on-container-exit --remove-orphans'
+        )
+
+
+def restart():
+    with shell_env(DOCKER_CLIENT_TIMEOUT='300', COMPOSE_HTTP_TIMEOUT='300'):
+        local(
+            'docker-compose stop '
+            '&& '
+            'docker-compose up'
+        )

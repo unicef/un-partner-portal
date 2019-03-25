@@ -11,12 +11,13 @@ import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHa
 import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
-import withConditionalDisplay from '../../../common/hoc/withConditionalDisplay';
-import { isUserNotAgencyReader } from '../../../../helpers/authHelpers';
+import DownloadButton from '../../buttons/downloadCfeiButton';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const edit = 'edit';
 const manage = 'manage';
 const complete = 'complete';
+const download = 'download';
 
 const PartnerOpenAfterDeadlineHeaderOptions = (props) => {
   const { params: { id },
@@ -28,15 +29,18 @@ const PartnerOpenAfterDeadlineHeaderOptions = (props) => {
       <Complete handleClick={() => handleDialogOpen(complete)} />
       <DropdownMenu
         options={
-          [
-            {
-              name: edit,
-              content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
-            },
-            {
-              name: manage,
-              content: <Reviewers handleClick={() => handleDialogOpen(manage)} />,
-            },
+          [{
+            name: download,
+            content: <DownloadButton handleClick={() => { authorizedFileDownload({uri: `/projects/${id}/?export=pdf`}); }} />,
+          },
+          {
+            name: edit,
+            content: <EditButton handleClick={() => handleDialogOpen(edit)} />,
+          },
+          {
+            name: manage,
+            content: <Reviewers handleClick={() => handleDialogOpen(manage)} />,
+          },
           ]
         }
       />
@@ -70,5 +74,4 @@ PartnerOpenAfterDeadlineHeaderOptions.propTypes = {
 export default compose(
   withMultipleDialogHandling,
   withRouter,
-  withConditionalDisplay([isUserNotAgencyReader]),
 )(PartnerOpenAfterDeadlineHeaderOptions);

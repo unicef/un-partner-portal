@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { compose, pluck, any } from 'ramda';
+import { compose, any } from 'ramda';
+import Typography from 'material-ui/Typography';
 import withStyles from 'material-ui/styles/withStyles';
+import { TableCell } from 'material-ui/Table';
 import { browserHistory as history, withRouter } from 'react-router';
 import OpenCfeiApplicationsFilter from '../../filters/openCfeiApplicationsFilter';
 import PartnerProfileNameCell from '../../../partners/partnerProfileNameCell';
@@ -36,6 +38,7 @@ const styleSheetHeader = () => ({
 
 const HeaderActionsBase = (props) => {
   const { classes, rows, changeDisabled } = props;
+
   const ids = rows.map(row => row.id);
   const anyReviewStarted = any(({ review_progress: progress }) => !progress.startsWith('0'), rows);
   const Preselect = WithGreyColor(changeDisabled)(PreselectButton);
@@ -50,6 +53,7 @@ const HeaderActionsBase = (props) => {
 
 const mapStateToPropsForHeaderActions = (state, ownProps) => ({
   changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
+  status: selectCfeiStatus(state, ownProps.params.id),
 });
 
 const HeaderActions = compose(
@@ -86,9 +90,10 @@ class ApplicationsListContainer extends Component {
     return true;
   }
 
-  applicationsCells({ row, column, hovered }) {
+  applicationsCells({ row, column, hovered, value }) {
     const { changeDisabled } = this.props;
-    if (column.name === 'name') {
+
+    if (column.name === 'legal_name') {
       return (<PartnerProfileNameCell
         info={row.partner_additional}
       />);
@@ -112,11 +117,12 @@ class ApplicationsListContainer extends Component {
       return <OrganizationTypeCell orgType={row.type_org} />;
     }
 
-    return undefined;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   render() {
     const { applications, columns, loading, itemsCount, allowedToEdit } = this.props;
+
     return (
       <div>
         <GridColumn spacing={24}>

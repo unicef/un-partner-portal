@@ -1,13 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import DropdownMenu from '../../../common/dropdownMenu';
 import PinnedCell from '../../cells/pinnedCell';
+import DownloadButton from '../../buttons/downloadCfeiButton';
 import PinButton from '../../buttons/pinItemButton';
+import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
+
+const download = 'download';
 
 const PartnerOpenHeaderOptions = (props) => {
-  const { params: { id } } = props;
+  const { params: { id }, hasPermission } = props;
+
+  let dropdownOptions = [
+    {
+      name: download,
+      content: <DownloadButton handleClick={() => { authorizedFileDownload({ uri: `/projects/${id}/?export=pdf` }); }} />,
+    },
+  ]
+
+  if (hasPermission) {
+    dropdownOptions.push(
+      {
+        name: 'pinItem',
+        content: <PinButton id={id} />,
+      });
+  }
 
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={0}>
@@ -17,12 +38,7 @@ const PartnerOpenHeaderOptions = (props) => {
       <Grid item>
         <DropdownMenu
           options={
-            [
-              {
-                name: 'pinItem',
-                content: <PinButton id={id} />,
-              },
-            ]
+            dropdownOptions
           }
         />
       </Grid>
@@ -31,7 +47,16 @@ const PartnerOpenHeaderOptions = (props) => {
 };
 
 PartnerOpenHeaderOptions.propTypes = {
+  hasPermission: PropTypes.bool.isRequired,
   params: PropTypes.object,
 };
 
-export default withRouter(PartnerOpenHeaderOptions);
+const mapStateToProps = state => ({
+  hasPermission: checkPermission(PARTNER_PERMISSIONS.CFEI_PINNING, state),
+});
+
+const ContainerPartnerOpenHeaderOptions = connect(
+  mapStateToProps,
+)(PartnerOpenHeaderOptions);
+
+export default withRouter(ContainerPartnerOpenHeaderOptions);

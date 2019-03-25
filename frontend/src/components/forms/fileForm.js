@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-import { FormControl } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 import FileFormUploadButton from '../common/buttons/fileFormUploadButton';
+import LocalFileFormUploadButton from '../common/buttons/localFileFormUploadButton';
 import { renderFileDownload } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
 
@@ -34,6 +34,7 @@ class FileForm extends Component {
       validation,
       warn,
       readOnly,
+      localUpload,
       deleteDisabled,
       infoText,
       ...other } = this.props;
@@ -49,12 +50,13 @@ class FileForm extends Component {
           />
           : <Field
             name={fieldName}
-            component={FileFormUploadButton}
+            component={localUpload ? LocalFileFormUploadButton : FileFormUploadButton}
             fieldName={fieldName}
             label={label}
             sectionName={sectionName}
             formName={formName}
             infoText={infoText}
+            optional={optional}
             deleteDisabled={deleteDisabled}
             validate={(optional ? [] : [required].concat(validation || []))}
             warn={warn ? warning : undefined}
@@ -116,6 +118,8 @@ FileForm.propTypes = {
    * render additional tooltip with label
    */
   infoText: PropTypes.node,
+
+  localUpload: PropTypes.bool,
 };
 
 FileForm.defaultProps = {

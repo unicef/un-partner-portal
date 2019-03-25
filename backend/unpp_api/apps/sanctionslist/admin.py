@@ -3,11 +3,12 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import SanctionedItem, SanctionedName, SanctionedNameMatch
+from sanctionslist.models import SanctionedItem, SanctionedName, SanctionedNameMatch
 
 
 class SanctionedNameInline(admin.TabularInline):
     model = SanctionedName
+    extra = 1
 
 
 class SanctionedItemAdmin(admin.ModelAdmin):
@@ -22,10 +23,9 @@ class SanctionedItemAdmin(admin.ModelAdmin):
 
 
 class SanctionedNameMatchAdmin(admin.ModelAdmin):
-    list_display = ('partner', 'name', 'match_type',
-                    'match_text',
-                    'created',
-                    'can_ignore',)
+    list_display = (
+        'partner', 'name', 'match_type', 'match_text', 'created', 'can_ignore',
+    )
     list_filter = ('can_ignore', 'match_type',)
 
 

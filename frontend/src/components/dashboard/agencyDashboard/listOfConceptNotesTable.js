@@ -11,15 +11,15 @@ import { formatDateForPrint } from '../../../helpers/dates';
 
 
 const columns = [
-  { name: 'title', title: 'Project Title' },
-  { name: 'id', title: 'CFEI' },
+  { name: 'title', title: 'Project Title', width: 250 },
+  { name: 'displayID', title: 'CFEI' },
   { name: 'eoi_applications_count', title: 'Number of Applications' },
   { name: 'deadline_date', title: 'Notification of results deadline' },
 ];
 
 
-const renderCells = ({ row, column }) => {
-  if (column.name === 'id') {
+const renderCells = ({ row, column, value }) => {
+  if (column.name === 'displayID') {
     return (
       <TableCell >
         <Typography
@@ -27,7 +27,7 @@ const renderCells = ({ row, column }) => {
           component={Link}
           to={`/cfei/open/${row.id}`}
         >
-          {row.id}
+          {row.displayID}
         </Typography>
       </TableCell>);
   } else if (column.name === 'deadline_date') {
@@ -36,7 +36,7 @@ const renderCells = ({ row, column }) => {
         {formatDateForPrint(row.deadline_date)}
       </TableCell>);
   }
-  return undefined;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 renderCells.propTypes = {

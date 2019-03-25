@@ -153,16 +153,26 @@ const getTheme = () => (
         completed: '#5B92E5',
         closed: '#233944',
         open: '#72C300',
+        draft: '#A1A1A1',
+      },
+      userStatus: {
+        invited: '#FF6D00',
+        active: '#8BC34A',
+        deactivated: '#263238',
       },
       dateColors: {
         dark: '#233944',
         green: '#72C300',
         red: '#EA4022',
         blue: '#0099FF',
+        orange: '#fec832',
       },
       flags: {
+        observation: '#A1A1A1',
         red: '#D50000',
         yellow: '#FFC400',
+        escalated: '#FFA000',
+        background: '#E5E5E5',
       },
     },
     typography: {

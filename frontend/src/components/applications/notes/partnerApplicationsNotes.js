@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
 import CustomGridColumn from '../../common/grid/customGridColumn';
+import Typography from 'material-ui/Typography';
 import PartnerApplicationsNotesFilter from './partnerApplicationsNotesFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
 import ApplicationStatusCell from '../../eois/cells/applicationStatusCell';
@@ -18,11 +19,11 @@ import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 import CountriesCell from '../../partners/countriesCell';
 
 /* eslint-disable react/prop-types */
-const applicationCell = ({ row, column }) => {
-  if (column.name === 'id') {
+const applicationCell = ({ row, column, value }) => {
+  if (column.name === 'project_displayID') {
     return (<ConceptNoteIDCell
       cfeiId={row.eoi_id}
-      id={row.id}
+      id={row.project_displayID}
       type={PROJECT_TYPES.OPEN}
     />);
   } else if (column.name === 'application_date') {
@@ -39,7 +40,7 @@ const applicationCell = ({ row, column }) => {
       />);
   }
 
-  return undefined;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 /* eslint-disable react/prefer-stateless-function */

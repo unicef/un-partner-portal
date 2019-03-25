@@ -26,6 +26,9 @@ export const password = value => (
     : 'Invalid password'
 );
 
+export const sameAs = (other, errorMsg) => (value, { [other]: otherValue }) =>
+  value !== otherValue ? errorMsg : undefined;
+
 export const url = (value) => {
   if (value && value.length > 0) {
     return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value)
@@ -39,15 +42,15 @@ export const url = (value) => {
 export const numerical = (value) => {
   const min = 1;
   const max = 100;
-  if (+value < min) return `Value is to small, min: ${min}`;
-  else if (+value > max) return `Value is to large, max: ${max}`;
+  if (+value < min) return `Value is too small, min: ${min}`;
+  else if (+value > max) return `Value is too large, max: ${max}`;
   return undefined;
 };
 
 export const weight = (value) => {
   const numValue = Number(value);
   if (Number.isNaN(numValue)) return 'Invalid number';
-  if (value < 1) return 'Value is to small, min: 1';
+  if (value < 1) return 'Value is too small, min: 1';
   return undefined;
 };
 
@@ -68,7 +71,7 @@ export const hasLocations = (values, allValues, { optionalLocations }) => {
     values.forEach((countryObj) => {
       if (countryObj.country
           && !countryObj.locations
-          && !optionalLocations.includes(countryObj.country)) {
+          && optionalLocations && !optionalLocations.includes(countryObj.country)) {
         error = EMPTY_ERROR;
       }
     });
@@ -109,9 +112,9 @@ export const validateReviewScores = (values, props) => {
     const weights = pluck('weight', props.criteria);
     values.scores.forEach((scoreObj, scoreIndex) => {
       const scoreError = {};
-      if (+scoreObj.score < 1) scoreError.score = 'Value is to small, min: 1';
+      if (+scoreObj.score < 1) scoreError.score = 'Value is too small, min: 1';
       else if (+scoreObj.score > weights[scoreIndex]) {
-        scoreError.score = `Value is to large, max: ${weights[scoreIndex]}`;
+        scoreError.score = `Value is too large, max: ${weights[scoreIndex]}`;
       }
       scoresError[scoreIndex] = scoreError;
     });

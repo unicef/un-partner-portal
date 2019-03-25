@@ -55,7 +55,7 @@ class CountryOfficesHeaderContainer extends React.Component {
 
   render() {
     return (
-      <div>
+      <div style={{ display: 'flex', width: '100%' }}>
         <CountryOfficesHeader
           disableNewCountries={this.props.disableNewCountries}
           handleNewCountryClick={this.handleNewCountry}

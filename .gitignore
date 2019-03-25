@@ -111,3 +111,6 @@ frontend/*/dev.js
 # PyCharm etc.
 .idea/
 .vscode/
+
+# k8s secrets
+kubernetes/base/secrets.yml

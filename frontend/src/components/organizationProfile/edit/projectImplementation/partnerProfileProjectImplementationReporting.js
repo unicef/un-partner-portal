@@ -32,8 +32,10 @@ const PartnerProfileProjectImplementationReporting = (props) => {
           placeholder={PLACEHOLDERS.explain}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '5000',
+            InputProps: {
+              inputProps: {
+                maxLength: '5000',
+              },
             },
           }}
           warn

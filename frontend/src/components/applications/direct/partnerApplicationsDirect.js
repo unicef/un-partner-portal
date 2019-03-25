@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { TableCell } from 'material-ui/Table';
 import PropTypes from 'prop-types';
+import Typography from 'material-ui/Typography';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import PartnerApplicationsFilter from '../unsolicited/partnerApplicationsUnsolicitedFilter';
 import ConceptNoteIDCell from '../conceptNoteIDCell';
@@ -17,7 +18,7 @@ import { PROJECT_TYPES } from '../../../helpers/constants';
 import TableWithStateInUrl from '../../common/hoc/tableWithStateInUrl';
 import CountriesCell from '../../partners/countriesCell';
 
-const applicationCell = ({ row, column }) => {
+const applicationCell = ({ row, column, value }) => {
   if (column.name === 'submission_date') {
     return <WrappedCell content={formatDateForPrint(row.submission_date)} />;
   } else if (column.name === 'id') {
@@ -40,7 +41,7 @@ const applicationCell = ({ row, column }) => {
       />);
   }
 
-  return undefined;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 class PartnerApplicationsDirect extends Component {

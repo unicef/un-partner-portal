@@ -16,7 +16,7 @@ const styleSheet = (theme) => {
   return {
     padding: {
       padding: `0px ${spacing}px ${spacing}px ${spacing}px`,
-      alignItems: 'flex-end',
+      alignItems: 'center',
     },
     background: {
       backgroundColor: theme.palette.common.lightGreyBackground,
@@ -30,7 +30,7 @@ const styleSheet = (theme) => {
 const VerificationQuestion = (props) => {
   const { classes, question, questionFieldName, commentFieldName, readOnly } = props;
   return (
-    <GridColumn>
+    <GridColumn spacing={8}>
       <SpreadContent className={`${classes.padding} ${classes.background}`}>
         <Typography type="body2" className={classes.questionMargin}>
           {question}
@@ -43,8 +43,10 @@ const VerificationQuestion = (props) => {
           fieldName={commentFieldName}
           textFieldProps={{
             multiline: true,
-            inputProps: {
-              maxLength: '300',
+            InputProps: {
+              inputProps: {
+                maxLength: '300',
+              },
             },
           }}
           readOnly={readOnly}

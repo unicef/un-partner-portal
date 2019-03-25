@@ -62,6 +62,9 @@ const SingleFlagSummary = (props) => {
               fieldName="contact_email"
               validation={[email]}
               readOnly
+              textFieldProps={{
+                "type": "email"
+              }}
             />
           </GridRow>
           <FileForm

@@ -4,7 +4,6 @@ import { withStyles } from 'material-ui/styles';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import { GoogleApiWrapper } from 'google-maps-react';
 import TextFieldForm from '../../../../forms/textFieldForm';
 import AddressMapField from './addressMapField';
 
@@ -30,7 +29,8 @@ const messages = {
 };
 
 const LocationFieldArray = (props) => {
-  const { classes, formName, readOnly, name, country, loaded } = props;
+  const { classes, formName, readOnly, name, country } = props;
+  
   return (
     <div className={classes.container}>
       <TextFieldForm
@@ -38,18 +38,20 @@ const LocationFieldArray = (props) => {
         fieldName={'countryName'}
         optional
         textFieldProps={{
-          inputProps: {
-            initial: country,
+          InputProps: {
+            inputProps: {
+              initial: country,
+            },
           },
         }}
         readOnly
       />
       <div className={classes.innerPaper}>
-        {loaded && <AddressMapField
+        <AddressMapField
           formName={formName}
           name={name}
           readOnly={readOnly}
-        />}
+        />
       </div>
     </div>);
 };
@@ -59,14 +61,8 @@ LocationFieldArray.propTypes = {
   name: PropTypes.string,
   country: PropTypes.string,
   readOnly: PropTypes.bool,
-  loaded: PropTypes.bool,
   classes: PropTypes.object,
 };
-
-const WrappedLocationFieldArray = GoogleApiWrapper({
-  version: '3.exp',
-  apiKey: process.env.GOOGLE_KEY,
-})(LocationFieldArray);
 
 const connected = connect(
   (state, ownProps) => {
@@ -77,7 +73,7 @@ const connected = connect(
       country,
     };
   },
-)(WrappedLocationFieldArray);
+)(LocationFieldArray);
 
 export default withRouter(withStyles(styleSheet)(connected));
 

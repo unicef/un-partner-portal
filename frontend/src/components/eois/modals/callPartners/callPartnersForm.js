@@ -8,6 +8,8 @@ import ProjectPartners from '../../../forms/fields/projectFields/partnersField/P
 import GridColumn from '../../../common/grid/gridColumn';
 import { selectCfeiDetails } from '../../../../store';
 
+const FORM_NAME = 'callPartners';
+
 const messages = {
   label: 'Partners',
 };
@@ -23,6 +25,7 @@ const CallPartnersForm = (props) => {
           label={messages.label}
           initialMultiValues={invitedPartners}
           countries={countries}
+          formName={FORM_NAME}
           {...other}
         />
       </GridColumn>
@@ -41,7 +44,7 @@ CallPartnersForm.propTypes = {
 };
 
 const formCallPartners = reduxForm({
-  form: 'callPartners',
+  form: FORM_NAME,
 })(CallPartnersForm);
 
 const mapStateToProps = (state, ownProps) => {

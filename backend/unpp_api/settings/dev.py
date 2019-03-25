@@ -4,8 +4,8 @@ from .base import *  # noqa: ignore=F403
 
 # dev overrides
 DEBUG = True
-# TEMPLATE_DEBUG = DEBUG
 IS_DEV = True
+TEMPLATES[0]['OPTIONS']['debug'] = True
 
 # domains/hosts etc.
 DOMAIN_NAME = 'localhost:8000'
@@ -24,10 +24,7 @@ CACHES = {
 }
 
 # change logging level to debug
-LOGGING['loggers']['']['level'] = 'DEBUG'
 LOGGING['loggers']['django.request']['level'] = 'DEBUG'
-LOGGING['handlers']['default']['class'] = 'common.utils.DeferredRotatingFileHandler'
-LOGGING['handlers']['default']['filename'] = 'django.log'  # Full path is created by DeferredRotatingFileHandler.
 
 extend_list_avoid_repeats(INSTALLED_APPS, [
     'django_extensions',

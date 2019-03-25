@@ -12,7 +12,7 @@ const styleSheet = () => ({
     height: '100%',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'baseline',
+    justifyContent: 'flex-start',
     backgroundColor: 'transparent',
     color: 'inherit',
   },
@@ -31,7 +31,7 @@ const IconWithTextButton = (props) => {
       disableRipple
     >
       {icon}
-      <Typography className={classes.text} color="inherit" {...textProps}>{text}</Typography>
+      <Typography className={classes.text} color="inherit" {...textProps}>{text || ''}</Typography>
     </BaseButton>
   );
 };

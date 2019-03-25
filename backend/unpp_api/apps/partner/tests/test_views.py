@@ -4,11 +4,15 @@ import os
 import random
 
 import mock
+from datetime import date
 
+from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from django.conf import settings
-from rest_framework import status as statuses
+from rest_framework import status
 
+from agency.models import Agency
+from common.headers import CustomHeader
 from partner.models import (
     Partner,
     PartnerProfile,
@@ -21,6 +25,7 @@ from partner.models import (
     PartnerOtherInfo,
     PartnerInternalControl,
     PartnerExperience,
+    PartnerPolicyArea,
 )
 from common.models import Point, CommonFile
 from common.tests.base import BaseAPITestCase
@@ -30,36 +35,44 @@ from common.factories import (
     PartnerFactory,
     OtherAgencyFactory,
     PointFactory,
+    PartnerMemberFactory,
 )
 from common.consts import (
     FUNCTIONAL_RESPONSIBILITY_CHOICES,
     YEARS_OF_EXP_CHOICES,
     PARTNER_TYPES,
     ORG_AUDIT_CHOICES,
-    AUDIT_ASSESSMENT_CHOICES)
+    AUDIT_ASSESSMENT_CHOICES,
+)
 
 
 class TestPartnerCountryProfileAPIView(BaseAPITestCase):
 
-    quantity = 1
-    initial_factories = [
-        OtherAgencyFactory,
-        AgencyFactory,
-        UserFactory,
-        PartnerFactory,
-    ]
+    user_type = BaseAPITestCase.USER_PARTNER
 
     def test_create_country_profile(self):
-        partner = Partner.objects.first()
+        partner = PartnerFactory(
+            legal_name='Test International Partner HQ',
+            display_type=PARTNER_TYPES.international
+        )
+        PartnerMemberFactory(partner=partner, user=self.user)
+        self.client.set_headers({
+            CustomHeader.PARTNER_ID.value: partner.id
+        })
+
+        PartnerPolicyArea.objects.filter(partner=partner).update(document_policies=None)
         url = reverse('partners:country-profile', kwargs={"pk": partner.id})
         response = self.client.get(url, format='json')
-        chosen_country_to_create = map(lambda x: x['country_code'],
-                                       filter(lambda x: x['exist'] is False, response.data['countries_profile']))
+        self.assertResponseStatusIs(response)
+        chosen_country_to_create = list(map(
+            lambda x: x['country_code'],
+            filter(lambda x: x['exist'] is False, response.data['countries_profile'])
+        ))
         payload = {
             'chosen_country_to_create': chosen_country_to_create,
         }
         response = self.client.post(url, data=payload, format='json')
-        self.assertTrue(statuses.is_client_error(response.status_code))
+        self.assertTrue(status.is_client_error(response.status_code))
         self.assertEquals(
             response.data['non_field_errors'],
             ["You don't have the ability to create country profile if Your profile is not completed."]
@@ -68,10 +81,12 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         with mock.patch('partner.models.Partner.has_finished', lambda: True):
             response = self.client.post(url, data=payload, format='json')
 
+        self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
         expected_count = len(chosen_country_to_create)
-        self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(Partner.objects.filter(hq_id=partner.id, display_type=PARTNER_TYPES.international).count(),
-                          expected_count)
+        self.assertEquals(
+            Partner.objects.filter(hq_id=partner.id, display_type=PARTNER_TYPES.international).count(),
+            expected_count
+        )
         self.assertEquals(PartnerProfile.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerMailingAddress.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerHeadOrganization.objects.filter(partner__hq=partner).count(), 0)
@@ -80,8 +95,10 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
         self.assertEquals(PartnerMandateMission.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerFunding.objects.filter(partner__hq=partner).count(), expected_count)
         self.assertEquals(PartnerOtherInfo.objects.filter(partner__hq=partner).count(), expected_count)
-        self.assertEquals(PartnerInternalControl.objects.filter(partner__hq=partner).count(),
-                          expected_count*len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values)))
+        self.assertEquals(
+            PartnerInternalControl.objects.filter(partner__hq=partner).count(),
+            expected_count*len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values))
+        )
 
 
 class TestPartnerDetailAPITestCase(BaseAPITestCase):
@@ -94,62 +111,79 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         PartnerFactory,
         PointFactory,
     ]
+    user_type = BaseAPITestCase.USER_PARTNER
 
     def test_identification(self):
         profile = PartnerProfile.objects.first()
         year_establishment = 2015
-        registration_date = '2016-01-01'
-        url = reverse('common:file')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
-        with open(filename) as doc:
-            payload = {
-                "file_field": doc
-            }
-            response = self.client.post(url, data=payload, format='multipart')
 
-        self.assertTrue(statuses.is_success(response.status_code))
-        self.assertTrue(response.data['id'] is not None)
-        gov_doc_id = response.data['id']
-
-        with open(filename) as doc:
-            payload = {
-                "file_field": doc
-            }
-            response = self.client.post(url, data=payload, format='multipart')
-        self.assertTrue(statuses.is_success(response.status_code))
-        self.assertTrue(response.data['id'] is not None)
-        registration_doc_id = response.data['id']
-
-        url = reverse('partners:identification', kwargs={"pk": profile.id})
+        identification_url = reverse('partners:identification', kwargs={"pk": profile.id})
         payload = {
             'year_establishment': year_establishment,
-            'have_gov_doc': True,
-            'gov_doc': gov_doc_id,
-            'registration_to_operate_in_country': True,
-            'registration_doc': registration_doc_id,
-            'registration_date': registration_date,
-            'registration_comment': 'test comment',
-            'registration_number': '123/2016',
+            'have_governing_document': True,
+            'registered_to_operate_in_country': True,
         }
-        response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        response = self.client.patch(identification_url, data=payload)
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['year_establishment'], year_establishment)
-        self.assertEquals(response.data['registration_date'], registration_date)
-        self.assertEquals(response.data['registration_comment'], 'test comment')
-        self.assertTrue(response.data['gov_doc'] is not None)
-        self.assertTrue(response.data['registration_doc'] is not None)
 
-        response = self.client.get(url, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
-        self.assertEquals(response.data['registration_date'], registration_date)
-        self.assertTrue(response.data['registration_doc'] is not None)
+        response = self.client.get(identification_url)
+        self.assertResponseStatusIs(response)
+        identification_payload = response.data
+
+        file_endpoint_url = reverse('common:file')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
+        with open(filename) as doc:
+            payload = {
+                "file_field": doc
+            }
+            response = self.client.post(file_endpoint_url, data=payload, format='multipart')
+
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data['id'])
+
+        identification_payload['governing_documents'].append({
+            'document': response.data['id']
+        })
+
+        with open(filename) as doc:
+            payload = {
+                "file_field": doc
+            }
+            response = self.client.post(file_endpoint_url, data=payload, format='multipart')
+
+        self.assertTrue(status.is_success(response.status_code))
+        self.assertTrue(response.data['id'] is not None)
+
+        identification_payload['registration_documents'].append({
+            'document': response.data['id'],
+            'issue_date': date.today() - relativedelta(years=random.randint(1, 4)),
+            'expiry_date': date.today() + relativedelta(years=random.randint(5, 20)),
+            'registration_number': 'TEST_NUMBER',
+            'issuing_authority': 'TEST_AUTHORITY',
+        })
+
+        response = self.client.patch(identification_url, data=identification_payload)
+        self.assertResponseStatusIs(response)
+
+        if len(response.data['registration_documents']) > 1:
+            self.assertFalse(response.data['registration_documents'][0]['editable'])
+        self.assertTrue(response.data['registration_documents'][-1]['editable'])
+
+        if len(response.data['governing_documents']) > 1:
+            self.assertFalse(response.data['governing_documents'][0]['editable'])
+        self.assertTrue(response.data['governing_documents'][-1]['editable'])
+
+        self.assertTrue(response.data['have_governing_document'])
+        self.assertTrue(response.data['registered_to_operate_in_country'])
+        self.assertEqual(response.data['registration_documents'][-1]['registration_number'], 'TEST_NUMBER')
 
     def test_contact_information(self):
         partner = Partner.objects.first()
         url = reverse('partners:contact-information', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
         directors = response.data['directors']
         authorised_officers = response.data['authorised_officers']
         working_languages_other = 'PL'
@@ -186,7 +220,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'authorised_officers': authorised_officers,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['working_languages_other'], working_languages_other)
         self.assertEquals(response.data['connectivity_excuse'], connectivity_excuse)
         # org head can't be changed
@@ -208,7 +242,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'connectivity_excuse': 'one field to patch'
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['connectivity_excuse'], payload['connectivity_excuse'])
         self.assertEquals(partner.authorised_officers.count(), len(authorised_officers))
         for authorised_officer in partner.authorised_officers.all():
@@ -217,22 +251,22 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
     def test_mandate_mission(self):
         url = reverse('common:file')
-        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.csv')
+        filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
         with open(filename) as doc:
             payload = {
                 "file_field": doc
             }
             response = self.client.post(url, data=payload, format='multipart')
 
-        self.assertTrue(statuses.is_success(response.status_code))
-        self.assertTrue(response.data['id'] is not None)
+        self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data['id'])
         file_id = response.data['id']
 
         partner = Partner.objects.first()
         url = reverse('partners:mandate-mission', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
 
         comment = "unit test desc"
         experience = PartnerExperience.objects.filter(partner=partner).first()
@@ -275,13 +309,19 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             ],
             'governance_organigram': file_id,
             'experiences': [
-                {'id': experience.id, 'years': YEARS_OF_EXP_CHOICES.more_10},
-                {'specialization_id': 1, 'years': YEARS_OF_EXP_CHOICES.more_10}
+                {
+                    'id': experience.id,
+                    'years': YEARS_OF_EXP_CHOICES.more_10
+                },
+                {
+                    'specialization_id': 1,
+                    'years': YEARS_OF_EXP_CHOICES.years15
+                }
             ]
         }
 
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['ethic_safeguard_comment'], comment)
         self.assertEquals(response.data['security_desc'], comment)
         self.assertEquals(response.data['ethic_fraud_comment'], comment)
@@ -290,7 +330,8 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         self.assertTrue(response.data['population_of_concern'])
         self.assertEquals(len(response.data['experiences']), 2)
         self.assertEquals(response.data['experiences'][0]['years'], YEARS_OF_EXP_CHOICES.more_10)
-        self.assertEquals(response.data['experiences'][1]['years'], YEARS_OF_EXP_CHOICES.more_10)
+        self.assertIsNotNone(response.data['experiences'][0]['specialization'])
+        self.assertEquals(response.data['experiences'][1]['years'], YEARS_OF_EXP_CHOICES.years15)
         self.assertEquals(len(response.data['location_field_offices']), 2)
         self.assertTrue(Point.objects.last().id in [office['id'] for office in response.data['location_field_offices']])
 
@@ -299,7 +340,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         url = reverse('partners:funding', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
 
         text = 'test text'
         payload = response.data
@@ -312,7 +353,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         payload['source_core_funding'] = text
 
         update_response = self.client.put(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(update_response.status_code))
+        self.assertTrue(status.is_success(update_response.status_code))
         self.assertEquals(update_response.data['main_donors_list'], text)
         self.assertEquals(update_response.data['source_core_funding'], text)
         self.assertEquals(len(update_response.data['budgets']), len(budgets))
@@ -322,7 +363,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         url = reverse('partners:collaboration', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, statuses.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         text = 'updated to test'
 
@@ -343,7 +384,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         }
 
         update_response = self.client.patch(url, data=payload, format='json')
-        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+        self.assertEqual(update_response.status_code, status.HTTP_200_OK, msg=update_response.data)
 
         self.assertTrue(payload['partnership_collaborate_institution'])
         self.assertEquals(update_response.data['partnership_collaborate_institution_desc'], text)
@@ -352,8 +393,9 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertEquals(cp['partner_number'], text)
 
         collaborations_partnership = dict(update_response.data['collaborations_partnership'][0])
+
         collaborations_partnership.pop('id')
-        collaborations_partnership['agency_id'] = collaborations_partnership.pop('agency')['id']
+        collaborations_partnership['agency_id'] = Agency.objects.first().id
 
         payload = {
             'collaborations_partnership': [
@@ -361,16 +403,17 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
                 collaborations_partnership
             ]
         }
+
         update_response = self.client.patch(url, data=payload, format='json')
-        self.assertEqual(update_response.status_code, statuses.HTTP_400_BAD_REQUEST)
-        self.assertIn('collaborations_partnership', response.data)
+        self.assertEqual(update_response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('collaborations_partnership', update_response.data['full_non_field_errors'])
 
     def test_project_implementation(self):
         partner = Partner.objects.first()
         url = reverse('partners:project-implementation', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
 
         payload = response.data
         del payload['publish_annual_reports']
@@ -381,6 +424,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         del payload['last_report']
         del payload['audit_reports'][0]['most_recent_audit_report']
         del payload['audit_reports'][1]['most_recent_audit_report']
+
         text = 'test'
         payload['financial_control_system_desc'] = text
         payload['management_approach_desc'] = text
@@ -396,7 +440,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         response = self.client.patch(url, data=payload, format='json')
 
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['financial_control_system_desc'], text)
         self.assertEquals(response.data['management_approach_desc'], text)
         self.assertEquals(response.data['comment'], text)
@@ -406,13 +450,13 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
     def test_other_info(self):
         url = reverse('common:file')
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
-        with open(filename) as doc:
+        with open(filename, 'rb') as doc:
             payload = {
                 "file_field": doc
             }
             response = self.client.post(url, data=payload, format='multipart')
 
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
         self.assertTrue(response.data['id'] is not None)
         file_id = response.data['id']
 
@@ -420,7 +464,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         url = reverse('partners:other-info', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
 
         text = 'test'
         payload = {
@@ -429,17 +473,17 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             'confirm_data_updated': True,
         }
         response = self.client.patch(url, data=payload, format='json')
-        self.assertTrue(statuses.is_success(response.status_code))
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEquals(response.data['info_to_share'], text)
         self.assertTrue(response.data['org_logo'] is not None)
 
         response = self.client.patch(url, data={"other_doc_1": file_id}, format='json')
-        self.assertFalse(statuses.is_success(response.status_code))
+        self.assertFalse(status.is_success(response.status_code))
         self.assertEquals(response.data[0],
                           'This given common file id {} can be used only once.'.format(file_id))
 
         response = self.client.patch(url, data={"other_doc_1": file_id, "other_doc_3": file_id}, format='json')
-        self.assertFalse(statuses.is_success(response.status_code))
+        self.assertFalse(status.is_success(response.status_code))
         self.assertEquals(response.data[0], 'Given related field common file id have to be unique.')
 
     def test_add_audit_reports(self):
@@ -449,11 +493,11 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         files = []
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         for _ in range(2):
-            with open(filename) as doc:
+            with open(filename, 'rb') as doc:
                 response = self.client.post(reverse('common:file'), data={
                     "file_field": doc
                 }, format='multipart')
-            self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
             files.append(dict(response.data))
 
         update_payload = {
@@ -464,7 +508,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         }
 
         update_response = self.client.patch(url, data=update_payload, format='json')
-        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
 
         updated_audit_reports = update_response.data['audit_reports']
         self.assertEqual(len(updated_audit_reports), len(files))
@@ -481,11 +525,11 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         files = []
         filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'logo.png')
         for _ in range(2):
-            with open(filename) as doc:
+            with open(filename, 'rb') as doc:
                 response = self.client.post(reverse('common:file'), data={
                     "file_field": doc
                 }, format='multipart')
-            self.assertEqual(response.status_code, statuses.HTTP_201_CREATED, msg=response.content)
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
             files.append(dict(response.data))
 
         update_payload = {
@@ -496,7 +540,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         }
 
         update_response = self.client.patch(url, data=update_payload, format='json')
-        self.assertEqual(update_response.status_code, statuses.HTTP_200_OK)
+        self.assertEqual(update_response.status_code, status.HTTP_200_OK)
 
         updated_capacity_assessments = update_response.data['capacity_assessments']
         self.assertEqual(len(updated_capacity_assessments), len(files))
@@ -505,3 +549,19 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
             self.assertTrue(
                 partner.capacity_assessments.filter(report_file_id=f['id']).exists()
             )
+
+
+class TestPartnerPDFExport(BaseAPITestCase):
+
+    quantity = 1
+    user_type = BaseAPITestCase.USER_AGENCY
+    initial_factories = [
+        PartnerFactory,
+    ]
+
+    def test_download_partner_profile_pdf(self):
+        partner = Partner.objects.first()
+        url = reverse('partners:partner-profile', kwargs={'pk': partner.pk}) + '?export=pdf'
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertEqual(response.content_type, 'application/pdf')

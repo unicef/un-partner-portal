@@ -1,16 +1,12 @@
 from __future__ import absolute_import
-import os
 
 # import defaults
+from importlib import import_module
+
 from .base import *
 
 
-overrides = __import__(
-    ENV,
-    globals(),
-    locals(),
-    ['settings']
-)
+overrides = import_module('unpp_api.settings.{}'.format(ENV))
 
 # apply imported overrides
 for attr in dir(overrides):

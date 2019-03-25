@@ -17,46 +17,41 @@ PARTNER_REVIEW_TYPES = Choices(
 )
 
 PARTNER_TYPES = Choices(
-    ('CBO', 'cbo', 'Community Based Organization (CBO) '),
+    ('CBO', 'cbo', 'Community Based Organization (CBO)'),
     ('NGO', 'national', 'National NGO'),
     ('Int', 'international', 'International NGO (INGO)'),
     ('Aca', 'academic', 'Academic Institution'),
     ('RCC', 'red_cross', 'Red Cross/Red Crescent Movement'),
 )
 
-EOI_TYPES = Choices(
-    ('Ope', 'open', 'Open'),
-    ('Dir', 'direct', 'Direct'),
+CFEI_TYPES = Choices(
+    ('Ope', 'open', 'Open Selection'),
+    ('Dir', 'direct', 'Direct Selection / Retention'),
 )
 
 APPLICATION_STATUSES = Choices(
     ('Pen', 'pending', 'Pending'),
     ('Pre', 'preselected', 'Preselected'),
+    ('Rec', 'recommended', 'Application Recommended'),
     ('Rej', 'rejected', 'Rejected'),
 )
 
-MEMBER_ROLES = Choices(
-    ('Adm', 'admin', 'Administrator'),
-    ('Edi', 'editor', 'Editor'),
-    ('Rea', 'reader', 'Reader'),
+EXTENDED_APPLICATION_STATUSES = Choices(
+    ('Dra', 'draft', 'Draft'),
+    ('Rev', 'review', 'Application Under Review'),
+    ('Uns', 'unsuccessful', 'Application Unsuccessful'),
+    ('Suc', 'successful', 'Application Successful'),
+    ('Acc', 'accepted', 'Selection Accepted'),
+    ('Dec', 'declined', 'Selection Declined'),
+    ('Ret', 'retracted', 'Selection Retracted'),
 )
 
-POWER_MEMBER_ROLES = {
-    MEMBER_ROLES.admin: 0,
-    MEMBER_ROLES.editor: -1,
-    MEMBER_ROLES.reader: -2,
-}
-
-MEMBER_STATUSES = Choices(
-    ('Act', 'active', 'Active'),
-    ('Dea', 'deactivated', 'Deactivated'),
-    ('Inv', 'invited', 'Invited'),
-)
-
-EOI_STATUSES = Choices(
-    ('Ope', 'open', 'Open'),
+CFEI_STATUSES = Choices(
+    ('Dra', 'draft', 'Draft'),
+    ('Sen', 'sent', 'Sent'),
+    ('Ope', 'open', 'Published'),
     ('Clo', 'closed', 'Closed/Under Review'),
-    ('Com', 'completed', 'Completed'),
+    ('Com', 'finalized', 'Finalized'),
 )
 
 COLLABORATION_EVIDENCE_MODES = Choices(
@@ -90,7 +85,7 @@ PARTNER_DONORS_CHOICES = Choices(
     ('Pri', 'private', 'Private companies and corporations'),
     ('Gov', 'gov', 'Government'),
     ('UNA', 'united_agency', 'United Nations Agency'),
-    ('Bil', 'bilateral', 'Bilateral Agency/Multilateral/Development Banks'),
+    ('Bil', 'bilateral', 'Bilateral Agency/Multilateral Agency/Development Banks'),
     ('NGO', 'non_gov', 'International Non Governmental Organizations'),
     ('Oth', 'other', 'Other'),
 )
@@ -194,6 +189,7 @@ JUSTIFICATION_FOR_DIRECT_SELECTION = Choices(
     ('Inn', 'innovative', 'Innovative approach'),
     ('TCC', 'time', 'Time constraints/criticality of response'),
     ('Imp', 'importance', 'Importance of strengthening national civil society engagement'),
+    ('Ret', 'retention', 'Partner retention'),
     ('Oth', 'other', 'Other'),
 )
 
@@ -207,13 +203,37 @@ DIRECT_SELECTION_SOURCE = Choices(
     ('UNI', 'un', 'UN-Initiated'),
 )
 
-COMPLETED_REASON = Choices(
-    ('Par', 'partners', 'Finalized - Partner accepted'),
-    ('Can', 'canceled', 'Finalized - CFEI canceled'),
-    ('NoC', 'no_candidate', 'Finalized - No successful applicant'),
+COMMON_COMPLETED_REASON = Choices(
+    ('cancelled', 'Finalized - Cancelled'),
 )
 
+COMPLETED_REASON = Choices(
+    ('partners', 'Finalized - Partner accepted'),
+    ('no_candidate', 'Finalized - No successful applicant'),
+) + COMMON_COMPLETED_REASON
+
+UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS = Choices(
+    ('accepted_retention', 'Finalized - Partner accepted retention. Maintain decision for:'),
+)
+
+OTHER_AGENCIES_DSR_COMPLETION_OPTIONS = Choices(
+    ('accepted', 'Finalized - Partner accepted direct selection'),
+)
+
+ALL_COMPLETED_REASONS = (
+    COMPLETED_REASON + UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS + OTHER_AGENCIES_DSR_COMPLETION_OPTIONS
+)
+
+ALL_DSR_COMPLETED_REASONS = (
+    UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS + OTHER_AGENCIES_DSR_COMPLETION_OPTIONS + COMMON_COMPLETED_REASON
+)
+
+UNHCR_DSR_COMPLETED_REASONS = UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS + COMMON_COMPLETED_REASON
+
+OTHER_AGENCIES_DSR_COMPLETED_REASONS = OTHER_AGENCIES_DSR_COMPLETION_OPTIONS + COMMON_COMPLETED_REASON
+
 BUDGET_CHOICES = Choices(
+    ('B00', 'not_applicable', "Not Applicable"),
     ('B01', 'less', "Less than $500,000"),
     ('B02', '_2', "$500,001 to $2,000,000"),
     ('B03', '_10', "$2,000,001 to $10,000,000"),
@@ -223,9 +243,27 @@ BUDGET_CHOICES = Choices(
 )
 
 FLAG_TYPES = Choices(
-    ('Yel', 'yellow', 'Yellow Flag'),
-    ('Red', 'red', 'Red Flag'),
+    ('FL1_Obs', 'observation', 'Not Risk Related'),
+    ('FL2_Yel', 'yellow', 'Risk Flag'),
+    ('FL3_Esc', 'escalated', 'Risk Flag Escalated to UN HQ Editor'),
+    ('FL4_Red', 'red', 'Red Flag'),
 )
+
+USER_CREATED_FLAG_CATEGORIES = Choices(
+    ('C01_reputational_ethical', 'Reputational / Ethical'),
+    ('C02_financial', 'Financial'),
+    ('C03_operational', 'Operational'),
+    ('C04_compliance', 'Compliance'),
+    ('C05_sex_abuse', 'Sexual exploitation and abuse'),
+    ('C06_safeguarding_violation', 'Safeguarding violation'),
+    ('C99_other', 'Other'),  # So it's sorted as last
+)
+
+INTERNAL_FLAG_CATEGORIES = Choices(
+    ('C90_sanctions_match', 'sanctions_match', 'Sanctions Match'),
+)
+
+FLAG_CATEGORIES = USER_CREATED_FLAG_CATEGORIES + INTERNAL_FLAG_CATEGORIES
 
 SANCTION_LIST_TYPES = Choices(
     ('Ent', 'entity', 'Sanctioned Entity'),
@@ -238,11 +276,16 @@ SANCTION_MATCH_TYPES = Choices(
     ('Org', 'organization', 'Organization Name Match'),
 )
 
-EXTENDED_APPLICATION_STATUSES = Choices(
-    ('Rev', 'review', 'Application Under Review'),
-    ('Uns', 'unsuccessful', 'Application Unsuccessful'),
-    ('Suc', 'successful', 'Application Successful'),
-    ('Acc', 'accepted', 'Selection Accepted'),
-    ('Dec', 'declined', 'Selection Declined'),
-    ('Ret', 'retracted', 'Selection Retracted'),
+DSR_FINALIZE_RETENTION_CHOICES = Choices(
+    ('R_1YR', 'one year'),
+    ('R_2YR', 'second year'),
+    ('R_3YR', 'a third year'),
+    ('R_4YR', 'a fourth year'),
+)
+
+NOTIFICATION_FREQUENCY_CHOICES = Choices(
+    ('', 'disabled', 'Disabled'),
+    ('1_daily', 'daily', 'Daily'),
+    ('2_weekly', 'weekly', 'Weekly'),
+    ('3_biweekly', 'biweekly', 'Every Two Weeks'),
 )

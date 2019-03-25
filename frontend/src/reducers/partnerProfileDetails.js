@@ -93,7 +93,7 @@ const normalizeCollaboration = (state) => {
 };
 
 const savePartnerProfileDetails = (state, action) => {
-  const flatjson = flatten(action.partnerDetails);
+  const flatjson = flatten(R.dissoc('partner_additional', action.partnerDetails));
 
   const mappedFields = R.mapObjIndexed((value, key) =>
     mapJsonSteps(key, value, flatjson), detailsStructure);

@@ -19,6 +19,7 @@ const messages = {
 
 const OpenForm = (props) => {
   const { handleSubmit, form, handleConfirmation } = props;
+
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -33,6 +34,7 @@ const OpenForm = (props) => {
           {messages.cn}
         </Typography>
         <CnFileSection
+          showComponent
           component={<FileForm
             fieldName="cn"
           />}

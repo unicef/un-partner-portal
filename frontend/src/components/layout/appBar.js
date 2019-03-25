@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Popover from 'material-ui/Popover';
@@ -12,6 +12,12 @@ import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
 import Logout from './logout';
 import Options from './options';
+import { checkPermission, COMMON_PERMISSIONS } from '../../helpers/permissions';
+import SpreadContent from '../common/spreadContent';
+
+const message = {
+  maintenance: 'The UN Partner Portal will be down on 30 March 2019 for scheduled maintenance. The UN Partner Portal will resume service on 31 March 2019. We apologize for any inconvenience and appreciate your patience. Thank you for using UN Partner Portal! ',
+};
 
 const styleSheet = theme => ({
   leftHeader: {
@@ -20,12 +26,14 @@ const styleSheet = theme => ({
     },
     width: theme.spacing.unit * 28,
     justifyContent: 'center',
+    zIndex: 1,
     backgroundColor: theme.palette.secondary[500],
   },
   rightHeader: {
     flexShrink: 1,
     // dark blue color added as extra to regular palette
-    backgroundColor: theme.palette.primary.strong,
+    // backgroundColor: theme.palette.primary.strong,
+    backgroundColor: '#FF0000',    
     '-ms-grid-column': 2,
   },
   iconBox: {
@@ -40,6 +48,11 @@ const styleSheet = theme => ({
       display: 'none',
     },
   },
+  banner: {
+    color: '#FFF',
+    lineHeight: '1.25em',
+    fontSize: '16.5px',
+  },
 });
 
 class MainAppBar extends Component {
@@ -52,7 +65,7 @@ class MainAppBar extends Component {
       profileOpen: false,
     };
     this.handleVerificationClick = this.handleVerificationClick.bind(this);
-    this.handleVerificationRequestClose = this.handleVerificationRequestClose.bind(this);
+    this.handleVerificationClose = this.handleVerificationClose.bind(this);
     this.handleProfileClick = this.handleProfileClick.bind(this);
     this.handleProfileRequestClose = this.handleProfileRequestClose.bind(this);
   }
@@ -61,7 +74,7 @@ class MainAppBar extends Component {
     this.setState({ verificationOpen: true, notifAnchor: event.currentTarget });
   }
 
-  handleVerificationRequestClose() {
+  handleVerificationClose() {
     this.setState({ verificationOpen: false });
   }
 
@@ -73,7 +86,7 @@ class MainAppBar extends Component {
     this.setState({ profileOpen: false });
   }
   render() {
-    const { classes } = this.props;
+    const { classes, hasPermission } = this.props;
     return (
       <React.Fragment>
         <AppBar
@@ -90,21 +103,25 @@ class MainAppBar extends Component {
           position="static"
           color="primary"
         >
+        <SpreadContent>
+        	<Typography type="body2" className={classes.banner} color="primary">{message.maintenance}</Typography>
           <Grid
             container
             direction="row"
             justify="flex-end"
             spacing={0}
+            item xs={2}
           >
-            <Grid item>
+            {hasPermission && <Grid item>
               <BadgeIcon handleClick={this.handleVerificationClick} />
-            </Grid>
+            </Grid>}
             <Grid item>
               <IconButton color="contrast" onClick={this.handleProfileClick}>
                 <AccountIcon className={`${classes.iconBox} ${classes.headerIcon}`} />
               </IconButton>
             </Grid>
           </Grid>
+        </SpreadContent>
         </AppBar>
         <Popover
           id="notifications"
@@ -118,7 +135,7 @@ class MainAppBar extends Component {
             vertical: 'top',
             horizontal: 'right',
           }}
-          onRequestClose={this.handleVerificationRequestClose}
+          onClose={this.handleVerificationClose}
         >
           <NotificationsList />
         </Popover>
@@ -134,10 +151,9 @@ class MainAppBar extends Component {
             vertical: 'top',
             horizontal: 'right',
           }}
-          onRequestClose={this.handleProfileRequestClose}
+          onClose={this.handleProfileRequestClose}
         >
-          <Logout />
-          <Options />
+          <Logout onClose={this.handleProfileRequestClose} />
         </Popover>
       </React.Fragment>
     );
@@ -146,6 +162,13 @@ class MainAppBar extends Component {
 
 MainAppBar.propTypes = {
   classes: PropTypes.object.isRequired,
+  hasPermission: PropTypes.bool.isRequired,
 };
 
-export default withStyles(styleSheet, { name: 'MainAppBar' })(MainAppBar);
+const mapStateToProps = state => ({
+  hasPermission: checkPermission(COMMON_PERMISSIONS.RECEIVE_NOTIFICATIONS, state),
+});
+
+const containerMainAppBar = connect(mapStateToProps)(MainAppBar);
+
+export default withStyles(styleSheet, { name: 'MainAppBar' })(containerMainAppBar);

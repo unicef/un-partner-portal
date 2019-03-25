@@ -1,48 +1,38 @@
-import logging
-
+from django.conf import settings
+from django.contrib.auth import logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.http import Http404
+from django.urls import reverse
+from rest_framework.exceptions import PermissionDenied
+from django.views.generic import RedirectView
+from rest_auth.models import TokenModel
+from rest_auth.utils import default_create_token
 
-from rest_framework import status as statuses
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import RetrieveAPIView
 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateAPIView
 
-from partner.models import Partner
-from sanctionslist.scans import sanctions_scan_partner
-from .serializers import (
-    RegisterSimpleAccountSerializer,
+from account.serializers import (
     PartnerRegistrationSerializer,
-    AgencyUserSerializer,
     PartnerUserSerializer,
+    UserProfileSerializer,
 )
+from agency.serializers import AgencyUserSerializer
 
-logger = logging.getLogger(__name__)
 
+class AccountRegisterAPIView(CreateAPIView):
 
-class AccountRegisterAPIView(APIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = PartnerRegistrationSerializer
 
-    serializer_class = RegisterSimpleAccountSerializer
-    permission_classes = (AllowAny, )
-
-    def post(self, request, *args, **kwargs):
-        serializer = PartnerRegistrationSerializer(data=self.request.data)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=statuses.HTTP_400_BAD_REQUEST)
-
-        serializer.save()
-
-        partner_id = serializer.instance_json['partner']['id']
-        partner = Partner.objects.get(id=partner_id)
-        sanctions_scan_partner(partner)
-
-        if partner.has_sanction_match:
-            partner.is_locked = True
-            partner.save()
-
-        return Response(serializer.instance_json, status=statuses.HTTP_201_CREATED)
+    @transaction.atomic
+    def perform_create(self, serializer):
+        if self.request.user.agency_members.exists():
+            raise PermissionDenied('Agency Members cannot register partner profiles.')
+        elif self.request.user.partner_members.exists():
+            raise PermissionDenied('You have already registered a partner profile.')
+        return super(AccountRegisterAPIView, self).perform_create(serializer)
 
 
 class AccountCurrentUserRetrieveAPIView(RetrieveAPIView):
@@ -57,3 +47,32 @@ class AccountCurrentUserRetrieveAPIView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserProfileRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+
+    permission_classes = (IsAuthenticated, )
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        return self.request.user.profile
+
+
+class SocialAuthLoggedInUserView(LoginRequiredMixin, RedirectView):
+
+    def get_redirect_url(self, *args, **kwargs):
+        protocol = 'http' if settings.DEBUG else 'https'
+        token = default_create_token(TokenModel, self.request.user, None)
+
+        return f'{protocol}://{settings.FRONTEND_HOST}/login/{token}'
+
+
+class SocialAuthLoginView(RedirectView):
+
+    def get_redirect_url(self, *args, **kwargs):
+        # Make sure session is properly cleared, in case frontend fails to do so
+        logout(self.request)
+
+        return reverse('social:begin', kwargs={
+            'backend': self.kwargs['backend']
+        })

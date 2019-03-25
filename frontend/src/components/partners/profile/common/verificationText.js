@@ -5,9 +5,9 @@ import { withStyles } from 'material-ui/styles';
 import VerificationIcon from '../icons/verificationIcon';
 
 const messages = {
-  verified: 'Verified',
-  unverified: 'Unverified',
-  pending: 'Pending Verification ',
+  verified: 'Verification Passed',
+  unverified: 'Verification Failed',
+  pending: 'Verification Pending ',
 };
 
 const styleSheet = () => ({

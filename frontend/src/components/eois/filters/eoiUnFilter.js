@@ -24,7 +24,7 @@ const messages = {
     location: 'Location',
     sector: 'Sector & Area of Specialization',
     agency: 'Agency',
-    show: 'Show only those chosen for "direct selection"',
+    show: 'Show only those chosen for "direct selection/retention"',
   },
   clear: 'clear',
   submit: 'submit',
@@ -52,6 +52,8 @@ export const STATUS_VAL = [
     label: 'Finalized',
   },
 ];
+
+const FORM_NAME = 'unsolicitedFilter';
 
 class EoiFilter extends Component {
   constructor(props) {
@@ -151,7 +153,7 @@ class EoiFilter extends Component {
             <Grid item sm={4} xs={12}>
               <AdminOneLocation
                 fieldName="locations"
-                formName="tableFilter"
+                formName={FORM_NAME}
                 observeFieldName="country_code"
                 label={messages.labels.location}
                 optional
@@ -220,7 +222,7 @@ EoiFilter.propTypes = {
 };
 
 const formEoiFilter = reduxForm({
-  form: 'unsolicitedFilter',
+  form: FORM_NAME,
   destroyOnUnmount: true,
   forceUnregisterOnUnmount: true,
   enableReinitialize: true,

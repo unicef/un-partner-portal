@@ -5,11 +5,12 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import WithdrawApplicationModal from '../modals/withdrawApplication/withdrawApplicationModal';
 import withDialogHandling from '../../common/hoc/withDialogHandling';
+import ButtonWithTooltip from '../../common/buttonWithTooltipEnabled';
 
 const messages = {
   withdraw: 'retract selection',
+  decision: 'Decision made by partner',
 };
-
 
 const WithdrawApplicationButton = (props) => {
   const {
@@ -17,25 +18,37 @@ const WithdrawApplicationButton = (props) => {
     handleDialogClose,
     handleDialogOpen,
     dialogOpen,
+    onUpdate,
+    disabled,
+    isCompleted,
     ...other
   } = props;
 
   return (
     <Grid item>
-      <Button
-        color="accent"
-        onClick={handleDialogOpen}
-        {...other}
-      >
-        {messages.withdraw}
-      </Button>
+      {disabled ?
+        <ButtonWithTooltip
+          name="retract"
+          disabled
+          text={messages.withdraw}
+          tooltipText={messages.decision}
+          onClick={handleDialogOpen}
+        />
+        : <Button
+          color="accent"
+          disabled={isCompleted}
+          onClick={handleDialogOpen}
+          {...other}
+        >
+          {messages.withdraw}
+        </Button>}
       <WithdrawApplicationModal
         applicationId={applicationId}
+        onUpdate={onUpdate}
         dialogOpen={dialogOpen}
         handleDialogClose={handleDialogClose}
       />
     </Grid>
-
   );
 };
 
@@ -48,7 +61,9 @@ WithdrawApplicationButton.propTypes = {
   dialogOpen: PropTypes.bool,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
+  onUpdate: PropTypes.func,
+  isCompleted: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
-
 
 export default withDialogHandling(WithdrawApplicationButton);

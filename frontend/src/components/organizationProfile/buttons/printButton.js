@@ -1,18 +1,21 @@
 import React from 'react';
-import Print from 'material-ui-icons/Print';
+import Save from 'material-ui-icons/Save';
 import IconWithTextButton from '../../common/iconWithTextButton';
+import { authorizedFileDownload } from "../../../helpers/api/api";
 
 const messages = {
-  print: 'Print',
+  print: 'Download as PDF',
 };
 
-const PrintButton = () => (
-  <IconWithTextButton
-    icon={<Print />}
+const PrintButton = (props) => {
+  const { id } = props;
+
+  return (<IconWithTextButton
+    icon={<Save />}
     text={messages.print}
-    onClick={window.print}
-  />
-);
+    onClick={() => authorizedFileDownload({uri: `/partners/${id}/?export=pdf`})}
+  />);
+};
 
 
 export default PrintButton;

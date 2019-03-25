@@ -24,6 +24,7 @@ class TableWithStateInUrl extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { pathName, query = {} } = nextProps;
+
     if (!query.page || !query.page_size) {
       history.push({
         pathname: pathName,
@@ -45,12 +46,17 @@ class TableWithStateInUrl extends Component {
 
   changeSorting(sorting) {
     const { pathName, query } = this.props;
-    this.setState({
-      sorting,
-    });
 
-    const direction = sorting[0].direction === 'desc' ? '-' : '';
-    updateOrder(sorting[0].columnName, direction, pathName, query);
+    if (sorting[0].columnName !== 'country_code' && sorting[0].columnName !== 'status') {
+      const order = sorting[0].columnName === 'specializations' ? 'specializations__name' : sorting[0].columnName;
+
+      this.setState({
+        sorting,
+      });
+
+      const direction = sorting[0].direction === 'desc' ? '-' : '';
+      updateOrder(order, direction, pathName, query);
+    }
   }
 
   render() {
@@ -82,12 +88,12 @@ TableWithStateInUrl.propTypes = {
 
 
 const mapStateToProps = (state, {
-  location: { pathname: pathName, query } = {}
+  location: { pathname: pathName, query } = {},
 }) => ({
   pathName,
   query,
-  pageSize: R.isNil(query.page_size) ? 0 : +query.page_size,
-  pageNumber: R.isNil(query.page) ? 1 : +query.page,
+  pageSize: R.isNil(query.page_size) ? 0 : Number(query.page_size),
+  pageNumber: R.isNil(query.page) ? 1 : Number(query.page),
 });
 
 export default withRouter(connect(mapStateToProps, null)(TableWithStateInUrl));

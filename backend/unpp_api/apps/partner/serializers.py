@@ -1,15 +1,16 @@
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 
 from agency.serializers import AgencySerializer
 from common.consts import (
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     METHOD_ACC_ADOPTED_CHOICES,
-    FUNCTIONAL_RESPONSIBILITY_CHOICES,
     PARTNER_TYPES,
-    POLICY_AREA_CHOICES,
 )
-from common.mixins import SkipUniqueTogetherValidationOnPatchMixin
+from common.defaults import ActivePartnerIDDefault
+from common.mixins.serializers import SkipUniqueTogetherValidationOnPatchMixin
 from common.models import Point
 from common.countries import COUNTRIES_ALPHA2_CODE_DICT
 from common.serializers import (
@@ -17,8 +18,11 @@ from common.serializers import (
     SpecializationSerializer,
     MixinPartnerRelatedSerializer,
     MixinPreventManyCommonFile,
-    PointSerializer
+    PointSerializer,
+    CommonFileBase64UploadSerializer,
 )
+from externals.serializers import PartnerVendorNumberSerializer
+
 from partner.utilities import get_recent_budgets_for_partner
 from partner.models import (
     Partner,
@@ -40,10 +44,69 @@ from partner.models import (
     PartnerAuditReport,
     PartnerReporting,
     PartnerMember,
-    PartnerCapacityAssessment)
+    PartnerCapacityAssessment,
+    PartnerGoverningDocument,
+    PartnerRegistrationDocument,
+)
+
+
+class PartnerGoverningDocumentSerializer(serializers.ModelSerializer):
+
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    document = CommonFileBase64UploadSerializer()
+
+    class Meta:
+        model = PartnerGoverningDocument
+        fields = (
+            'id',
+            'created_by',
+            'document',
+            'editable',
+        )
+        extra_kwargs = {
+            'editable': {
+                'read_only': True
+            }
+        }
+
+
+class PartnerRegistrationDocumentSerializer(serializers.ModelSerializer):
+
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    document = CommonFileBase64UploadSerializer()
+
+    class Meta:
+        model = PartnerRegistrationDocument
+        fields = (
+            'id',
+            'created_by',
+            'document',
+            'registration_number',
+            'editable',
+            'issuing_authority',
+            'issue_date',
+            'expiry_date',
+        )
+        extra_kwargs = {
+            'editable': {
+                'read_only': True
+            }
+        }
+
+
+class PartnerSimpleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Partner
+        fields = (
+            'id',
+            'legal_name',
+        )
 
 
 class PartnerAdditionalSerializer(serializers.ModelSerializer):
+
+    hq = serializers.SerializerMethodField()
 
     class Meta:
         model = Partner
@@ -53,17 +116,26 @@ class PartnerAdditionalSerializer(serializers.ModelSerializer):
             'flagging_status',
             'is_verified',
             'has_finished',
+            'hq',
+            'has_potential_sanction_match',
+            'can_be_verified',
         )
+
+    def get_hq(self, partner):
+        if getattr(partner, 'hq', None):
+            return PartnerAdditionalSerializer(instance=partner.hq).data
 
 
 class PartnerSerializer(serializers.ModelSerializer):
 
     is_hq = serializers.BooleanField(read_only=True)
-    logo = CommonFileSerializer(source='other_info.org_logo',
-                                read_only=True)
-    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
+    logo = CommonFileSerializer(source='other_info.org_logo', read_only=True)
+    org_logo_thumbnail = serializers.CharField(source='other_info.org_logo_thumbnail', read_only=True, allow_null=True)
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
+    country_display = serializers.CharField(source='get_country_code_display', read_only=True)
+    location_of_office = PointSerializer(read_only=True)
+    location_field_offices = PointSerializer(read_only=True, many=True)
 
     class Meta:
         model = Partner
@@ -74,11 +146,21 @@ class PartnerSerializer(serializers.ModelSerializer):
             'logo',
             'legal_name',
             'country_code',
+            'country_display',
             'display_type',
             'partner_additional',
             'org_logo_thumbnail',
             'last_profile_update',
+            'location_of_office',
+            'location_field_offices',
         )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Partner.objects.all(),
+                fields=('legal_name', 'country_code'),
+                message='Partner with this name already registered for country.'
+            )
+        ]
 
 
 class PartnerShortSerializer(serializers.ModelSerializer):
@@ -98,16 +180,22 @@ class PartnerShortSerializer(serializers.ModelSerializer):
 
 class PartnerMemberSerializer(serializers.ModelSerializer):
 
+    role_display = serializers.CharField(source='get_role_display', read_only=True)
+
     class Meta:
         model = PartnerMember
         fields = (
             'id',
             'title',
             'role',
+            'role_display',
         )
 
 
 class PartnerProfileSerializer(serializers.ModelSerializer):
+
+    registered_to_operate_in_country = serializers.BooleanField(required=True)
+    have_governing_document = serializers.BooleanField(required=True)
 
     class Meta:
         model = PartnerProfile
@@ -117,7 +205,17 @@ class PartnerProfileSerializer(serializers.ModelSerializer):
             'acronym',
             'former_legal_name',
             'legal_name_change',
+            'year_establishment',
+            'registered_to_operate_in_country',
+            'missing_registration_document_comment',
+            'have_governing_document',
+            'missing_governing_document_comment',
         )
+        extra_kwargs = {
+            'year_establishment': {
+                'required': True,
+            },
+        }
 
 
 class PartnerFullSerializer(serializers.ModelSerializer):
@@ -129,8 +227,8 @@ class PartnerFullSerializer(serializers.ModelSerializer):
 
 class PartnerFullProfilesSerializer(serializers.ModelSerializer):
 
-    gov_doc = CommonFileSerializer(allow_null=True)
-    registration_doc = CommonFileSerializer(allow_null=True)
+    governing_documents = PartnerGoverningDocumentSerializer(read_only=True, many=True)
+    registration_documents = PartnerRegistrationDocumentSerializer(read_only=True, many=True)
 
     class Meta:
         model = PartnerProfile
@@ -173,6 +271,17 @@ class PartnerHeadOrganizationRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerHeadOrganization
         exclude = ("partner", )
+        extra_kwargs = {
+            'email': {
+                'validators': [
+                    UniqueValidator(
+                        queryset=PartnerHeadOrganization.objects.all(),
+                        message='Organization Head with provided email already exists.',
+                        lookup='iexact'
+                    )
+                ]
+            }
+        }
 
 
 class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
@@ -180,10 +289,20 @@ class PartnerHeadOrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = PartnerHeadOrganization
         fields = "__all__"
-        read_only_fields = (
-            'fullname',
-            'email',
-        )
+
+    def get_extra_kwargs(self):
+        extra_kwargs = super(PartnerHeadOrganizationSerializer, self).get_extra_kwargs()
+        if type(self.instance) == PartnerHeadOrganization:
+            extra_kwargs['email'] = {
+                'validators': [
+                    UniqueValidator(
+                        queryset=PartnerHeadOrganization.objects.exclude(partner=self.instance.partner),
+                        message='Organization Head with provided email already exists.',
+                        lookup='iexact'
+                    )
+                ]
+            }
+        return extra_kwargs
 
 
 class PartnerDirectorSerializer(serializers.ModelSerializer):
@@ -214,6 +333,7 @@ class PartnerMandateMissionSerializer(serializers.ModelSerializer):
 class PartnerExperienceSerializer(serializers.ModelSerializer):
 
     specialization = SpecializationSerializer(read_only=True)
+    specialization_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
 
     class Meta:
         model = PartnerExperience
@@ -239,21 +359,38 @@ class PartnerFundingSerializer(serializers.ModelSerializer):
 
 class PartnerCollaborationPartnershipSerializer(serializers.ModelSerializer):
 
-    agency = AgencySerializer()
+    agency = AgencySerializer(read_only=True)
+    agency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    partner_id = serializers.IntegerField(write_only=True, default=ActivePartnerIDDefault())
 
     class Meta:
         model = PartnerCollaborationPartnership
-        fields = "__all__"
-        read_only_fields = ('partner', 'agency')
+        fields = (
+            'id',
+            'partner',
+            'partner_id',
+            'agency',
+            'agency_id',
+            'description',
+            'partner_number',
+        )
+        read_only_fields = (
+            'partner', 'agency'
+        )
 
 
 class PartnerCollaborationEvidenceSerializer(serializers.ModelSerializer):
 
-    evidence_file = CommonFileSerializer()
+    created_by = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    evidence_file = CommonFileSerializer(read_only=True)
+    evidence_file_id = serializers.IntegerField(required=False, write_only=True)
 
     class Meta:
         model = PartnerCollaborationEvidence
         fields = "__all__"
+        read_only_fields = (
+            'editable',
+        )
 
 
 class PartnerOtherInfoSerializer(serializers.ModelSerializer):
@@ -262,6 +399,7 @@ class PartnerOtherInfoSerializer(serializers.ModelSerializer):
     other_doc_1 = CommonFileSerializer(allow_null=True)
     other_doc_2 = CommonFileSerializer(allow_null=True)
     other_doc_3 = CommonFileSerializer(allow_null=True)
+    org_logo_thumbnail = serializers.CharField(allow_null=True, read_only=True)
 
     class Meta:
         model = PartnerOtherInfo
@@ -328,8 +466,12 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     mailing_address = PartnerMailingAddressSerializer()
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer()
-    hq_org_head = serializers.SerializerMethodField()
+    org_head = PartnerHeadOrganizationSerializer(read_only=True)
+    organisation_heads = PartnerHeadOrganizationSerializer(many=True)
+    hq_org_head = PartnerHeadOrganizationSerializer(source='hq.org_head', read_only=True, allow_null=True)
+    hq_organisation_heads = PartnerHeadOrganizationSerializer(
+        source='hq.organisation_heads', read_only=True, many=True, allow_null=True
+    )
     mandate_mission = PartnerMandateMissionSerializer()
     experiences = PartnerExperienceSerializer(many=True)
     budgets = serializers.SerializerMethodField()
@@ -356,6 +498,7 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
     )
     other_info_is_complete = serializers.BooleanField(read_only=True, source="profile.other_info_is_complete")
     country_of_origin = serializers.CharField()
+    registration_declaration = CommonFileSerializer()
 
     class Meta:
         model = Partner
@@ -402,15 +545,15 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
             "proj_impl_is_complete",
             "other_info_is_complete",
             "country_of_origin",
+            "has_sanction_match",
+            "registration_declaration",
+            "organisation_heads",
+            "hq_organisation_heads",
         )
 
     def get_hq_budgets(self, partner):
         if partner.is_hq is False:
             return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner.hq), many=True).data
-
-    def get_hq_org_head(self, obj):
-        if obj.is_hq is False:
-            return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
 
     def get_budgets(self, partner):
         return PartnerBudgetSerializer(get_recent_budgets_for_partner(partner), many=True).data
@@ -418,7 +561,10 @@ class OrganizationProfileDetailsSerializer(serializers.ModelSerializer):
 
 class PartnerProfileSummarySerializer(serializers.ModelSerializer):
 
+    display_type_display = serializers.CharField(source='get_display_type_display', read_only=True)
+    country_display = serializers.CharField(source='get_country_code_display', read_only=True)
     location_of_office = PointSerializer()
+    location_field_offices = PointSerializer(many=True)
     country_presence_display = serializers.SerializerMethodField()
     org_head = serializers.SerializerMethodField()
     mailing_address = PartnerMailingAddressSerializer()
@@ -431,6 +577,8 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
     mandate_and_mission = serializers.CharField(source="mandate_mission.mandate_and_mission")
     partner_additional = PartnerAdditionalSerializer(source='*', read_only=True)
     last_profile_update = serializers.DateTimeField(source='last_update_timestamp', read_only=True, allow_null=True)
+    vendor_numbers = PartnerVendorNumberSerializer(many=True, read_only=True)
+    hq = PartnerSerializer(read_only=True, allow_null=True)
 
     class Meta:
         model = Partner
@@ -438,9 +586,12 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'id',
             'legal_name',
             'display_type',
+            'display_type_display',
             'is_hq',
             'country_code',
+            'country_display',
             'location_of_office',
+            'location_field_offices',
             'country_presence_display',
             'org_head',
             'mailing_address',
@@ -453,6 +604,13 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             'mandate_and_mission',
             'partner_additional',
             'last_profile_update',
+            'has_potential_sanction_match',
+            'is_locked',
+            'vendor_numbers',
+            'hq',
+        )
+        read_only_fields = (
+            'is_locked',
         )
 
     def get_country_presence_display(self, partner):
@@ -464,9 +622,8 @@ class PartnerProfileSummarySerializer(serializers.ModelSerializer):
             return COUNTRIES_ALPHA2_CODE_DICT.get(partner.location_of_office.admin_level_1.country_code, None)
 
     def get_org_head(self, obj):
-        if obj.is_hq is False:
-            return PartnerHeadOrganizationSerializer(obj.hq.org_head).data
-        return PartnerHeadOrganizationSerializer(obj.org_head).data
+        org_head = getattr(obj.hq if obj.is_hq is False else obj, 'org_head', None)
+        return PartnerHeadOrganizationSerializer(org_head).data
 
 
 class PartnersListSerializer(serializers.ModelSerializer):
@@ -505,7 +662,7 @@ class PartnersListSerializer(serializers.ModelSerializer):
             values_list("agency__name", flat=True).distinct()
 
 
-class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.ModelSerializer):
+class PartnerIdentificationSerializer(serializers.ModelSerializer):
 
     legal_name = serializers.CharField(source="partner.legal_name")
     partner_additional = PartnerAdditionalSerializer(source="partner", read_only=True)
@@ -514,9 +671,9 @@ class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.Mo
     former_legal_name = serializers.CharField(max_length=255, allow_blank=True)
     country_origin = serializers.CharField(read_only=True)
     type_org = serializers.CharField(source="partner.display_type", read_only=True)
-    gov_doc = CommonFileSerializer(allow_null=True)
-    registration_doc = CommonFileSerializer(allow_null=True)
     has_finished = serializers.BooleanField(read_only=True, source="profile.identification_is_complete")
+    governing_documents = PartnerGoverningDocumentSerializer(many=True, read_only=True)
+    registration_documents = PartnerRegistrationDocumentSerializer(many=True, read_only=True)
 
     class Meta:
         model = PartnerProfile
@@ -530,43 +687,52 @@ class PartnerIdentificationSerializer(MixinPreventManyCommonFile, serializers.Mo
             'type_org',
 
             'year_establishment',
-            'have_gov_doc',
-            'gov_doc',
-            'registration_to_operate_in_country',
-            'registration_doc',
-            'registration_date',
-            'registration_comment',
-            'registration_number',
+            'have_governing_document',
+            'missing_governing_document_comment',
+            'registered_to_operate_in_country',
+            'missing_registration_document_comment',
             'has_finished',
+            'governing_documents',
+            'registration_documents',
         )
-
-    prevent_keys = ['gov_doc', 'registration_doc']
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-
-        self.prevent_many_common_file_validator(self.initial_data)
-
-        instance.partner.legal_name = validated_data.get('partner', {}).get('legal_name', instance.partner.legal_name)
+        instance.partner.legal_name = validated_data.pop('partner', {}).pop('legal_name', instance.partner.legal_name)
         instance.partner.save()
 
-        instance.alias_name = validated_data.get('alias_name', instance.alias_name)
-        instance.acronym = validated_data.get('acronym', instance.acronym)
-        instance.former_legal_name = validated_data.get('former_legal_name', instance.former_legal_name)
-        instance.year_establishment = validated_data.get('year_establishment', instance.year_establishment)
-        instance.have_gov_doc = validated_data.get('have_gov_doc', instance.have_gov_doc)
-        instance.gov_doc_id = validated_data.get('gov_doc', instance.gov_doc_id)
-        instance.registration_to_operate_in_country = \
-            validated_data.get('registration_to_operate_in_country', instance.registration_to_operate_in_country)
-        instance.registration_doc_id = validated_data.get('registration_doc', instance.registration_doc_id)
-        instance.registration_date = validated_data.get('registration_date', instance.registration_date)
-        instance.registration_comment = validated_data.get('registration_comment', instance.registration_comment)
-        instance.registration_number = validated_data.get('registration_number', instance.registration_number)
+        governing_documents = self.initial_data.get('governing_documents', None)
+        registration_documents = self.initial_data.get('registration_documents', None)
 
-        instance.save()
+        if governing_documents is not None:
+            valid_ids = []
+            if governing_documents:
+                for gov_doc_data in governing_documents:
+                    gov_doc = PartnerGoverningDocument.objects.filter(id=gov_doc_data.get('id')).first()
+                    if gov_doc and (not gov_doc.editable or not gov_doc.profile == instance):
+                        continue
+                    serializer = PartnerGoverningDocumentSerializer(
+                        instance=gov_doc, data=gov_doc_data, context=self.context, partial=bool(gov_doc)
+                    )
+                    serializer.is_valid(raise_exception=True)
+                    valid_ids.append(serializer.save(profile=instance).id)
+            instance.governing_documents.exclude(editable=False).exclude(id__in=valid_ids).delete()
 
-        return PartnerProfile.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        if registration_documents is not None:
+            valid_ids = []
+            if registration_documents:
+                for reg_doc_data in registration_documents:
+                    reg_doc = PartnerRegistrationDocument.objects.filter(id=reg_doc_data.get('id')).first()
+                    if reg_doc and (not reg_doc.editable or not reg_doc.profile == instance):
+                        continue
+                    serializer = PartnerRegistrationDocumentSerializer(
+                        instance=reg_doc, data=reg_doc_data, context=self.context, partial=bool(reg_doc)
+                    )
+                    serializer.is_valid(raise_exception=True)
+                    valid_ids.append(serializer.save(profile=instance).id)
+            instance.registration_documents.exclude(editable=False).exclude(id__in=valid_ids).delete()
+
+        return super(PartnerIdentificationSerializer, self).update(instance, validated_data)
 
 
 class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
@@ -576,14 +742,17 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
     have_authorised_officers = serializers.BooleanField(source="profile.have_authorised_officers")
     directors = PartnerDirectorSerializer(many=True)
     authorised_officers = PartnerAuthorisedOfficerSerializer(many=True)
-    org_head = PartnerHeadOrganizationSerializer(allow_null=True)
+    org_head = PartnerHeadOrganizationSerializer(allow_null=True, read_only=True)
+    organisation_heads = PartnerHeadOrganizationSerializer(allow_null=True, many=True)
     connectivity = serializers.BooleanField(source="profile.connectivity")
     connectivity_excuse = serializers.CharField(
-        source="profile.connectivity_excuse", allow_null=True, allow_blank=True)
+        source="profile.connectivity_excuse", allow_null=True, allow_blank=True
+    )
     working_languages = serializers.ListField(source="profile.working_languages")
     working_languages_other = serializers.CharField(
         source="profile.working_languages_other",
-        allow_null=True
+        allow_null=True,
+        allow_blank=True,
     )
     has_finished = serializers.BooleanField(read_only=True, source="profile.contact_is_complete")
 
@@ -601,10 +770,11 @@ class PartnerContactInformationSerializer(MixinPartnerRelatedSerializer, seriali
             'working_languages',
             'working_languages_other',
             'has_finished',
+            'organisation_heads',
         )
 
     related_names = [
-        "profile", "mailing_address", "directors", "authorised_officers", "org_head",
+        "profile", "mailing_address", "directors", "authorised_officers", "organisation_heads",
     ]
 
     @transaction.atomic
@@ -677,8 +847,6 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        # std method does not support writable nested fields by default
-
         location_field_offices = validated_data.get('location_field_offices', [])
         location_of_office = validated_data.get('location_of_office')
         instance.country_presence = validated_data.get('country_presence', instance.country_presence)
@@ -701,8 +869,9 @@ class PartnerProfileMandateMissionSerializer(MixinPartnerRelatedSerializer, seri
         instance.save()
 
         self.update_partner_related(instance, validated_data, related_names=self.related_names)
+        instance.refresh_from_db()
 
-        return Partner.objects.get(id=instance.id)  # we want to refresh changes after update on related models
+        return instance
 
 
 class PartnerProfileFundingSerializer(MixinPartnerRelatedSerializer, serializers.ModelSerializer):
@@ -758,8 +927,9 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
 
     any_partnered_with_un = serializers.BooleanField(source="profile.any_partnered_with_un")
     any_accreditation = serializers.BooleanField(source="profile.any_accreditation")
-    any_reference = serializers.BooleanField(source="profile.any_reference")
     has_finished = serializers.BooleanField(read_only=True, source="profile.collaboration_complete")
+
+    any_reference = serializers.BooleanField(source="profile.any_reference")
 
     class Meta:
         model = Partner
@@ -775,14 +945,13 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
         )
 
     related_names = [
-        "profile", "collaborations_partnership", "collaboration_evidences"
+        "profile", "collaborations_partnership", "collaboration_evidences",
     ]
     exclude_fields = {
         "collaborations_partnership": PartnerCollaborationPartnershipSerializer.Meta.read_only_fields
     }
 
     def validate(self, attrs):
-        # Workaround for issues that MixinPartnerRelatedSerializer present, this approach should be redone
         partner_agency_set = set()
         collaborations_partnerships = self.initial_data.get('collaborations_partnership', [])
         for collaborations_partnership in self.initial_data.get('collaborations_partnership', []):
@@ -805,46 +974,55 @@ class PartnerProfileCollaborationSerializer(MixinPartnerRelatedSerializer, seria
 class PartnerProfileProjectImplementationSerializer(
         MixinPreventManyCommonFile, MixinPartnerRelatedSerializer, serializers.ModelSerializer):
 
-    have_management_approach = serializers.BooleanField(
-        source="profile.have_management_approach")
+    have_management_approach = serializers.BooleanField(source="profile.have_management_approach")
     management_approach_desc = serializers.CharField(
-        source="profile.management_approach_desc", allow_blank=True, allow_null=True)
-    have_system_monitoring = serializers.BooleanField(
-        source="profile.have_system_monitoring")
+        source="profile.management_approach_desc", allow_blank=True, allow_null=True
+    )
+    have_system_monitoring = serializers.BooleanField(source="profile.have_system_monitoring")
     system_monitoring_desc = serializers.CharField(
-        source="profile.system_monitoring_desc", allow_blank=True, allow_null=True)
-    have_feedback_mechanism = serializers.BooleanField(
-        source="profile.have_feedback_mechanism")
+        source="profile.system_monitoring_desc", allow_blank=True, allow_null=True
+    )
+    have_feedback_mechanism = serializers.BooleanField(source="profile.have_feedback_mechanism")
     feedback_mechanism_desc = serializers.CharField(
-        source="profile.feedback_mechanism_desc", allow_blank=True, allow_null=True)
+        source="profile.feedback_mechanism_desc", allow_blank=True, allow_null=True
+    )
     org_acc_system = serializers.ChoiceField(
-        source="profile.org_acc_system", choices=FINANCIAL_CONTROL_SYSTEM_CHOICES)
+        source="profile.org_acc_system", choices=FINANCIAL_CONTROL_SYSTEM_CHOICES
+    )
     method_acc = serializers.ChoiceField(
-        source="profile.method_acc", choices=METHOD_ACC_ADOPTED_CHOICES)
-    have_system_track = serializers.BooleanField(
-        source="profile.have_system_track")
+        source="profile.method_acc", choices=METHOD_ACC_ADOPTED_CHOICES
+    )
+    have_system_track = serializers.BooleanField(source="profile.have_system_track")
     financial_control_system_desc = serializers.CharField(
-        source="profile.financial_control_system_desc", allow_blank=True, allow_null=True)
-    internal_controls = PartnerInternalControlSerializer(many=True)
+        source="profile.financial_control_system_desc", allow_blank=True, allow_null=True
+    )
+    internal_controls = PartnerInternalControlSerializer(many=True, read_only=True)
     experienced_staff = serializers.BooleanField(
-        source="profile.experienced_staff")
+        source="profile.experienced_staff"
+    )
     experienced_staff_desc = serializers.CharField(
-        source="profile.experienced_staff_desc", allow_blank=True, allow_null=True)
-    area_policies = PartnerPolicyAreaSerializer(many=True)
+        source="profile.experienced_staff_desc", allow_blank=True, allow_null=True
+    )
+    area_policies = PartnerPolicyAreaSerializer(many=True, read_only=True)
     have_bank_account = serializers.BooleanField(
-        source="profile.have_bank_account")
+        source="profile.have_bank_account"
+    )
     have_separate_bank_account = serializers.BooleanField(
-        source="profile.have_separate_bank_account")
+        source="profile.have_separate_bank_account"
+    )
     explain = serializers.CharField(
-        source="profile.explain", allow_blank=True, allow_null=True)
+        source="profile.explain", allow_blank=True, allow_null=True
+    )
 
     regular_audited = serializers.NullBooleanField(source="audit.regular_audited")
     regular_audited_comment = serializers.CharField(
-        source="audit.regular_audited_comment", allow_blank=True, allow_null=True)
+        source="audit.regular_audited_comment", allow_blank=True, allow_null=True
+    )
     audit_reports = PartnerAuditReportSerializer(many=True)
 
     major_accountability_issues_highlighted = serializers.BooleanField(
-        source="audit.major_accountability_issues_highlighted")
+        source="audit.major_accountability_issues_highlighted"
+    )
     comment = serializers.CharField(source="audit.comment", allow_blank=True, allow_null=True)
 
     regular_capacity_assessments = serializers.NullBooleanField(source="audit.regular_capacity_assessments")
@@ -983,7 +1161,7 @@ class PartnerProfileOtherInfoSerializer(
     info_to_share = serializers.CharField(source="other_info.info_to_share", required=False,
                                           allow_blank=True)
     org_logo = CommonFileSerializer(source="other_info.org_logo", allow_null=True)
-    org_logo_thumbnail = serializers.ImageField(source='other_info.org_logo_thumbnail', read_only=True)
+    org_logo_thumbnail = serializers.CharField(source='other_info.org_logo_thumbnail', read_only=True, allow_null=True)
     confirm_data_updated = serializers.BooleanField(source="other_info.confirm_data_updated")
 
     other_doc_1 = CommonFileSerializer(source='other_info.other_doc_1', allow_null=True)
@@ -1022,7 +1200,7 @@ class PartnerProfileOtherInfoSerializer(
 class PartnerCountryProfileSerializer(serializers.ModelSerializer):
 
     countries_profile = serializers.SerializerMethodField(read_only=True)
-    chosen_country_to_create = serializers.SerializerMethodField()
+    chosen_country_to_create = serializers.ListField(write_only=True)
 
     class Meta:
         model = Partner
@@ -1059,52 +1237,29 @@ class PartnerCountryProfileSerializer(serializers.ModelSerializer):
         return data
 
     def get_countries_profile(self, obj):
-        choose = []
+        choices = []
         for country_code in obj.country_presence:
             item = {
                 "country_code": country_code,
                 "country_name": COUNTRIES_ALPHA2_CODE_DICT.get(country_code),
-                "exist": False,
+                "exist": obj.children.filter(country_code=country_code).exists(),
             }
-            if obj.country_profiles.filter(country_code=country_code).exists():
-                item["exist"] = True
-            choose.append(item)
+            choices.append(item)
 
-        return choose
-
-    def get_chosen_country_to_create(self, obj):
-        # we need this data only to upload - post
-        return []
+        return choices
 
     @transaction.atomic
     def create(self, validated_data):
-        hq_id = self.context['request'].parser_context.get('kwargs', {}).get('pk')
+        hq: Partner = get_object_or_404(
+            Partner,
+            id=self.context['request'].parser_context.get('kwargs', {}).get('pk')
+        )
         for country_code in validated_data['chosen_country_to_create']:
-            partner = Partner.objects.create(
-                hq_id=hq_id,
+            Partner.objects.create(
+                hq=hq,
+                legal_name=hq.legal_name,
                 country_code=country_code,
                 display_type=PARTNER_TYPES.international,
             )
-            # TODO - move this and partner create in account registration into one location
-            PartnerProfile.objects.create(partner=partner)
-            PartnerMailingAddress.objects.create(partner=partner)
-            PartnerAuditAssessment.objects.create(partner=partner)
-            PartnerReporting.objects.create(partner=partner)
-            PartnerMandateMission.objects.create(partner=partner)
-            PartnerFunding.objects.create(partner=partner)
-            PartnerOtherInfo.objects.create(partner=partner)
 
-            responsibilities = []
-            for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
-                responsibilities.append(
-                    PartnerInternalControl(partner=partner, functional_responsibility=responsibility)
-                )
-            PartnerInternalControl.objects.bulk_create(responsibilities)
-
-            policy_areas = []
-            for policy_area in list(POLICY_AREA_CHOICES._db_values):
-                policy_areas.append(PartnerPolicyArea(partner=partner, area=policy_area))
-
-            PartnerPolicyArea.objects.bulk_create(policy_areas)
-
-        return Partner.objects.get(pk=hq_id)  # we want to refresh changes after creating related models
+        return hq

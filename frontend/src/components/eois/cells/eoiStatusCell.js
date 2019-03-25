@@ -19,34 +19,41 @@ const styleSheet = theme => ({
   Com: {
     color: theme.palette.eoiStatus.completed,
   },
+  Dra: {
+    color: theme.palette.eoiStatus.draft,
+  },
+  Sen: {
+    color: theme.palette.eoiStatus.draft,
+  },
   text: {
     whiteSpace: 'normal',
     maxWidth: 80,
+  },
+  root: {
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 
 const EoiStatusCell = (props) => {
   const { classes, status } = props;
   const colorClass = classNames(classes[status]);
+
   return (
-    <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={8}>
-      <Grid item >
-        <SvgIcon className={colorClass}>
-          <circle cx="12" cy="12" r="8" />
-        </SvgIcon>
-      </Grid>
-      <Grid item className={classes.text}>
-        <Typography type="body1" color="inherit">
-          {projectStatuses[status]}
-        </Typography>
-      </Grid>
-    </Grid>
+    <div className={classes.root}>
+      <SvgIcon className={colorClass}>
+        <circle cx="12" cy="12" r="8" />
+      </SvgIcon>
+      <Typography className={classes.text} type="body1" color="inherit">
+        {projectStatuses[status]}
+      </Typography>
+    </div>
   );
 };
 
 EoiStatusCell.propTypes = {
   classes: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
+  status: PropTypes.string,
 };
 
 export default withStyles(styleSheet, { name: 'EoiStatusCell' })(EoiStatusCell);

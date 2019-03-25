@@ -9,12 +9,17 @@ import Grid from 'material-ui/Grid';
 import SvgIcon from 'material-ui/SvgIcon';
 import { applicationStatuses } from '../../../../helpers/idMaps';
 import { selectExtendedApplicationStatuses } from '../../../../store';
-import { isUserAgency } from '../../../../helpers/authHelpers';
 
 
 const styleSheet = theme => ({
   Pen: {
     color: theme.palette.common.green,
+  },
+  Dra: {
+    color: theme.palette.eoiStatus.draft,
+  },
+  Sen: {
+    color: theme.palette.eoiStatus.draft,
   },
   Rej: {
     color: theme.palette.eoiStatus.closed,
@@ -42,7 +47,7 @@ const styleSheet = theme => ({
   },
   text: {
     whiteSpace: 'normal',
-    maxWidth: 80,
+    maxWidth: 150,
   },
 });
 
@@ -58,7 +63,7 @@ const ApplicationStatusText = (props) => {
       </Grid>
       <Grid item className={classes.text}>
         <Typography type="body1" color="inherit">
-          {label}
+          {label || ''}
         </Typography>
       </Grid>
     </Grid>
@@ -71,7 +76,7 @@ ApplicationStatusText.propTypes = {
 };
 
 const mapStateToProps = (state, { status, applicationStatus }) => ({
-  finalStatus: !applicationStatus || (applicationStatus === 'Rev' && isUserAgency(state))
+  finalStatus: !applicationStatus
     ? { id: status, label: applicationStatuses[status] }
     : { id: applicationStatus, label: selectExtendedApplicationStatuses(state)[applicationStatus] },
 });

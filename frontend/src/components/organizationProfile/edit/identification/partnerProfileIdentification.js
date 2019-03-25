@@ -65,8 +65,17 @@ class PartnerProfileIdentification extends Component {
   handleSubmit(formValues) {
     const { initialValues, updateTab, partnerId, loadPartnerProfileDetails } = this.props;
 
-    const identification = flatten(formValues.identification);
+    let identification = flatten(formValues.identification);
     const initIndetification = flatten(initialValues.identification);
+
+    const governingDocs = R.map(item => (R.is(String, item.document) ? R.dissoc('document', item) : item),
+      identification.governing_documents);
+
+    const registrationDocs = R.map(item => (R.is(String, item.document) ? R.dissoc('document', item) : item),
+      identification.registration_documents);
+
+    identification = R.assoc('governing_documents', governingDocs, identification);
+    identification = R.assoc('registration_documents', registrationDocs, identification);
 
     const patchValues = changedValues(initIndetification, identification);
 
