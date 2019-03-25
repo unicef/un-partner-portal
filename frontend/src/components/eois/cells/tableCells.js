@@ -13,6 +13,7 @@ import { formatDateForPrint } from '../../../helpers/dates';
 import EoiFocalPointCell from './eoiFocalPointCell';
 import EoiAgencyFocalCell from './eoiAgencyFocalCell';
 import CountriesCellCfeiID from '../../partners/countriesCellCfeiID';
+import { PROJECT_STATUSES } from '../../../helpers/constants';
 
 export default type => ({ row, column, value }) => {
   if (column.name === 'focal_points') {
@@ -40,9 +41,10 @@ export default type => ({ row, column, value }) => {
         {row.agency.name}
       </TableCell>);
   } else if (column.name === 'agency_focal') {
-    return <TableCell padding="dense" >
-      <EoiAgencyFocalCell agency={row.agency.name} focalPoints={row.focal_points} />
-    </TableCell>;
+    return (
+      <TableCell padding="dense">
+        <EoiAgencyFocalCell agency={row.agency.name} focalPoints={row.focal_points} />
+      </TableCell>);
   } else if (column.name === 'status' && type === 'open') {
     return (
       <TableCell >
@@ -73,7 +75,7 @@ export default type => ({ row, column, value }) => {
   } else if (column.name === 'created') {
     return (
       <TableCell >
-        {formatDateForPrint(row.created)}
+        {row.status !== PROJECT_STATUSES.DRA ? formatDateForPrint(row.start_date) : '-'}
       </TableCell>);
   } else if (column.name === 'deadline_date') {
     return (
