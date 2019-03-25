@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
-import { FormControl } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 import FileFormUploadButton from '../common/buttons/fileFormUploadButton';
 import LocalFileFormUploadButton from '../common/buttons/localFileFormUploadButton';
@@ -57,6 +56,7 @@ class FileForm extends Component {
             sectionName={sectionName}
             formName={formName}
             infoText={infoText}
+            optional={optional}
             deleteDisabled={deleteDisabled}
             validate={(optional ? [] : [required].concat(validation || []))}
             warn={warn ? warning : undefined}

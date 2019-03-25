@@ -27,7 +27,7 @@ ROLE_LABELS = {
 
 # HQ Roles have different permission scopes than ordinary roles
 PARTNER_ROLE_PERMISSIONS = {
-    True: {  # INGO HQ
+    True: {  # International CSO HQ (old name INGO HQ)
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.REGISTER,
             PartnerPermission.CREATE_COUNTRY_OFFICE,
@@ -75,7 +75,7 @@ PARTNER_ROLE_PERMISSIONS = {
             PartnerPermission.DSR_VIEW,
         ]),
     },
-    False: {  # INGO Country Profile
+    False: {  # International CSO (old name INGO) Country Profile
         PartnerRole.ADMIN: frozenset([
             PartnerPermission.VIEW_DASHBOARD,
             PartnerPermission.CFEI_VIEW,

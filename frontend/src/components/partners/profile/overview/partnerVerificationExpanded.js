@@ -10,12 +10,10 @@ import VerificationQuestion from '../../../../components/partners/profile/modals
 const messages = {
   certUpload: 'Has partner uploaded its valid, non-expired registration certificate issued by the ' +
   'correct goverment body?',
-  missingReason: 'Is CSO\'s reason for missing registration certificate acceptable?',
   mmConsistent: 'Are the partner\'s mandate and mission consistent with that of the UN?',
+  observationsPose: 'Do these observations pose unacceptable risk to the UN?',
+  riskRelated: 'Are there any other risk-related observations associated with the CSO/partner that are not captured in UN Partner Portal, but which pose unacceptable risk to the UN?',
   indicateResults: 'Does the partner have mechanisms to combat fraud and corruption, prevent sexual exploitation and abuse, and protect and safeguard beneficiaries?',
-  repRisk: 'Has a potential reputational risk issue been identified from public or other sources?',
-  yellowFlag: 'Does the partner have a "yellow" flag in its profile, indicating reputational risk?',
-  canVerify: 'Can partner be verified in spite of reputional risk?',
 };
 
 const verificationQuestions = [
@@ -36,33 +34,23 @@ const verificationQuestions = [
     question: messages.indicateResults,
     questionFieldName: 'is_indicate_results',
     commentFieldName: 'indicate_results_comment',
-  },
+  }, 
   {
     id: 3,
-    question: messages.repRisk,
-    questionFieldName: 'is_rep_risk',
-    commentFieldName: 'rep_risk_comment',
-  },
-  {
-    id: 4,
-    question: messages.yellowFlag,
+    question: messages.observationsPose,
     questionFieldName: 'is_yellow_flag',
     commentFieldName: 'yellow_flag_comment',
   },
   {
-    question: messages.canVerify,
-    questionFieldName: 'can_verify',
-    commentFieldName: 'can_verify_comment',
-  },
-  {
-    question: messages.missingReason,
-    questionFieldName: 'is_reason_acceptable',
-    commentFieldName: 'reason_acceptable_comment',
+    id: 4,
+    question: messages.riskRelated,
+    questionFieldName: 'is_rep_risk',
+    commentFieldName: 'rep_risk_comment',
   },
 ];
 
 const partnerVerificationExpanded = (props) => {
-  const { handleSubmit, readOnly, isYellowFlag, notCertUploaded } = props;
+  const { handleSubmit, readOnly } = props;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -73,17 +61,6 @@ const partnerVerificationExpanded = (props) => {
           commentFieldName={verificationQuestions[0].commentFieldName}
           readOnly={readOnly}
         />
-        {visibleIfYes(notCertUploaded)
-          ? <GridColumn>
-            <VerificationQuestion
-              question={verificationQuestions[6].question}
-              questionFieldName={verificationQuestions[6].questionFieldName}
-              commentFieldName={verificationQuestions[6].commentFieldName}
-              readOnly={readOnly}
-            />
-            <Divider />
-          </GridColumn>
-          : null}
       </GridColumn>
       <GridColumn>
         <VerificationQuestion
@@ -117,16 +94,6 @@ const partnerVerificationExpanded = (props) => {
           readOnly={readOnly}
         />
       </GridColumn>
-      {visibleIfYes(isYellowFlag)
-        ? <GridColumn>
-          <VerificationQuestion
-            question={verificationQuestions[5].question}
-            questionFieldName={verificationQuestions[5].questionFieldName}
-            commentFieldName={verificationQuestions[5].commentFieldName}
-            readOnly={readOnly}
-          />
-        </GridColumn>
-        : null}
     </form >
   );
 };
@@ -136,9 +103,7 @@ partnerVerificationExpanded.propTypes = {
      * callback for form submit
      */
   handleSubmit: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool,
-  isYellowFlag: PropTypes.bool,
-  notCertUploaded: PropTypes.bool,
+  readOnly: PropTypes.bool, 
 };
 
 

@@ -5,7 +5,10 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
+from imagekit.models import ImageSpecField
 from model_utils.models import TimeStampedModel
+from pilkit.processors import ResizeToFill
+
 from common.countries import COUNTRIES_ALPHA2_CODE, COUNTRIES_ALPHA2_CODE_DICT
 
 
@@ -93,12 +96,33 @@ class CommonFile(TimeStampedModel):
     file_field = models.FileField(validators=(
         FileExtensionValidator(settings.ALLOWED_EXTENSIONS),
     ))
+    # Only applicable for image files
+    __thumbnail = ImageSpecField(
+        source='file_field',
+        processors=[
+            ResizeToFill(150, 75)
+        ],
+        format='JPEG',
+        options={
+            'quality': 80
+        },
+    )
 
     class Meta:
         ordering = ['id']
 
     def __str__(self):
-        return "CommonFile <pk:{}>".format(self.id)
+        return f"CommonFile [{self.pk}] {self.file_field}"
+
+    @property
+    def thumbnail_url(self):
+        """
+        Done this way to fail gracefully when trying to get thumbnail for non-image file
+        """
+        try:
+            return self.__thumbnail.url
+        except OSError:
+            return None
 
     @property
     def has_existing_reference(self):

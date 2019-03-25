@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Q
 from rest_framework.generics import (
     ListAPIView,
     CreateAPIView,
     RetrieveAPIView,
     RetrieveUpdateAPIView,
-    get_object_or_404)
+    get_object_or_404,
+)
 from django_filters.rest_framework import DjangoFilterBackend
 
 from account.serializers import PartnerMemberSerializer
@@ -34,7 +36,6 @@ from partner.serializers import (
 from partner.filters import PartnersListFilter
 from partner.models import (
     Partner,
-    PartnerProfile,
     PartnerMember,
 )
 from partner.mixins import FilterUsersPartnersMixin, VerifyPartnerProfileUpdatePermissionsMixin
@@ -53,7 +54,7 @@ class OrganizationProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
     queryset = Partner.objects.all()
 
 
-class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
+class PartnerProfileAPIView(RetrieveAPIView):
 
     permission_classes = (
         HasUNPPPermission(
@@ -70,6 +71,14 @@ class PartnerProfileAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
         if request.GET.get('export', '').lower() == 'pdf':
             return PartnerProfilePDFExporter(self.get_object()).get_as_response()
         return super(PartnerProfileAPIView, self).retrieve(request, *args, **kwargs)
+
+    def get_queryset(self):
+        queryset = super(PartnerProfileAPIView, self).get_queryset()
+        if self.request.active_partner:
+            queryset = queryset.filter(
+                Q(id__in=self.request.user.partner_ids) | Q(children__id__in=self.request.user.partner_ids)
+            ).order_by().distinct('id')
+        return queryset
 
 
 class PartnerProfileSummaryAPIView(FilterUsersPartnersMixin, RetrieveAPIView):
@@ -111,7 +120,7 @@ class PartnerShortListAPIView(ListAPIView):
             ]
         ),
     )
-    queryset = Partner.objects.filter(is_locked=False)
+    queryset = Partner.objects.filter(is_locked=False).order_by('legal_name_length', 'legal_name')
     serializer_class = PartnerShortSerializer
     filter_backends = (DjangoFilterBackend, )
     filter_class = PartnersListFilter
@@ -130,7 +139,10 @@ class PartnerIdentificationAPIView(
         ),
     )
     serializer_class = PartnerIdentificationSerializer
-    queryset = PartnerProfile.objects.all()
+    queryset = Partner.objects.all()
+
+    def get_object(self):
+        return super(PartnerIdentificationAPIView, self).get_object().profile
 
 
 class PartnerContactInformationAPIView(

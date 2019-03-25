@@ -71,7 +71,7 @@ def sanctions_scan_partner(partner):
             org_head.fullname, SANCTION_LIST_TYPES.individual, partner
         )
         create_sanctions_match(
-            matched_names, partner, SANCTION_MATCH_TYPES.board, "Match found for head of organization"
+            matched_names, partner, SANCTION_MATCH_TYPES.board, "Match found for organizations head"
         )
 
     # Partner Directors
@@ -80,7 +80,7 @@ def sanctions_scan_partner(partner):
             director.fullname, SANCTION_LIST_TYPES.individual, partner
         )
         create_sanctions_match(
-            matched_names, partner, SANCTION_MATCH_TYPES.board, "Match found for Director on organization"
+            matched_names, partner, SANCTION_MATCH_TYPES.board, "Match found for organizations Director"
         )
 
     # Partner Authorized Officers
@@ -89,7 +89,7 @@ def sanctions_scan_partner(partner):
             officer.fullname, SANCTION_LIST_TYPES.individual, partner
         )
         create_sanctions_match(
-            matched_names, partner, SANCTION_MATCH_TYPES.board, "Match found for Authorized Officer on organization"
+            matched_names, partner, SANCTION_MATCH_TYPES.board, "Match found for organizations Authorized Officer"
         )
 
     # Partner Users
@@ -99,7 +99,7 @@ def sanctions_scan_partner(partner):
         )
 
         create_sanctions_match(
-            matched_names, partner, SANCTION_MATCH_TYPES.user, "Match found for User on organization"
+            matched_names, partner, SANCTION_MATCH_TYPES.user, "Match found for organization User"
         )
 
 

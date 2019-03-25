@@ -1,5 +1,5 @@
 # Django packages
-Django==1.11.15
+Django==1.11.20
 django-nose==1.4.5
 nose-timer==0.7.1
 django-model-utils==3.1.2
@@ -8,9 +8,8 @@ django-sequences==2.2
 django-mail-templated==2.6.5
 django-imagekit==4.0.1
 dj-static==0.0.6
-
-# APM
-elastic-apm==2.0.0
+django-redis==4.10.0
+django-background-tasks==1.2.0
 
 # REST framework
 djangorestframework==3.7.7
@@ -19,11 +18,9 @@ django-rest-auth==0.9.3
 django-countries==5.3
 
 # Other Python packages
-Fabric==1.13.1
 Pillow==5.2.0
 python-memcached==1.59
 ipython==5.4.1
-azure-storage==0.20.2
 psycopg2==2.7.5
 python-json-logger==0.1.7
 xmltodict==0.11.0
@@ -36,6 +33,8 @@ coolname==1.0.4
 reportlab==3.4.0
 Babel==2.6.0
 defusedxml==0.5.0
+mapbox==0.17.1
+progress==1.4
 
 # Testing
 astroid==1.5.2
@@ -46,7 +45,6 @@ mock==2.0.0
 Faker==0.8.16
 httmock==1.2.6
 
-# WSGI
 gunicorn==19.9.0
 
 # Sentry
@@ -55,7 +53,4 @@ raven==6.4.0
 # New Relic
 newrelic==2.106.1.88
 
--e git+https://github.com/robertavram/django-storages.git@1.6.5.3#egg=django-storages
-
-# For accessing legacy MSSQL DB
--e git+https://github.com/denisenkom/django-sqlserver.git#egg=django-sqlserver
+django-storages[azure]==1.7.1

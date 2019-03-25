@@ -11,7 +11,7 @@ import { updateApplication } from '../../../../../reducers/partnerApplicationDet
 import ResultRadio from './resultRadio';
 import ProfileConfirmation from '../../../../organizationProfile/common/profileConfirmation';
 import { PROJECT_STATUSES } from '../../../../../helpers/constants';
-import { formatDateForPrint } from '../../../../../helpers/dates'; 
+import { formatDateForPrint } from '../../../../../helpers/dates';
 
 const styleSheet = theme => ({
   container: {
@@ -75,6 +75,7 @@ class ResultForm extends Component {
     const body = JSON.parse(values.confirmation)
       ? { did_accept: true, did_decline: false }
       : { did_accept: false, did_decline: true };
+      
     this.props.submitConfirmation(body);
     this.setState({ change: false, confirmed: false });
   }
@@ -164,9 +165,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  submitConfirmation: body => dispatch(updateApplication(ownProps.application.id, body)),
+  submitConfirmation: body => dispatch(updateApplication(ownProps.cfeiId, ownProps.application.id, body)),
 });
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   withStyles(styleSheet, { name: 'ResultForm' })(formResult));

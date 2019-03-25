@@ -18,7 +18,7 @@ const messages = {
 
 const columns = [
   { name: 'cn_id', title: 'Application ID' },
-  { name: 'title', title: 'Project Title', width: 250 },
+  { name: 'project_title', title: 'Project Title', width: 250 },
   { name: 'cfei_type', title: 'Application Type' },
   { name: 'agency_name', title: 'UN Agency' },
   { name: 'countries', title: 'Country' },
@@ -52,7 +52,7 @@ const renderCells = ({ row, column, value }) => {
         id={row.id}
       />);
   }
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 renderCells.propTypes = {

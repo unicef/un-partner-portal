@@ -24,19 +24,33 @@ class AgencyRole(AutoNameEnum):
     MFT_USER = auto()
 
     @classmethod
-    def get_choices(cls, agency=None):
+    def get_choices(cls, agency=None, user_role=None):
         if agency and agency.name == UNHCR.name:
             def filter_function(role_name):
-                return role_name not in {
-                    AgencyRole.EDITOR_BASIC,
-                    AgencyRole.EDITOR_ADVANCED,
-                }
+                if user_role == AgencyRole.HQ_EDITOR.name or user_role is None:
+                    return role_name not in {
+                        AgencyRole.EDITOR_BASIC,
+                        AgencyRole.EDITOR_ADVANCED,
+                    }
+                else:
+                    return role_name not in {
+                        AgencyRole.EDITOR_BASIC,
+                        AgencyRole.EDITOR_ADVANCED,
+                        AgencyRole.HQ_EDITOR,
+                    }
         elif agency:
             def filter_function(role_name):
-                return role_name not in {
-                    AgencyRole.PAM_USER,
-                    AgencyRole.MFT_USER,
-                }
+                if user_role == AgencyRole.HQ_EDITOR.name or user_role is None:
+                    return role_name not in {
+                        AgencyRole.PAM_USER,
+                        AgencyRole.MFT_USER,
+                    }
+                else:
+                    return role_name not in {
+                        AgencyRole.PAM_USER,
+                        AgencyRole.MFT_USER,
+                        AgencyRole.HQ_EDITOR,
+                    }
         else:
             def filter_function(*args):
                 return True
@@ -103,6 +117,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
         AgencyPermission.RUN_REPORT_CSO_MAPPING,
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
+        AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COUNT,
     ]),
     AgencyRole.EDITOR_BASIC: frozenset([
         AgencyPermission.VIEW_DASHBOARD,
@@ -140,11 +155,13 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
 
+        AgencyPermission.UCN_CONVERT_TO_DSR,
+
         AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COUNT,
+        AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
         AgencyPermission.RUN_REPORT_CSO_PROFILE,
         AgencyPermission.RUN_REPORT_CSO_MAPPING,
         AgencyPermission.RUN_REPORT_CSO_CONTACT,
-        AgencyPermission.RUN_REPORT_CFEI_MANAGEMENT,
         AgencyPermission.ERP_ENTER_VENDOR_NUMBER,
     ]),
     AgencyRole.EDITOR_ADVANCED: frozenset([
@@ -186,6 +203,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
 
+        AgencyPermission.UCN_CONVERT_TO_DSR,
+
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
 
         AgencyPermission.VERIFY_CSOS_FOR_OWN_COUNTRY,
@@ -217,6 +236,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_FINALIZE,
         AgencyPermission.CFEI_FINALIZED_VIEW_ALL_REVIEWS,
         AgencyPermission.CFEI_FINALIZED_VIEW_ALL_INFO,
+        AgencyPermission.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS,
 
         AgencyPermission.CFEI_DIRECT_EDIT_SENT,
         AgencyPermission.CFEI_DIRECT_PUBLISH,
@@ -267,6 +287,8 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CFEI_DIRECT_SEND_DRAFT_TO_FOCAL_POINT,
         AgencyPermission.CFEI_DIRECT_EDIT_PUBLISHED,
         AgencyPermission.CFEI_DIRECT_CANCEL,
+
+        AgencyPermission.UCN_CONVERT_TO_DSR,
 
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
         AgencyPermission.VIEW_PROFILE_OBSERVATION_FLAG_COUNT,

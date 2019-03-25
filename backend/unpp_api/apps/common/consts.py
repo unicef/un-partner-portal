@@ -19,9 +19,9 @@ PARTNER_REVIEW_TYPES = Choices(
 PARTNER_TYPES = Choices(
     ('CBO', 'cbo', 'Community Based Organization (CBO)'),
     ('NGO', 'national', 'National NGO'),
-    ('Int', 'international', 'International NGO (INGO)'),
+    ('Int', 'international', 'International Civil Society Organization'),
     ('Aca', 'academic', 'Academic Institution'),
-    ('RCC', 'red_cross', 'Red Cross/Red Crescent Movement'),
+    ('RCC', 'red_cross', 'Red Cross/Red Crescent National Society'),
 )
 
 CFEI_TYPES = Choices(
@@ -233,6 +233,7 @@ UNHCR_DSR_COMPLETED_REASONS = UNHCR_EXCLUSIVE_DSR_COMPLETION_OPTIONS + COMMON_CO
 OTHER_AGENCIES_DSR_COMPLETED_REASONS = OTHER_AGENCIES_DSR_COMPLETION_OPTIONS + COMMON_COMPLETED_REASON
 
 BUDGET_CHOICES = Choices(
+    ('B00', 'not_applicable', "Not Applicable"),
     ('B01', 'less', "Less than $500,000"),
     ('B02', '_2', "$500,001 to $2,000,000"),
     ('B03', '_10', "$2,000,001 to $10,000,000"),
@@ -242,9 +243,9 @@ BUDGET_CHOICES = Choices(
 )
 
 FLAG_TYPES = Choices(
-    ('FL1_Obs', 'observation', 'Observation'),
-    ('FL2_Yel', 'yellow', 'Yellow Flag'),
-    ('FL3_Esc', 'escalated', 'Escalated Flag'),
+    ('FL1_Obs', 'observation', 'Not Risk Related'),
+    ('FL2_Yel', 'yellow', 'Risk Flag'),
+    ('FL3_Esc', 'escalated', 'Risk Flag Escalated to UN HQ Editor'),
     ('FL4_Red', 'red', 'Red Flag'),
 )
 
@@ -259,7 +260,7 @@ USER_CREATED_FLAG_CATEGORIES = Choices(
 )
 
 INTERNAL_FLAG_CATEGORIES = Choices(
-    ('sanctions_match', 'Sanctions List Match'),
+    ('C90_sanctions_match', 'sanctions_match', 'Sanctions Match'),
 )
 
 FLAG_CATEGORIES = USER_CREATED_FLAG_CATEGORIES + INTERNAL_FLAG_CATEGORIES

@@ -3,14 +3,19 @@ from __future__ import unicode_literals
 
 from rest_framework import serializers
 
-from .models import Notification, NotifiedUser
+from notification.models import Notification, NotifiedUser
+from notification.utilities import replace_urls_with_anchor_tags
 
 
 class NotificationSerializer(serializers.ModelSerializer):
+    html_description = serializers.SerializerMethodField()
 
     class Meta:
         model = Notification
         fields = '__all__'
+
+    def get_html_description(self, notification: Notification):
+        return replace_urls_with_anchor_tags(notification.description)
 
 
 class NotifiedUserSerializer(serializers.ModelSerializer):

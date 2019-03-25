@@ -11,9 +11,12 @@ import AccountIcon from 'material-ui-icons/AccountCircle';
 import BadgeIcon from './badgeIcon';
 import NotificationsList from '../notifications/notificationsList';
 import Logout from './logout';
-import Options from './options';
+import logo from '../../img/logo.png';
 import { checkPermission, COMMON_PERMISSIONS } from '../../helpers/permissions';
 
+const message = {
+  maintenance: 'The UN Partner Portal will be down on 23 March 2019 for scheduled maintenance. The UN Partner Portal will resume service on 24 March 2019.  We apologize for any inconvenience and appreciate your patience. Thank you for using UN Partner Portal! ',
+};
 
 const styleSheet = theme => ({
   leftHeader: {
@@ -28,7 +31,8 @@ const styleSheet = theme => ({
   rightHeader: {
     flexShrink: 1,
     // dark blue color added as extra to regular palette
-    backgroundColor: theme.palette.primary.strong,
+    // backgroundColor: theme.palette.primary.strong,
+    backgroundColor: '#FF0000',
     '-ms-grid-column': 2,
   },
   iconBox: {
@@ -42,6 +46,18 @@ const styleSheet = theme => ({
     '@media print': {
       display: 'none',
     },
+  },
+  logo: {
+    maxWidth: '170px',
+  },
+  banner: {
+    color: '#FFF',
+    minWidth: '76%',
+    lineHeight: '1.25em',
+  },
+  bannerRoot: {
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 
@@ -85,7 +101,7 @@ class MainAppBar extends Component {
           color="accent"
         >
           <Typography type="display1" color="inherit">
-              UNPP
+            <img className={classes.logo} src={logo} alt="logo" />
           </Typography>
         </AppBar>
         <AppBar
@@ -93,12 +109,14 @@ class MainAppBar extends Component {
           position="static"
           color="primary"
         >
-          <Grid
+        <div className={classes.bannerRoot}>
+      <Typography type="body2" className={classes.banner} color="primary">{message.maintenance}</Typography>
+      <Grid
             container
             direction="row"
             justify="flex-end"
             spacing={0}
-          >
+          > 
             {hasPermission && <Grid item>
               <BadgeIcon handleClick={this.handleVerificationClick} />
             </Grid>}
@@ -108,6 +126,8 @@ class MainAppBar extends Component {
               </IconButton>
             </Grid>
           </Grid>
+        </div>
+         
         </AppBar>
         <Popover
           id="notifications"

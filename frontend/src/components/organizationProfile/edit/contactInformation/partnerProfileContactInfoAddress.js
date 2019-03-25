@@ -129,6 +129,9 @@ const PartnerProfileContactInfoAddress = (props) => {
                     validation={[email]}
                     optional
                     readOnly={readOnly}
+                    textFieldProps={{
+                      "type": "email"
+                    }}
                   />
                 </Grid>
               </Grid>

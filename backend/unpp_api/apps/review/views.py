@@ -157,7 +157,7 @@ class PartnerVerificationListCreateAPIView(ListCreateAPIView):
             )
 
         if partner.hq and not partner.hq.is_verified:
-            raise serializers.ValidationError('INGO HQ profile needs to be verified before country office.')
+            raise serializers.ValidationError('ICSO HQ profile needs to be verified before country office.')
 
         if partner.has_red_flag:
             raise serializers.ValidationError(

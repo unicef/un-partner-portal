@@ -6,6 +6,7 @@ from django.core.management import call_command
 from django.test import override_settings
 from django.urls import reverse
 from django.core import mail
+import mock
 from rest_framework import status
 
 from account.models import User
@@ -157,6 +158,7 @@ class TestOpenCFEI(BaseAPITestCase):
         self.assertResponseStatusIs(response)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_recommendation_simple_flow(self):
         office = AgencyOfficeFactory(agency=UNICEF.model_instance)
         agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
@@ -259,7 +261,7 @@ class TestOpenCFEI(BaseAPITestCase):
                 lambda m: agency_member_advanced.user.email in m.to,
                 mail.outbox
             ))
-            self.assertIn('ready to have a winner picked', pick_a_winner_email.body)
+            self.assertIn('Prospective Partner Identified for CFEI', pick_a_winner_email.body)
 
         with self.login_as_user(agency_member_basic.user):
             # Check basic user cant pick winner
@@ -286,6 +288,7 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(accept_response)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_recommendation_pick_2nd_application(self):
         office = AgencyOfficeFactory(agency=UNICEF.model_instance)
         agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
@@ -428,7 +431,7 @@ class TestOpenCFEI(BaseAPITestCase):
                 lambda m: agency_member_advanced.user.email in m.to,
                 mail.outbox
             ))
-            self.assertIn('ready to have a winner picked', pick_a_winner_email.body)
+            self.assertIn('Prospective Partner Identified for CFEI', pick_a_winner_email.body)
 
         with self.login_as_user(agency_member_advanced.user):
             application_url = reverse('projects:application', kwargs={'pk': apply2_response.data['id']})
@@ -451,6 +454,7 @@ class TestOpenCFEI(BaseAPITestCase):
             self.assertResponseStatusIs(accept_response)
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_recommendation_pick_partner_declined(self):
         office = AgencyOfficeFactory(agency=UNICEF.model_instance)
         agency_member_basic = AgencyMemberFactory(office=office, role=AgencyRole.EDITOR_BASIC.name)
@@ -599,7 +603,7 @@ class TestOpenCFEI(BaseAPITestCase):
                 lambda m: agency_member_advanced.user.email in m.to,
                 mail.outbox
             ))
-            self.assertIn('ready to have a winner picked', pick_a_winner_email.body)
+            self.assertIn('Prospective Partner Identified for CFEI', pick_a_winner_email.body)
 
         with self.login_as_user(agency_member_advanced.user):
             application_url = reverse('projects:application', kwargs={'pk': apply_response.data['id']})

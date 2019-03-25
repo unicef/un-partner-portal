@@ -33,6 +33,7 @@ const styleSheet = theme => ({
     display: 'flex',
     alignItems: 'center',
     minWidth: 72,
+    minHeight: 48,
     cursor: 'pointer',
     '&:hover': {
       color: theme.palette.secondary[700],
@@ -116,6 +117,7 @@ class FileFormUploadButton extends Component {
       errorMsg,
       label,
       infoText,
+      optional,
       loading } = this.props;
     const url = R.is(String, input.value) ? input.value : fileUrl;
 
@@ -150,8 +152,9 @@ class FileFormUploadButton extends Component {
                   : <FileUpload className={classes.icon} />}
                 {messages.upload}
               </Typography>
-
-              {((touched && error) || warning) && <FormHelperText error>{(!this.state.fileSizeError && !errorMsg) ? (error || warning) : (errorMsg || messages.fileSizeError)}</FormHelperText>}
+              {((touched && error) || warning || (optional && errorMsg))
+                && <FormHelperText error>{(!this.state.fileSizeError && !errorMsg)
+                  ? (error || warning) : (errorMsg || messages.fileSizeError)}</FormHelperText>}
             </React.Fragment>
             : <div className={classes.wrapContent}>
               <Typography type="subheading" className={classes.iconLabel} gutterBottom >
@@ -183,6 +186,7 @@ FileFormUploadButton.propTypes = {
   input: PropTypes.object,
   deleteDisabled: PropTypes.bool,
   loading: PropTypes.bool,
+  optional: PropTypes.bool,
   fileUrl: PropTypes.string,
   errorMsg: PropTypes.string,
   infoText: PropTypes.node,

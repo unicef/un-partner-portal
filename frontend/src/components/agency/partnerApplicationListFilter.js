@@ -11,7 +11,7 @@ import SelectForm from '../forms/selectForm';
 import CheckboxForm from '../forms/checkboxForm';
 import TextFieldForm from '../forms/textFieldForm';
 import Agencies from '../forms/fields/projectFields/agencies';
-import { selectMappedSpecializations, selectNormalizedCountries } from '../../store';
+import { selectMappedSpecializations, selectNormalizedCountries, selectNormalizedCfeiTypes } from '../../store';
 import resetChanges from '../eois/filters/eoiHelper';
 import CountryField from '../forms/fields/projectFields/locationField/countryField';
 
@@ -240,7 +240,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     countries: selectNormalizedCountries(state),
     specs: selectMappedSpecializations(state),
-    eoiTypes: [],
+    eoiTypes: selectNormalizedCfeiTypes(state),
     pathName: ownProps.location.pathname,
     query: ownProps.location.query,
     agencyId: state.session.agencyId,

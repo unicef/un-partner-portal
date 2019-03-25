@@ -84,10 +84,6 @@ export const loadUserData = () => (dispatch, getState) => {
   const token = session.token;
   const partnerId = session.partnerId;
 
-  if (!token) {
-    history.push('/login');
-    return Promise.resolve();
-  }
   dispatch(sessionInitializing());
   return getUserData(token)
     .then((response) => {
@@ -124,7 +120,7 @@ export const loadUserData = () => (dispatch, getState) => {
       // partner specific fields
       if (role === ROLES.PARTNER) {
         const mainPartner = R.defaultTo(
-          R.head(response.partners),
+          R.find(R.propEq('is_hq', true), response.partners) || R.head(response.partners),
           R.find(R.propEq('id', partnerId), response.partners),
         );
 
@@ -139,7 +135,7 @@ export const loadUserData = () => (dispatch, getState) => {
           telephone: R.path(['office', 'telephone'], mainPartner),
           logo: R.prop('logo', mainPartner),
           permissions: R.prop('permissions', response),
-          logoThumbnail: R.prop('org_logo_thumbnail', mainPartner),
+          logoThumbnail: R.prop('org_logo_thumbnail', mainPartner) || R.prop('logo', mainPartner),
           isProfileComplete: R.path(['partner_additional', 'has_finished'],
             mainPartner),
           lastUpdate: R.prop('last_profile_update', mainPartner),
@@ -148,11 +144,17 @@ export const loadUserData = () => (dispatch, getState) => {
       }
       dispatch(initSession(sessionObject));
       dispatch(sessionReady(getState));
+
       return sessionObject;
     })
     .catch((error) => {
-      // TODO correct error handling for different scenarios
-      history.push('/login');
+      if (error.response.status === 404) {
+        history.push('/registration');
+      } else {
+        window.localStorage.removeItem('token');
+        window.location.href = '/landing/';
+      }
+
       dispatch(initSession({
         authorized: false,
         role: ROLES.PARTNER,
@@ -169,27 +171,34 @@ export const loginUser = creds => dispatch => login(creds)
     history.push('/');
   });
 
-export const logoutUser = () => dispatch => logout()
-  .then(() => {
-    window.localStorage.removeItem('token');
-    dispatch(logoutSuccess());
-    history.push('/login');
-  }).catch(() => {
-    window.localStorage.removeItem('token');
-    dispatch(logoutSuccess());
-    history.push('/login');
-  });
+export const logoutUser = () => (dispatch, getState) => {
+  const logoutAzure = getState().partnerProfileConfig['active-directory-logout-url'];
+
+  return logout()
+    .then(() => {
+      window.localStorage.removeItem('token');
+      dispatch(logoutSuccess());
+      window.location.href = logoutAzure;
+    }).catch(() => {
+      window.localStorage.removeItem('token');
+      dispatch(logoutSuccess());
+      window.location.href = logoutAzure;
+    })
+};
 
 export const registerUser = json => dispatch => postRegistration(json)
-  .then(({ user: { email, username } }) => {
-    dispatch(loginSuccess({ role: ROLES.PARTNER, user: username }));
+  .then(() => {
+    dispatch(loginSuccess({ role: ROLES.PARTNER }));
     dispatch(sessionChange({ newlyRegistered: true }));
-    dispatch(loginUser({ email, password: R.path(['user', 'password'], json) }));
+    dispatch(loadUserData());
+    history.push('/');
   });
 
 export const changePassword = payload => () => passwordResetConfirm(payload);
 
-const setSession = (state, session) => R.mergeDeepRight(state, session);
+const setSession = (state, session) => {
+  return R.mergeDeepRight(state, session);
+};
 
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {

@@ -7,6 +7,7 @@ import TextFieldForm from '../forms/textFieldForm';
 import PolarRadio from '../forms/fields/PolarRadio';
 import CountryField from '../forms/fields/projectFields/locationField/countryField';
 import { email } from '../../helpers/validation';
+import GridColumn from '../common/grid/gridColumn';
 
 const messages = {
   tooltip: 'Country of Origin: Country of origin refers to the ' +
@@ -19,65 +20,54 @@ const messages = {
 const BasicInformation = (props) => {
   const { legalNameChange, country } = props;
   return (
-    <Grid item>
-      <Grid container direction="column" spacing={16}>
-        <TextFieldForm
-          label={messages.legalName}
-          fieldName="json.partner.legal_name"
-        />
-        <Grid item sm={6} xs={12}>
+    <GridColumn>
+          <TextFieldForm
+            label={messages.legalName}
+            fieldName="json.partner.legal_name"
+          /> 
           <TextFieldForm
             label={messages.alias}
             placeholder={messages.aliasPlaceholder}
             fieldName="json.partner_profile.alias_name"
             optional
-          />
-        </Grid>
-        <Grid item sm={6} xs={12}>
+          /> 
           <TextFieldForm
             label={'Acronym (If applicable)'}
             placeholder="Provide acronym"
             fieldName="json.partner_profile.acronym"
             optional
-          />
-        </Grid>
-        <Grid item sm={6} xs={12}>
+          /> 
           <PolarRadio
             fieldName="json.partner_profile.legal_name_change"
             label="Has the Organization had a legal name change?"
-          />
-        </Grid>
+          /> 
         {legalNameChange === true &&
           (<TextFieldForm
             label="Organization's former Legal Name"
             fieldName="json.partner_profile.former_legal_name"
-          />)}
-        <Grid item>
+          />)} 
           <CountryField
             fieldName="json.partner.country_code"
             label="Country of Origin"
             initialValue={country}
             overlap={false}
             infoText={messages.tooltip}
-          />
-        </Grid>
-        <Grid item>
+          /> 
           <TextFieldForm
             label="Head of Organization's Full Name"
             placeholder="Provide Full Name"
             fieldName="json.partner_head_organization.fullname"
-          />
-        </Grid>
-        <Grid item sm={6} xs={12}>
+          /> 
           <TextFieldForm
             label="E-mail of Head of Organization"
             placeholder="Provide Email"
             fieldName="json.partner_head_organization.email"
             validation={[email]}
+            textFieldProps={{
+              "type": "email"
+            }}
           />
-        </Grid>
-      </Grid>
-    </Grid>
+        </GridColumn> 
   );
 };
 

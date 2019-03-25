@@ -47,17 +47,19 @@ const styleSheet = (theme) => {
 };
 
 const PartnerProfileNameCell = (props) => {
-  const { info, onClick } = props;
+  const { info, isHq, onClick, permission } = props;
 
   return (<TableCell>
-    <ItemPartnerAdditionalInfo info={info} onClick={onClick} />
+    <ItemPartnerAdditionalInfo permission={permission} isHq={isHq} info={info} onClick={onClick} />
   </TableCell>
   );
 };
 
 PartnerProfileNameCell.propTypes = {
   info: PropTypes.object.isRequired,
+  isHq: PropTypes.bool,
   onClick: PropTypes.func,
+  permission: PropTypes.bool,
 };
 
 export default withStyles(styleSheet, { name: 'PartnerProfileNameCell' })(PartnerProfileNameCell);

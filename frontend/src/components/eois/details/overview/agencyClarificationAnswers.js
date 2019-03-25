@@ -13,7 +13,7 @@ import { ROLES } from '../../../../helpers/constants';
 import withMultipleDialogHandling from '../../../common/hoc/withMultipleDialogHandling';
 import HeaderList from '../../../common/list/headerList';
 import PaddedContent from '../../../common/paddedContent';
-import { isCfeiClarificationDeadlinePassed, selectClarificationAnswersCount, selectClarificationAnswers, isUserAFocalPoint, isUserACreator } from '../../../../store';
+import { isCfeiClarificationDeadlinePassed, selectClarificationAnswersCount, selectClarificationAnswers, isUserAFocalPoint, isUserACreator, isCfeiDeadlinePassed } from '../../../../store';
 import { checkPermission, AGENCY_PERMISSIONS, isRoleOffice, AGENCY_ROLES } from '../../../../helpers/permissions';
 import Loader from '../../../common/loader';
 import { loadClarificationAnswers } from '../../../../reducers/clarificationAnswers';
@@ -27,8 +27,10 @@ const messages = {
   title: 'Requests for additional \n Information/Clarifications',
   upload: 'Upload file',
   isCfeiDeadlinePassed: 'Upload will be enabled when clarification request deadline date has passed.',
+  cfeiDeadlinePassed: 'Upload is disabled after application deadline.',
   publishedUntil: 'UN Response will be available after Clarification Request Deadline date.',
   maxFile: 'You can upload up to three files.',
+  noResponse: 'No response from UN',
 };
 
 const styleSheet = theme => ({
@@ -94,52 +96,53 @@ class AgencyClarificationAnswers extends Component {
       isFocalPoint } = this.props;
 
     return ((hasActionPermission && isAdvEd && (isCreator || isFocalPoint))
-    || (hasActionPermission && isBasEd && isCreator)
-    || (hasActionPermission && isMFT && isFocalPoint)
-    || (hasActionPermission && isPAM && isCreator));
+      || (hasActionPermission && isBasEd && isCreator)
+      || (hasActionPermission && isMFT && isFocalPoint)
+      || (hasActionPermission && isPAM && isCreator));
   }
 
   fileItems() {
     const { classes, answers, dialogOpen, handleDialogClose, handleDialogOpen,
       id, hasPermissionToAdd, role } = this.props;
 
-    return (answers.map(item => (
-      <React.Fragment key={item.id}>
-        {dialogOpen[remove] && <DeleteClarificationAnswerModal
-          cfeiId={id}
-          id={item.id}
-          dialogOpen={dialogOpen[remove]}
-          handleDialogClose={handleDialogClose}
-        />}
-        <div key={item.id}>
-          <Typography type="subheading" className={classes.iconLabel} gutterBottom >
-            <Attachment className={classes.icon} />
-            <div
-              role="button"
-              tabIndex={0}
-              className={classes.link}
-              onClick={() => { window.open(item.file); }}
-            >
-              {item.title}
-            </div>
-            {this.hasPermission(hasPermissionToAdd) && role === ROLES.AGENCY
-              && <IconButton onClick={() => handleDialogOpen(remove)}>
-                <Close className={classes.removeIcon} />
-              </IconButton>}
-          </Typography>
-        </div>
-      </React.Fragment>),
-    ));
+    return (answers.length > 0
+      ? answers.map(item => (
+        <React.Fragment key={item.id}>
+          {dialogOpen[remove] && <DeleteClarificationAnswerModal
+            cfeiId={id}
+            id={item.id}
+            dialogOpen={dialogOpen[remove]}
+            handleDialogClose={handleDialogClose}
+          />}
+          <div key={item.id}>
+            <Typography type="subheading" className={classes.iconLabel} gutterBottom >
+              <Attachment className={classes.icon} />
+              <div
+                role="button"
+                tabIndex={0}
+                className={classes.link}
+                onClick={() => { window.open(item.file); }}
+              >
+                {item.title}
+              </div>
+              {this.hasPermission(hasPermissionToAdd) && role === ROLES.AGENCY
+                && <IconButton onClick={() => handleDialogOpen(remove)}>
+                  <Close className={classes.removeIcon} />
+                </IconButton>}
+            </Typography>
+          </div>
+        </React.Fragment>))
+      : role === ROLES.PARTNER && <Typography type="body1">{messages.noResponse}</Typography>)
   }
 
   uploadFile() {
-    const { classes, handleDialogOpen, isClaraificationDeadlinePassed,
+    const { classes, handleDialogOpen, isClarificationDeadlinePassed, isApplicationDeadlinePassed,
       count, hasPermissionToAdd } = this.props;
-    const tooltipText = (!isClaraificationDeadlinePassed && messages.isCfeiDeadlinePassed)
-                          || (count === 3 && messages.maxFile);
+    const tooltipText = (!isClarificationDeadlinePassed && messages.isCfeiDeadlinePassed)
+     || (isApplicationDeadlinePassed && messages.cfeiDeadlinePassed) || (count === 3 && messages.maxFile);
 
     return (
-      (!isClaraificationDeadlinePassed || count === 3) ?
+      (!isClarificationDeadlinePassed || isApplicationDeadlinePassed || count === 3) ?
         <ButtonWithTooltip
           name="publish"
           className={classes.btnSize}
@@ -204,6 +207,7 @@ AgencyClarificationAnswers.propTypes = {
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
   isClarificationDeadlinePassed: PropTypes.bool,
+  isApplicationDeadlinePassed: PropTypes.bool,
   hasPermissionToAdd: PropTypes.bool,
   loading: PropTypes.bool,
   loadingAnswers: PropTypes.bool,
@@ -223,8 +227,9 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.addClarificationAnswer.status.loading,
   loadingAnswers: state.clarificationAnswers.status.loading,
   isClarificationDeadlinePassed: isCfeiClarificationDeadlinePassed(state, ownProps.id),
+  isApplicationDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
   hasPermissionToAdd:
-  checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
+    checkPermission(AGENCY_PERMISSIONS.CFEI_PUBLISHED_VIEW_AND_ANSWER_CLARIFICATION_QUESTIONS, state),
   count: selectClarificationAnswersCount(state, ownProps.id),
   answers: selectClarificationAnswers(state, ownProps.id),
   id: ownProps.id,

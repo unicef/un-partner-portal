@@ -4,9 +4,10 @@ import R from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Place from 'material-ui-icons/Place';
-import { Marker, Popup } from "react-mapbox-gl";
+import { Marker, Popup, ZoomControl } from "react-mapbox-gl";
 import MapContainer from '../../../../common/map/MapContainer';
 import { errorToBeAdded } from '../../../../../reducers/errorReducer';
+import LocationsGeocoder from './locationsGeocoder';
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const geocodingClient = mbxGeocoding({ accessToken: process.env.MAP_BOX_KEY });
 /**
@@ -29,8 +30,8 @@ const geocodingClient = mbxGeocoding({ accessToken: process.env.MAP_BOX_KEY });
  */
 
 const messages = {
-  error: 'Location doesn\'t contains all required informations',
-}
+  error: 'Please indicate locations within the geographic boundaries of the selected country',
+};
 
 class LocationsMapBase extends Component {
   constructor() {
@@ -43,7 +44,7 @@ class LocationsMapBase extends Component {
       activeMarkerNumber: null,
       activeLocation: null,
     };
-    
+
     this.initMap = this.initMap.bind(this);
     this.mapClicked = this.mapClicked.bind(this);
     this.onMarkerOver = this.onMarkerOver.bind(this);
@@ -54,6 +55,7 @@ class LocationsMapBase extends Component {
 
   componentDidMount() {
     const { currentCountry } = this.props;
+
     if (currentCountry) {
       this.initMap(currentCountry);
     }
@@ -84,21 +86,29 @@ class LocationsMapBase extends Component {
   }
 
   initMap(country) {
-    const { removeAllLocations } = this.props;
+    const { countries, removeAllLocations } = this.props;
 
     if (this.state.previousCountry && this.state.previousCountry !== country && !this.props.readOnly) {
       removeAllLocations();
     }
 
-    geocodingClient.forwardGeocode({ query: country, limit: 1, })
+    let code;
+
+    if (!countries[country]) {
+      code = R.keys(countries)[R.indexOf(country, R.values(countries))]
+    }
+
+    geocodingClient.forwardGeocode({ query: countries[country] || country, limit: 1, countries: [code || country] })
       .send()
       .then(response => {
-        const match = response.body.features[0];
+        if (response.body.features.length > 0) {
+          const match = response.body.features[0];
 
-        this.setState({
-          pos: match.center,
-          bounds: match.bbox,
-        });
+          this.setState({
+            pos: match.center,
+            bounds: match.bbox,
+          });
+        }
       });
 
     this.setState({ previousCountry: country });
@@ -122,7 +132,7 @@ class LocationsMapBase extends Component {
             if (region && country && country.properties && currentCountryCode === country.properties.short_code.toUpperCase()) {
               const newLocation = {
                 admin_level_1: {
-                  name: region.place_name,
+                  name: region.text_en,
                   country_code: currentCountryCode
                 },
                 lat: clickEvent.lngLat.lat.toFixed(5),
@@ -151,7 +161,7 @@ class LocationsMapBase extends Component {
   }
 
   render() {
-    const { showMap, locations } = this.props;
+    const { showMap, locations, readOnly } = this.props;
     const {
       pos,
       bounds,
@@ -163,6 +173,8 @@ class LocationsMapBase extends Component {
       bounds={bounds}
       onClick={this.mapClicked}
     >
+      {!readOnly && <LocationsGeocoder />}
+      <ZoomControl position="bottom-right" />
       {locations && locations.map(({ lat, lon, admin_level_1 }, index) => (
         <Marker onClick={(event) => this.removeMarker(index)}
           onMouseEnter={() => this.onMarkerOver(lat, lon, admin_level_1)}
@@ -219,7 +231,14 @@ LocationsMapBase.propTypes = {
    * function to save error in redux and display snackbar
    */
   postError: PropTypes.func,
+
+  countries: PropTypes.object.isRequired,
 };
+
+
+const mapStateToProps = state => ({
+  countries: state.countries,
+})
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   postError: error => dispatch(errorToBeAdded(
@@ -227,4 +246,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 
 
-export default connect(null, mapDispatchToProps)(LocationsMapBase);
+export default connect(mapStateToProps, mapDispatchToProps)(LocationsMapBase);

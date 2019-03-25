@@ -57,7 +57,7 @@ function sidebarMenu(props) {
           <div className={classes.oneLine}>
             <BackButton defaultPath="/" arrowBack />
             <Typography className={classes.textColor}>
-              User<br />Management
+              Home page
             </Typography>
           </div>
         </div>

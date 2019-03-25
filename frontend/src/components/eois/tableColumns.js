@@ -7,13 +7,15 @@ export const openPartnerColumns = [
   { name: 'start_date', title: 'Estimated Start Date' },
 ];
 
+export const customColumns = [
+  'country_code', 'agency', 'status', 'agency_focal', 'country_code_cfei',
+]
+
 export const openAgencyColumns = [
-  { name: 'title', title: 'Project Title', width: 250 },
-  { name: 'displayID', title: 'CFEI ID' },
-  { name: 'focal_points', title: 'CFEI Focal Point' },
-  { name: 'agency', title: 'UN Agency' },
-  { name: 'country_code', title: 'Country' },
+  { name: 'title', title: 'Project Title', width: 230 },
+  { name: 'country_code_cfei', title: 'Country & CFEI ID' },
   { name: 'specializations', title: 'Sector & Area of Specialization', width: 200 },
+  { name: 'agency_focal', title: 'UN Agency \n& CFEI Focal Point', width: 170 },
   { name: 'created', title: 'Date Posted' },
   { name: 'deadline_date', title: 'Application Deadline' },
   { name: 'status', title: 'Status' },

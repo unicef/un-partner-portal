@@ -25,10 +25,10 @@ urlpatterns = [
     url(r'^api/dashboard/', include('dashboard.urls', namespace='dashboard')),
     url(r'^api/reports/', include('reports.urls', namespace='reports')),
     url(r'^api/externals/', include('externals.urls', namespace='externals')),
+    url(r'^api/public/', include('public.urls', namespace='public')),
     url(r'^api/rest-auth/', include('rest_auth.urls')),
     url(r'^api/test-raise-exception/', test_raise_exception_view),
-
-    url(r'^social/', include('social_django.urls', namespace='social')),
+    url(r'^api/social/', include('social_django.urls', namespace='social')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.IS_DEV or settings.IS_STAGING:

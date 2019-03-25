@@ -51,7 +51,10 @@ class TestPartnerCountryProfileAPIView(BaseAPITestCase):
     user_type = BaseAPITestCase.USER_PARTNER
 
     def test_create_country_profile(self):
-        partner = PartnerFactory(display_type=PARTNER_TYPES.international)
+        partner = PartnerFactory(
+            legal_name='Test International Partner HQ',
+            display_type=PARTNER_TYPES.international
+        )
         PartnerMemberFactory(partner=partner, user=self.user)
         self.client.set_headers({
             CustomHeader.PARTNER_ID.value: partner.id
@@ -410,7 +413,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         url = reverse('partners:project-implementation', kwargs={"pk": partner.id})
 
         response = self.client.get(url, format='json')
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
 
         payload = response.data
         del payload['publish_annual_reports']
@@ -421,6 +424,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
         del payload['last_report']
         del payload['audit_reports'][0]['most_recent_audit_report']
         del payload['audit_reports'][1]['most_recent_audit_report']
+
         text = 'test'
         payload['financial_control_system_desc'] = text
         payload['management_approach_desc'] = text
@@ -436,7 +440,7 @@ class TestPartnerDetailAPITestCase(BaseAPITestCase):
 
         response = self.client.patch(url, data=payload, format='json')
 
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertResponseStatusIs(response)
         self.assertEquals(response.data['financial_control_system_desc'], text)
         self.assertEquals(response.data['management_approach_desc'], text)
         self.assertEquals(response.data['comment'], text)
@@ -555,8 +559,20 @@ class TestPartnerPDFExport(BaseAPITestCase):
         PartnerFactory,
     ]
 
-    def test_download_pdf(self):
+    def test_download_partner_profile_pdf(self):
         partner = Partner.objects.first()
+        url = reverse('partners:partner-profile', kwargs={'pk': partner.pk}) + '?export=pdf'
+        response = self.client.get(url)
+        self.assertResponseStatusIs(response, status.HTTP_200_OK)
+        self.assertEqual(response.content_type, 'application/pdf')
+
+    def test_layout_error(self):
+        partner: Partner = Partner.objects.first()
+        partner.mandate_mission.security_desc = 5000 * 'A '
+        partner.mandate_mission.ethic_safeguard_comment = 5000 * 'A '
+        partner.mandate_mission.ethic_fraud_comment = 5000 * 'A '
+        partner.mandate_mission.save()
+
         url = reverse('partners:partner-profile', kwargs={'pk': partner.pk}) + '?export=pdf'
         response = self.client.get(url)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)

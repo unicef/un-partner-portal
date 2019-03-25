@@ -52,7 +52,7 @@ function sidebarMenu(props) {
         label={item.label}
         key={item.label}
         icon={createElement(item.icon)}
-        onClick={() => onItemClick(index, item.path)}
+        onClick={() => onItemClick(index, item.path, item.external)}
       />
     );
     if (item.path === '/settings' || item.path === '/profile') {
@@ -106,8 +106,12 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = () => ({
-  onItemClick: (id, path) => {
-    history.push(path);
+  onItemClick: (id, path, external) => {
+    if (external) {
+      window.open(path);
+    } else {
+      history.push(path);
+    }
   },
   onSettingsClick: (path) => {
     history.push(path);

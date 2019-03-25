@@ -33,7 +33,8 @@ const styleSheet = theme => ({
     display: 'flex',
     alignItems: 'center',
     minWidth: 72,
-    padding: theme.spacing.unit,
+    minHeight: 48,
+    paddingLeft: theme.spacing.unit,
     cursor: 'pointer',
     '&:hover': {
       color: theme.palette.secondary[700],

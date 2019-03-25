@@ -8,7 +8,7 @@ import { withStyles } from 'material-ui/styles';
 import { browserHistory as history, withRouter } from 'react-router';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import { selectNormalizedOrganizationTypes, selectNormalizedFlagTypes, selectNormalizedFlagCategoryChoices } from '../../../store';
+import { selectNormalizedOrganizationTypes, selectNormalizedFlagTypes, selectAllFlagCategoryChoices } from '../../../store';
 import SelectForm from '../../forms/selectForm';
 import CheckboxForm from '../../forms/checkboxForm';
 import resetChanges from '../../eois/filters/eoiHelper';
@@ -27,7 +27,7 @@ const messages = {
     observationType: 'Observation Type',
     categoryOfRisk: 'Category of risk',
     year: 'Year',
-    show: 'Show INGO HQ only',
+    show: 'Show International CSO HQ only',
     status: 'Status',
     typoOfOrg: 'Type of organization',
   },
@@ -36,15 +36,15 @@ const messages = {
 const VERIFICATION_MENU = [
   {
     value: 'pending',
-    label: 'Pending verification',
+    label: 'Verification Pending',
   },
   {
     value: 'verified',
-    label: 'Verified',
+    label: 'Verification Passed',
   },
   {
     value: 'unverified',
-    label: 'Unverified',
+    label: 'Verification Failed',
   },
 ];
 
@@ -79,12 +79,20 @@ export const STATUS_VAL = [
   },
 ];
 
-export const YEARS_VAL = [
-  {
-    value: '2018',
-    label: '2018',
-  },
-];
+export const YEARS_VAL = () => {
+  const currentYear = new Date().getFullYear();
+  const FROM = 2018;
+  const years = [];
+
+  for (let year = FROM; year < currentYear + 1; year += 1) {
+    years.push({
+      value: String(year),
+      label: String(year),
+    });
+  }
+
+  return years;
+};
 
 class VerificationFilter extends Component {
   constructor(props) {
@@ -175,7 +183,7 @@ class VerificationFilter extends Component {
               <SelectForm
                 fieldName="verification_year"
                 label={messages.labels.verificationYear}
-                values={YEARS_VAL}
+                values={YEARS_VAL()}
                 optional
               />
             </Grid>
@@ -261,7 +269,7 @@ const mapStateToProps = (state, ownProps) => {
     query: ownProps.location.query,
     organizationTypes: selectNormalizedOrganizationTypes(state),
     flagTypes: selectNormalizedFlagTypes(state),
-    categoryRisks: selectNormalizedFlagCategoryChoices(state),
+    categoryRisks: selectAllFlagCategoryChoices(state),
     countryCode: country_code,
     initialValues: {
       is_verified,

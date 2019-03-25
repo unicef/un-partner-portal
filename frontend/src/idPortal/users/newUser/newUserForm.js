@@ -8,6 +8,7 @@ import GridColumn from '../../../components/common/grid/gridColumn';
 import { email } from '../../../helpers/validation';
 import RoleField from './roleField';
 import { selectNormalizedOffices } from '../../../store';
+import { AGENCY_ROLES } from '../../../helpers/permissions';
 
 const messages = {
   formName: 'newUserForm',
@@ -34,8 +35,11 @@ const NewUserForm = (props) => {
             fieldName="email"
             validation={[email]}
             readOnly={!R.isNil(id)}
+            textFieldProps={{
+              "type": "email"
+            }}
           />
-          <RoleField formName="newUserForm" />
+          <RoleField id={id} formName="newUserForm" />
         </GridColumn>
       </div>
     </form >
@@ -47,7 +51,7 @@ NewUserForm.propTypes = {
      * callback for form submit
      */
   handleSubmit: PropTypes.func.isRequired,
-  id: PropTypes.string,
+  id: PropTypes.number,
 };
 
 const formNewUser = reduxForm({
@@ -66,7 +70,7 @@ const mapStateToProps = (state, ownProps) => {
     const fullname = user.fullname;
     const email = user.email;
     const office_memberships = R.map(item => R.assoc('office_id', item.office.id,
-      R.assoc('role', item.role, null))
+      R.assoc('role', item.role, R.assoc('is_role_editable', state.session.officeId === item.office.id || state.session.officeRole === AGENCY_ROLES.HQ_EDITOR , null)))
       , user.office_memberships);
 
     initialValues = { fullname, email, office_memberships };

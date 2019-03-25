@@ -12,7 +12,7 @@ import CaptionTypography from '../../common/typography/captionTypography';
 
 const messages = {
   title: 'Number Of Pinned Calls for Expressions of Interest',
-  caption: 'with approaching application deadline',
+  caption: 'with application deadlines in the next 10 days',
   button: 'view all',
 };
 

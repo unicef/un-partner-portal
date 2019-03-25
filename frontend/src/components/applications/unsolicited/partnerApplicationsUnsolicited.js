@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import PartnerApplicationsNotesFilter from './partnerApplicationsUnsolicitedFilter';
 import DirectSelectionCell from './directSelectionCell';
@@ -42,7 +43,7 @@ const applicationCell = ({ row, column, value }) => {
     />);
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 class PartnerApplicationsUnsolicited extends Component {

@@ -30,6 +30,9 @@ const styleSheet = theme => ({
   paper: {
     height: 'inherit',
   },
+  value: {
+    whiteSpace: 'nowrap',
+  }
 });
 
 const NumberOfPartners = (props) => {
@@ -69,7 +72,7 @@ const NumberOfPartners = (props) => {
                         <Typography>{name}</Typography>
                       </Grid>
                     </Grid>
-                    <Typography>{value}</Typography>
+                    <Typography className={classes.value}>{value}</Typography>
                   </SpreadContent>
                   <Divider />
                 </GridColumn>

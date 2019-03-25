@@ -1,5 +1,6 @@
 import random
 import os
+import uuid
 from datetime import date
 from coolname import generate
 from dateutil.relativedelta import relativedelta
@@ -63,6 +64,8 @@ from common.consts import (
     STAFF_GLOBALLY_CHOICES,
     FINANCIAL_CONTROL_SYSTEM_CHOICES,
     WORKING_LANGUAGES_CHOICES,
+    APPLICATION_STATUSES,
+    ALL_COMPLETED_REASONS,
 )
 from common.countries import COUNTRIES_ALPHA2_CODE
 from sanctionslist.models import SanctionedNameMatch, SanctionedItem, SanctionedName
@@ -187,7 +190,7 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 
 class UserFactory(factory.django.DjangoModelFactory):
     fullname = factory.LazyFunction(get_fullname)
-    email = factory.Sequence(lambda n: "fake-user-{}@unicef.org".format(n))
+    email = factory.LazyFunction(lambda: f"fake-user-{uuid.uuid4()}@unicef.org")
     password = factory.PostGenerationMethodCall('set_password', 'test')
 
     profile = factory.RelatedFactory(UserProfileFactory, 'user')
@@ -206,6 +209,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = User
+        django_get_or_create = ('email', )
 
 
 class AdminLevel1Factory(factory.django.DjangoModelFactory):
@@ -262,6 +266,7 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     legal_name = factory.LazyFunction(get_partner_name)
     display_type = PARTNER_TYPES.cbo
     country_code = fuzzy.FuzzyChoice(COUNTRIES)
+    hq = None
 
     # hq information
     country_presence = factory.LazyFunction(get_country_list)
@@ -319,19 +324,23 @@ class PartnerFactory(factory.django.DjangoModelFactory):
     def budgets(self, create, extracted, **kwargs):
         # we want to have last 3 year (with current)
         for year in [date.today().year, date.today().year-1, date.today().year-2]:
-            PartnerBudget.objects.create(
+            PartnerBudget.objects.get_or_create(
                 partner=self,
                 year=year,
-                budget=get_budget_choice()
+                defaults={
+                    'budget': get_budget_choice()
+                }
             )
 
     @factory.post_generation
     def collaborations_partnership(self, create, extracted, **kwargs):
-        PartnerCollaborationPartnership.objects.create(
+        PartnerCollaborationPartnership.objects.get_or_create(
             partner=self,
-            created_by=get_partner_member(),
             agency=get_random_agency(),
-            description="description"
+            defaults={
+                'created_by': get_partner_member(),
+                'description': 'description',
+            }
         )
 
     @factory.post_generation
@@ -359,60 +368,26 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def internal_controls(self, create, extracted, **kwargs):
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.procurement,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.authorization,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.recording,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.payment,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.custody,
-            segregation_duties=True,
-            comment="fake comment"
-        )
-        PartnerInternalControl.objects.create(
-            partner=self,
-            functional_responsibility=FUNCTIONAL_RESPONSIBILITY_CHOICES.bank,
-            segregation_duties=True,
-            comment="fake comment"
-        )
+        for functional_responsibility in FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values:
+            PartnerInternalControl.objects.get_or_create(
+                partner=self,
+                functional_responsibility=functional_responsibility,
+                defaults={
+                    'segregation_duties': True,
+                    'comment': 'fake comment'
+                }
+            )
 
     @factory.post_generation
     def area_policies(self, create, extracted, **kwargs):
-        PartnerPolicyArea.objects.create(
-            partner=self,
-            area=POLICY_AREA_CHOICES.human,
-            document_policies=bool(random.getrandbits(1))
-        )
-        PartnerPolicyArea.objects.create(
-            partner=self,
-            area=POLICY_AREA_CHOICES.procurement,
-            document_policies=bool(random.getrandbits(1))
-        )
-        PartnerPolicyArea.objects.create(
-            partner=self,
-            area=POLICY_AREA_CHOICES.asset,
-            document_policies=bool(random.getrandbits(1))
-        )
+        for area in POLICY_AREA_CHOICES._db_values:
+            PartnerPolicyArea.objects.get_or_create(
+                partner=self,
+                area=area,
+                defaults={
+                    'document_policies': bool(random.getrandbits(1)),
+                }
+            )
 
     @factory.post_generation
     def org_head(self, create, extracted, **kwargs):
@@ -593,6 +568,9 @@ class PartnerFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Partner
+        django_get_or_create = (
+            'legal_name', 'country_code', 'hq'
+        )
 
 
 class PartnerMemberFactory(factory.django.DjangoModelFactory):
@@ -638,6 +616,7 @@ class AgencyMemberFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = AgencyMember
+        django_get_or_create = ('user', 'office')
 
 
 class OpenEOIFactory(factory.django.DjangoModelFactory):
@@ -686,13 +665,14 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def reviewers(self, create, extracted, **kwargs):
-        agency_members = User.objects.filter(is_superuser=False, agency_members__isnull=False).order_by("?")
-        count = random.randint(2, 4)
-        idx = agency_members.count()
-        while count and idx:
-            count -= 1
-            idx -= 1
-            self.reviewers.add(agency_members[idx])
+        agency_members = AgencyMemberFactory.create_batch(
+            random.randint(2, 4),
+            office=AgencyOfficeFactory(agency=self.agency),
+            role=AgencyRole.EDITOR_ADVANCED.name
+        )
+        self.reviewers.add(*[
+            am.user for am in agency_members
+        ])
 
     @factory.post_generation
     def focal_points(self, create, extracted, **kwargs):
@@ -715,8 +695,6 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def applications(self, create, extracted, **kwargs):
-        cfile = CommonFile.objects.create()
-        cfile.file_field.save('test.csv', open(filename))
         if self.display_type == CFEI_TYPES.direct:
             partner = get_random_partner()
             Application.objects.create(
@@ -737,8 +715,10 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
                     partner=partner,
                     eoi=self,
                     agency=self.agency,
-                    cn=cfile,
-                    submitter=self.focal_points.first(),
+                    cn=get_new_common_file(),
+                    submitter=(
+                        partner.partner_members.order_by('?').first() or PartnerMemberFactory(partner=partner)
+                    ).user,
                 )
                 for reviewer in self.reviewers.all():
                     scores = []
@@ -756,18 +736,85 @@ class OpenEOIFactory(factory.django.DjangoModelFactory):
                         note='Note for application id: {}'.format(app.id)
                     )
 
+                # Preselect a 3rd of applications
+                total_applications = self.applications.count()
+                for application in self.applications.all()[:int(total_applications / 3)]:
+                    application.status = APPLICATION_STATUSES.preselected
+                    application.save()
+
     @factory.post_generation
     def locations(self, create, extracted, **kwargs):
         self.locations.add(*PointFactory.create_batch(random.randint(2, 3)))
 
     @factory.post_generation
     def attachments(self, create, extracted, **kwargs):
-        for _ in range(random.randint(0, 3)):
+        for _ in range(random.randint(1, 5)):
             EOIAttachment.objects.create(
                 created_by=self.created_by,
                 eoi=self,
                 file=get_new_common_file(),
                 description=fake.catch_phrase()
+            )
+
+
+class FinalizedEOIFactory(OpenEOIFactory):
+    clarification_request_deadline_date = factory.LazyFunction(
+        lambda: date.today() - relativedelta(days=random.randint(30, 40))
+    )
+    deadline_date = factory.LazyFunction(
+        lambda: date.today() - relativedelta(days=random.randint(25, 30))
+    )
+    notif_results_date = factory.LazyAttribute(
+        lambda o: o.deadline_date + relativedelta(days=random.randint(7, 14))
+    )
+    start_date = factory.LazyFunction(
+        lambda: date.today() + relativedelta(years=random.randint(1, 3))
+    )
+    end_date = factory.LazyAttribute(
+        lambda o: o.start_date + relativedelta(days=random.randint(60, 120))
+    )
+    justification = factory.LazyFunction(fake.text)
+    review_summary_comment = factory.LazyFunction(fake.text)
+    review_summary_attachment = factory.LazyFunction(get_new_common_file)
+    completed_reason = ALL_COMPLETED_REASONS.partners
+    sent_for_publishing = True
+    sent_for_decision = True
+    is_published = True
+    is_completed = True
+
+    @factory.post_generation
+    def create_winner(self, create, extracted, **kwargs):
+        partner = PartnerFactory()
+        partner_user = (
+            partner.partner_members.order_by('?').first() or PartnerMemberFactory(partner=partner)
+        ).user
+        application = Application.objects.create(
+            partner=partner,
+            eoi=self,
+            agency=self.agency,
+            cn=get_new_common_file(),
+            did_win=True,
+            did_accept=True,
+            partner_decision_date=date.today(),
+            status=APPLICATION_STATUSES.recommended,
+            justification_reason=fake.text(),
+            submitter=partner_user,
+            partner_decision_maker=partner_user,
+        )
+        for reviewer in self.reviewers.all():
+            scores = []
+            for criterion in self.assessments_criteria:
+                scores.append(
+                    {'selection_criteria': criterion['selection_criteria'], 'score': random.randint(1, 10)}
+                )
+            Assessment.objects.create(
+                created_by=reviewer,
+                reviewer=reviewer,
+                application=application,
+                scores=scores,
+                date_reviewed=date.today(),
+                completed=True,
+                note='Note for application id: {}'.format(application.id)
             )
 
 
@@ -818,13 +865,14 @@ class UnsolicitedFactory(factory.django.DjangoModelFactory):
         model = Application
 
     @factory.post_generation
-    def proposal_of_eoi_details(self, create, extracted, **kwargs):
+    def eoi_details(self, create, extracted, **kwargs):
         self.proposal_of_eoi_details = {
             'specializations': [
                 Specialization.objects.all().order_by("?").first().id,
             ],
-            'title': 'fake title'
+            'title': fake.sentence()
         }
+        self.locations_proposal_of_eoi.add(PointFactory())
         self.save()
 
 

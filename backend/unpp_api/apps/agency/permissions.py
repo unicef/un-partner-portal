@@ -68,6 +68,9 @@ class AgencyPermission(AutoNameEnum):
     CFEI_DIRECT_CANCEL = auto()
     CFEI_DIRECT_FINALIZE = auto()  # If creator / focal point
 
+    # Unsolicited concept notes
+    UCN_CONVERT_TO_DSR = auto()
+
     # Sanctions check
     REVIEW_AND_MARK_SANCTIONS_MATCHES = auto()
 

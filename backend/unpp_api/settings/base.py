@@ -6,16 +6,26 @@ import sys
 ####
 # Change per project
 ####
+from django.urls import reverse_lazy
+from django.utils.text import slugify
+
 PROJECT_NAME = 'unpp_api'
 # project root and add "apps" to the path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(PROJECT_ROOT, 'apps/'))
 
+# domains/hosts etc.
+DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
+WWW_ROOT = 'http://%s/' % DOMAIN_NAME
+ALLOWED_HOSTS = [DOMAIN_NAME]
+FRONTEND_HOST = os.getenv('UNPP_FRONTEND_HOST', DOMAIN_NAME)
+
 ####
 # Other settings
 ####
 ADMINS = (
-    ('Alerts', os.getenv('ALERTS_EMAIL') or 'unicef-unpp@tivix.com'),
+    ('Alerts', os.getenv('ALERTS_EMAIL') or 'admin@unpartnerportal.com'),
+    ('Tivix', f'unicef-unpp+{slugify(DOMAIN_NAME)}@tivix.com'),
 )
 
 SANCTIONS_LIST_URL = 'https://scsanctions.un.org/resources/xml/en/consolidated.xml'
@@ -30,18 +40,18 @@ ROOT_URLCONF = 'unpp_api.urls'
 DATA_VOLUME = os.getenv('DATA_VOLUME', '/data')
 
 ALLOWED_EXTENSIONS = (
-    'pdf', 'doc', 'docx', 'xls', 'xlsx' 'img', 'png', 'jpg', 'jpeg'
+    'pdf', 'doc', 'docx', 'xls', 'xlsx' 'img', 'png', 'jpg', 'jpeg', 'csv', 'zip'
 )
 UPLOADS_DIR_NAME = 'uploads'
-MEDIA_URL = '/api/%s/' % UPLOADS_DIR_NAME
-MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, '%s' % UPLOADS_DIR_NAME))
+MEDIA_URL = f'/api/{UPLOADS_DIR_NAME}/'
+MEDIA_ROOT = os.getenv('UNPP_UPLOADS_PATH', os.path.join(DATA_VOLUME, UPLOADS_DIR_NAME))
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 4194304  # 4mb
-
+FILE_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024  # 25mb
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
 
 # static resources related. See documentation at: http://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/
 STATIC_URL = '/api/static/'
-STATIC_ROOT = '%s/staticserve' % DATA_VOLUME
+STATIC_ROOT = f'{DATA_VOLUME}/staticserve'
 
 # static serving
 STATICFILES_FINDERS = (
@@ -55,7 +65,7 @@ IS_STAGING = False
 IS_PROD = False
 
 UN_SANCTIONS_LIST_EMAIL_ALERT = 'test@tivix.com'  # TODO - change to real one
-DEFAULT_FROM_EMAIL = 'UNPP Stage <noreply@unpp.org>'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'UNPP Stage <noreply@unpartnerportal.org>')
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
@@ -66,12 +76,6 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', '').lower() == 'true'
 ENV = os.getenv('ENV')
 if not ENV:
     raise Exception('Environment variable ENV is required!')
-
-# domains/hosts etc.
-DOMAIN_NAME = os.getenv('DJANGO_ALLOWED_HOST', 'localhost')
-WWW_ROOT = 'http://%s/' % DOMAIN_NAME
-ALLOWED_HOSTS = [DOMAIN_NAME]
-FRONTEND_HOST = os.getenv('UNPP_FRONTEND_HOST', DOMAIN_NAME)
 
 DATABASES = {
     'default': {
@@ -89,12 +93,12 @@ if POSTGRES_SSL_MODE == 'on':
     DATABASES['default'].update({'OPTIONS': {"sslmode": 'require'}})
 
 MIDDLEWARE = [
-    'elasticapm.contrib.django.middleware.TracingMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'account.authentication.CustomSocialAuthExceptionMiddleware',
     'common.middleware.ActivePartnerMiddleware',
     'common.middleware.ActiveAgencyOfficeMiddleware',
     'common.middleware.ClientTimezoneMiddleware',
@@ -120,7 +124,6 @@ TEMPLATES = [
 ]
 
 INSTALLED_APPS = [
-    'elasticapm.contrib.django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.humanize',
@@ -140,6 +143,7 @@ INSTALLED_APPS = [
     'social_django',
     'sequences.apps.SequencesConfig',
     'django_nose',
+    'background_task',
 
     'common',
     'account',
@@ -182,26 +186,44 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'common.authentication.CustomAzureADBBCOAuth2',
+    'account.authentication.CustomAzureADBBCOAuth2',
 ]
 
 # Django-social-auth settings
-KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
-SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_KEY = os.getenv('AZURE_B2C_CLIENT_ID', None)
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_SECRET = os.getenv('AZURE_B2C_CLIENT_SECRET', None)
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_SANITIZE_REDIRECTS = False
-POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
+SOCIAL_AUTH_SANITIZE_REDIRECTS = True
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_POLICY = os.getenv('AZURE_B2C_POLICY_NAME', "b2c_1A_UNICEF_PARTNERS_signup_signin")
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_PW_RESET_POLICY = os.getenv(
+    'AZURE_B2C_PW_RESET_POLICY_NAME', "B2C_1_PasswordResetPolicy"
+)
 
-TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
-SCOPE = ['openid', 'email']
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_TENANT_ID = os.getenv('AZURE_B2C_TENANT', 'unicefpartners.onmicrosoft.com')
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_SCOPE = [
+    'openid', 'email', 'profile',
+]
 IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/dashboard"
-
-# TODO: Re-enable this back once we figure out all email domain names to whitelist from partners
-# SOCIAL_AUTH_WHITELISTED_DOMAINS = ['unicef.org', 'google.com']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = reverse_lazy('accounts:social-logged-in')
+SOCIAL_AUTH_PIPELINE = (
+    'account.authentication.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'account.authentication.require_email',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'account.authentication.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'account.authentication.user_details',
+)
+SOCIAL_AUTH_AZUREAD_B2C_OAUTH2_USER_FIELDS = [
+    'email', 'fullname'
+]
 
 TEST_RUNNER = os.getenv('DJANGO_TEST_RUNNER', 'django.test.runner.DiscoverRunner')
 NOSE_ARGS = ['--with-timer', '--nocapture', '--nologcapture']
@@ -215,7 +237,7 @@ REST_FRAMEWORK = {
 }
 REST_AUTH_SERIALIZERS = {
     'LOGIN_SERIALIZER': 'account.serializers.CustomLoginSerializer',
-    'USER_DETAILS_SERIALIZER': 'account.serializers.RegisterSimpleAccountSerializer',
+    'USER_DETAILS_SERIALIZER': 'account.serializers.SimpleAccountSerializer',
     'PASSWORD_RESET_SERIALIZER': 'account.serializers.CustomPasswordResetSerializer',
 }
 
@@ -227,8 +249,7 @@ def extend_list_avoid_repeats(list_to_extend, extend_with):
     list_to_extend.extend(filter(lambda x: not list_to_extend.count(x), extend_with))
 
 
-LOGS_PATH = os.getenv('UNPP_LOGS_PATH', os.path.join(DATA_VOLUME, PROJECT_NAME, 'logs'))
-
+LOG_LEVEL = 'DEBUG' if DEBUG and 'test' not in sys.argv else 'INFO'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -247,19 +268,9 @@ LOGGING = {
     },
     'handlers': {
         'default': {
-            'level': 'DEBUG',
+            'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
-        },
-        'filesystem': {
-            'level': 'DEBUG',
-            'class': 'common.utils.DeferredRotatingFileHandler',
-            'filename': 'django.log',
-            'formatter': 'verbose',
-        },
-        'elasticapm': {
-            'level': 'ERROR',
-            'class': 'elasticapm.contrib.django.handlers.LoggingHandler',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -269,8 +280,13 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['default', 'filesystem'],
+            'handlers': ['default'],
             'level': 'INFO',
+            'propagate': True
+        },
+        'console': {
+            'handlers': ['default'],
+            'level': 'DEBUG',
             'propagate': True
         },
         'django.request': {
@@ -283,20 +299,8 @@ LOGGING = {
             'handlers': ['default'],
             'propagate': False,
         },
-        'elasticapm.errors': {
-            'level': 'ERROR',
-            'handlers': ['default'],
-            'propagate': False,
-        },
     }
 }
-
-# apm related - it's enough to set those as env variables, here just for documentation
-# by default logging and apm is off, so below envs needs to be set per environment
-
-# ELASTIC_APM_APP_NAME=<app-name> # set app name visible on dashboard
-# ELASTIC_APM_SECRET_TOKEN=<app-token> #secret token - needs to be exact same as on apm-server
-# ELASTIC_APM_SERVER_URL=http://elastic.tivixlabs.com:8200 # apm-server url
 
 UNHCR_API_HOST = os.getenv('UNHCR_API_HOST')
 UNHCR_API_USERNAME = os.getenv('UNHCR_API_USERNAME')
@@ -309,19 +313,29 @@ UNICEF_API_PASSWORD = os.getenv('UNICEF_API_PASSWORD')
 WFP_API_HOST = os.getenv('WFP_API_HOST')
 WFP_API_TOKEN = os.getenv('WFP_API_TOKEN')
 
+GIT_VERSION = os.getenv('GIT_VERSION', 'UNKNOWN')
 
-LEGACY_DB_HOST = os.getenv('LEGACY_DB_HOST')
-if LEGACY_DB_HOST and 'test' not in sys.argv:
-    # bit of an ugly hack, to stop creating legacy DB when testing
-    DATABASES['legacy'] = {
-        'ENGINE': 'sqlserver',
-        'NAME': os.getenv('LEGACY_DB_NAME'),
-        'USER': os.getenv('LEGACY_DB_USER'),
-        'PASSWORD': os.getenv('LEGACY_DB_PW'),
-        'HOST': LEGACY_DB_HOST,
-        'PORT': int(os.getenv('LEGACY_DB_PORT', 1433)),
+REDIS_INSTANCE = os.getenv('REDIS_INSTANCE')
+
+if REDIS_INSTANCE:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': f'redis://{REDIS_INSTANCE}/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+            'TIMEOUT': 3600
+        }
     }
-    DATABASE_ROUTERS = [
-        'legacy.database_routers.LegacyDatabaseRouter',
-    ]
-    INSTALLED_APPS += ['legacy']
+    DJANGO_REDIS_IGNORE_EXCEPTIONS = not DEBUG
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'common.cache_backends.DummyRedisCache',
+            'LOCATION': 'unpp'
+        }
+    }
+
+SESSION_COOKIE_HTTPONLY = True
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

@@ -8,10 +8,6 @@ import HeaderNavigation from '../common/headerNavigation';
 import { checkPermission, COMMON_PERMISSIONS } from '../../helpers/permissions';
 import PermissionNotification from '../common/permissionNotification';
 
-const messages = {
-  partner: 'Calls for Expressions of Interest',
-  agency: 'Expressions of Interest',
-};
 
 class EoiHeader extends Component {
   constructor(props) {
@@ -53,7 +49,7 @@ class EoiHeader extends Component {
       return (
         <HeaderNavigation
           index={index}
-          title={messages[role]}
+          title={'Partnership Opportunities'}
           tabs={tabs}
           header={(!id && type && type !== 'unsolicited' && role === 'agency')
            && <NewCfeiModalButton type={type} />}

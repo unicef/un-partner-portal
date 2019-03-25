@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import Save from 'material-ui-icons/Save';
 import PaginatedList from '../../../common/list/paginatedList';
 import TableWithStateInUrl from '../../../common/hoc/tableWithStateInUrl';
@@ -13,6 +14,7 @@ import {
 import { loadClarificationRequests } from '../../../../reducers/clarificationRequests';
 import IconWithTextButton from '../../../common/iconWithTextButtonWrapped';
 import { formatDateForPrint } from '../../../../helpers/dates';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const columns = [
   { name: 'partner', title: 'Organization name' },
@@ -57,7 +59,7 @@ class OpenCfeiRequests extends Component {
       return <TableCell>{value.name}</TableCell>;
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   render() {
@@ -77,7 +79,7 @@ class OpenCfeiRequests extends Component {
               color={'accent'}
               icon={<Save />}
               text={messages.download}
-              onClick={() => { window.open(`/api/projects/${id}/questions?export=pdf`, '_self'); }}
+              onClick={() => { authorizedFileDownload({uri: `/projects/${id}/questions?export=pdf`}); }}
             />}
         />
       </div>

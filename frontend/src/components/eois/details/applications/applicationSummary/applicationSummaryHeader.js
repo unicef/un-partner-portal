@@ -24,7 +24,6 @@ import ApplicationStatusText from '../applicationStatusText';
 import GridRow from '../../../../common/grid/gridRow';
 import EditReviewModalButton from './reviewContent/editReviewModalButton';
 import AddReviewModalButton from './reviewContent/addReviewModalButton';
-import AwardApplicationButtonContainer from '../../../buttons/awardApplicationButtonContainer';
 import WithdrawApplicationButton from '../../../buttons/withdrawApplicationButton';
 import { APPLICATION_STATUSES, PROJECT_STATUSES } from '../../../../../helpers/constants';
 import { checkPermission, AGENCY_PERMISSIONS, isRoleOffice, AGENCY_ROLES } from '../../../../../helpers/permissions';
@@ -79,7 +78,6 @@ class ApplicationSummaryHeader extends Component {
       params: { applicationId },
       didWin,
       didWithdraw,
-      completedReview,
       hasAssessPermission,
       isCompleted,
       isDeadlinePassed,
@@ -90,8 +88,9 @@ class ApplicationSummaryHeader extends Component {
     || cfeiStatus !== PROJECT_STATUSES.CLO;
 
     if (loading || isCompleted || status !== APPLICATION_STATUSES.PRE) return <div />;
+    const assessment = getAssessment(reviews && reviews[user]);
 
-    if (completedReview) {
+    if (assessment && assessment.completed) {
       if (didWin) {
         if (didWithdraw) {
           return <Button disabled>{messages.retracted}</Button>;
@@ -178,7 +177,6 @@ ApplicationSummaryHeader.propTypes = {
   hasRetractPermission: PropTypes.bool, 
   didWin: PropTypes.bool,
   didWithdraw: PropTypes.bool, 
-  completedReview: PropTypes.bool,
   cfeiStatus: PropTypes.string,
   applicationStatus: PropTypes.string,
   isAdvEd: PropTypes.bool,
@@ -228,7 +226,6 @@ const mapStateToProps = (state, ownProps) => {
     user: state.session.userId,
     didWin: did_win,
     didWithdraw: did_withdraw,
-    completedReview: assessments_is_completed,
     isCompleted: isCfeiCompleted(state, eoi),
     isDeadlinePassed: isCfeiDeadlinePassed(state, eoi),
   };

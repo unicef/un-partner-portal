@@ -14,12 +14,11 @@ class CompareApplicationsModal extends Component {
     return (
       <div>
         <ControlledModal
-          maxWidth="xl"
           title={messages.title}
           trigger={dialogOpen}
           handleDialogClose={handleDialogClose}
           removeContentPadding
-          buttons={{ }}
+          buttons={{}}
           content={<CompareApplicationsContentContainer applications={applications} />}
         />
       </div >

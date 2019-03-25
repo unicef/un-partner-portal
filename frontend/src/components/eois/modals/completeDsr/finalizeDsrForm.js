@@ -4,13 +4,12 @@ import { compose } from 'ramda';
 import { reduxForm, formValueSelector } from 'redux-form';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Grid from 'material-ui/Grid';
-import GridRow from '../../../common/grid/gridRow';
+import GridColumn from '../../../common/grid/gridColumn';
 import TextFieldForm from '../../../forms/textFieldForm';
 import RadioForm from '../../../forms/radioForm';
 import SelectForm from '../../../forms/selectForm';
-import { selectNormalizedDsrFinalizeOptions,
+import {
+  selectNormalizedDsrFinalizeOptions,
   selectNormalizedTimePeriods,
   selectCfeiStatus,
   selectCfeiWinnersStatus,
@@ -38,8 +37,9 @@ const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
 };
 
 const FinalizeDsrForm = (props) => {
-  const { classes, handleSubmit, completionReasons, timePeriods, completedReason, hasWinners } = props;
+  const { handleSubmit, completionReasons, timePeriods, completedReason, hasWinners } = props;
   const checkIfNotCancelled = completedReason !== 'cancelled';
+  const checkIfAccepted = completedReason === 'accepted_retention' || completedReason === 'accepted';
   const completedReasonAccepted = [];
   const completedReasonCancelled = [];
   completedReasonCancelled.push(completionReasons[0]);
@@ -71,24 +71,20 @@ const FinalizeDsrForm = (props) => {
         disabled={!hasWinners}
         column
       />}
-      {acceptedWithRetention && <GridRow>
+      {acceptedWithRetention && 
         <RadioForm
           fieldName="completed_reason"
-          values={completedReasonRetention}
+          values={completedReasonAccepted}
           disabled={!hasWinners}
           column
-        />
-
-        <Grid>
-          <SelectForm
-            fieldName="completed_retention"
-            placeholder={messages.retentionPlaceholder}
-            label={messages.retentionLabel}
-            values={timePeriods}
-            formControlStyle={formControlStyle}
-          />
-        </Grid>
-      </GridRow>}
+        />}
+      {checkIfAccepted && <SelectForm
+        fieldName="completed_retention"
+        placeholder={messages.retentionPlaceholder}
+        label={messages.retentionLabel}
+        values={timePeriods}
+        formControlStyle={formControlStyle}
+      />}
       <RadioForm
         fieldName="completed_reason"
         values={completedReasonCancelled}
@@ -109,22 +105,18 @@ const FinalizeDsrForm = (props) => {
 };
 
 FinalizeDsrForm.propTypes = {
-  classes: PropTypes.object,
-  /**
-   * callback for form submit
-   */
   handleSubmit: PropTypes.func.isRequired,
   completionReasons: PropTypes.array,
   timePeriods: PropTypes.array,
-  disabled: PropTypes.string,
   hasWinners: PropTypes.bool,
+  completedReason: PropTypes.string,
 };
 
 const finalizeDsr = reduxForm({
   form: 'finalizeDsr',
 })(FinalizeDsrForm);
 
-const mapStateToProps = (state, { params: { id, type } }, ownProps) => {
+const mapStateToProps = (state, { params: { id, type } }) => {
   const completionReasons = selectNormalizedDsrFinalizeOptions(state);
   const status = selectCfeiStatus(state, id);
   const reviewStarted = (status === PROJECT_STATUSES.OPE && type !== PROJECT_TYPES.DIRECT);

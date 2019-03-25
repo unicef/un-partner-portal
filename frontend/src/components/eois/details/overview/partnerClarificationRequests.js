@@ -38,11 +38,11 @@ class PartnerClarificationRequests extends Component {
   }
 
   title() {
-    const { handleDialogOpen, hasPermissionToAdd, isClaraificationDeadlinePassed } = this.props;
+    const { handleDialogOpen, hasPermissionToAdd, isClarificationDeadlinePassed } = this.props;
 
     return (<SpreadContent>
       <Typography type="body2" >{messages.title}</Typography>
-      {hasPermissionToAdd && !isClaraificationDeadlinePassed && <DropdownMenu
+      {hasPermissionToAdd && !isClarificationDeadlinePassed && <DropdownMenu
         options={[
           {
             name: add,
@@ -89,7 +89,7 @@ PartnerClarificationRequests.propTypes = {
   id: PropTypes.string,
   handleDialogClose: PropTypes.func,
   handleDialogOpen: PropTypes.func,
-  isClaraificationDeadlinePassed: PropTypes.bool,
+  isClarificationDeadlinePassed: PropTypes.bool,
   hasPermissionToAdd: PropTypes.bool,
   loading: PropTypes.bool,
   loadRequests: PropTypes.func,
@@ -98,7 +98,7 @@ PartnerClarificationRequests.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   loading: state.addClarificationRequest.status.loading,
-  isClaraificationDeadlinePassed: isCfeiClarificationDeadlinePassed(state, ownProps.id),
+  isClarificationDeadlinePassed: isCfeiClarificationDeadlinePassed(state, ownProps.id),
   hasPermissionToAdd: checkPermission(PARTNER_PERMISSIONS.CFEI_SEND_CLARIFICATION_REQUEST, state),
   count: selectClarificationRequestsCount(state, ownProps.id),
 });

@@ -30,7 +30,7 @@ const messages = {
     typePlaceholder: 'Select type',
     sector: 'Sector & Area of Specialization',
     experience: 'UN Experience',
-    show: 'Show INGO HQ only',
+    show: 'Show International CSO HQ only',
   },
 };
 
@@ -274,7 +274,7 @@ const mapStateToProps = (state, ownProps) => {
       registered,
       is_hq,
       has_experience,
-      locations,
+      locations: locations && Number(locations),
     },
   };
 };

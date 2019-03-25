@@ -15,6 +15,8 @@ import {
 } from '../../../reducers/partnerVerifications';
 import VerificationIcon from '../profile/icons/verificationIcon';
 import FlaggingStatus from '../profile/common/flaggingStatus';
+import PotentialMatch from '../profile/icons/potentialMatch';
+import HqProfile from '../profile/icons/hqProfile';
 import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
 
 const messages = {
@@ -25,8 +27,10 @@ const messages = {
 const PartnerTitle = (props) => {
   const {
     partner: {
+      isHq = false,
       name = '',
       partnerStatus: { is_verified, flagging_status: flags = {},
+        has_potential_sanction_match,
       } = {},
     } = {},
   } = props;
@@ -37,12 +41,19 @@ const PartnerTitle = (props) => {
           {name}
         </Typography>
       </Grid>
+      {isHq && <Grid item>
+        <HqProfile />
+      </Grid>}
       <Grid item>
         <VerificationIcon verified={is_verified} />
       </Grid>
       <Grid item>
         <FlaggingStatus flags={flags} />
       </Grid>
+      {has_potential_sanction_match
+        && <Grid item>
+          <PotentialMatch />
+        </Grid>}
     </Grid>);
 };
 
@@ -68,8 +79,8 @@ class PartnerProfileHeader extends Component {
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
     filterTabs = (hasVerifySeeCommentsPermission)
-      ? tabs
-      : R.filter(item => item.path !== messages.verificationTab, tabs);
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
 
     if (filterTabs.findIndex(tab => location.match(`^/partner/${partnerId}/${tab.path}`)) === -1) {
       history.push('/');
@@ -86,8 +97,8 @@ class PartnerProfileHeader extends Component {
       : R.filter(item => item.path !== messages.observationTab, tabs);
 
     filterTabs = (hasVerifySeeCommentsPermission)
-      ? tabs
-      : R.filter(item => item.path !== messages.verificationTab, tabs);
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
 
     history.push(`/partner/${partnerId}/${filterTabs[index].path}`);
   }
@@ -97,11 +108,16 @@ class PartnerProfileHeader extends Component {
       tabs,
       children,
       hasViewObservationPermission,
+      hasVerifySeeCommentsPermission,
     } = this.props;
 
-    const filterTabs = (hasViewObservationPermission)
+    let filterTabs = (hasViewObservationPermission)
       ? tabs
       : R.filter(item => item.path !== messages.observationTab, tabs);
+
+    filterTabs = (hasVerifySeeCommentsPermission)
+      ? filterTabs
+      : R.filter(item => item.path !== messages.verificationTab, filterTabs);
 
     const index = this.updatePath();
     return (

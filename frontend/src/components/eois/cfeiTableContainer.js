@@ -11,6 +11,7 @@ import {
   openPartnerColumns,
   directAgencyColumns,
   unsolicitedAgencyColumns,
+  customColumns,
 } from './tableColumns';
 
 const { OPEN, DIRECT, PINNED, UNSOLICITED } = PROJECT_TYPES;
@@ -44,6 +45,7 @@ class CfeiTableContainer extends Component {
           columns={CfeiTableContainer.getColumnData(role, type)}
           templateCell={RenderProjectCells(type)}
           loading={loading}
+          customColumns={customColumns}
         />
       </Grid>
     );

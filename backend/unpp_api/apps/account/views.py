@@ -1,11 +1,18 @@
+from django.conf import settings
+from django.contrib.auth import logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import Http404
+from django.urls import reverse
+from rest_framework.exceptions import PermissionDenied
+from django.views.generic import RedirectView
+from rest_auth.models import TokenModel
+from rest_auth.utils import default_create_token
 
-from rest_framework.permissions import AllowAny, IsAuthenticated
+
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, RetrieveUpdateAPIView
 
-from partner.models import Partner
-from sanctionslist.scans import sanctions_scan_partner
 from account.serializers import (
     PartnerRegistrationSerializer,
     PartnerUserSerializer,
@@ -16,15 +23,16 @@ from agency.serializers import AgencyUserSerializer
 
 class AccountRegisterAPIView(CreateAPIView):
 
-    permission_classes = (AllowAny, )
+    permission_classes = (IsAuthenticated, )
     serializer_class = PartnerRegistrationSerializer
 
     @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        response = super(AccountRegisterAPIView, self).create(request, *args, **kwargs)
-        partner = Partner.objects.get(id=response.data['partner']['id'])
-        sanctions_scan_partner(partner)
-        return response
+    def perform_create(self, serializer):
+        if self.request.user.agency_members.exists():
+            raise PermissionDenied('Agency Members cannot register partner profiles.')
+        elif self.request.user.partner_members.exists():
+            raise PermissionDenied('You have already registered a partner profile.')
+        return super(AccountRegisterAPIView, self).perform_create(serializer)
 
 
 class AccountCurrentUserRetrieveAPIView(RetrieveAPIView):
@@ -48,3 +56,23 @@ class UserProfileRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user.profile
+
+
+class SocialAuthLoggedInUserView(LoginRequiredMixin, RedirectView):
+
+    def get_redirect_url(self, *args, **kwargs):
+        protocol = 'http' if settings.DEBUG else 'https'
+        token = default_create_token(TokenModel, self.request.user, None)
+
+        return f'{protocol}://{settings.FRONTEND_HOST}/login/{token}'
+
+
+class SocialAuthLoginView(RedirectView):
+
+    def get_redirect_url(self, *args, **kwargs):
+        # Make sure session is properly cleared, in case frontend fails to do so
+        logout(self.request)
+
+        return reverse('social:begin', kwargs={
+            'backend': self.kwargs['backend']
+        })

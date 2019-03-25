@@ -42,15 +42,15 @@ export const url = (value) => {
 export const numerical = (value) => {
   const min = 1;
   const max = 100;
-  if (+value < min) return `Value is to small, min: ${min}`;
-  else if (+value > max) return `Value is to large, max: ${max}`;
+  if (+value < min) return `Value is too small, min: ${min}`;
+  else if (+value > max) return `Value is too large, max: ${max}`;
   return undefined;
 };
 
 export const weight = (value) => {
   const numValue = Number(value);
   if (Number.isNaN(numValue)) return 'Invalid number';
-  if (value < 1) return 'Value is to small, min: 1';
+  if (value < 1) return 'Value is too small, min: 1';
   return undefined;
 };
 
@@ -112,9 +112,9 @@ export const validateReviewScores = (values, props) => {
     const weights = pluck('weight', props.criteria);
     values.scores.forEach((scoreObj, scoreIndex) => {
       const scoreError = {};
-      if (+scoreObj.score < 1) scoreError.score = 'Value is to small, min: 1';
+      if (+scoreObj.score < 1) scoreError.score = 'Value is too small, min: 1';
       else if (+scoreObj.score > weights[scoreIndex]) {
-        scoreError.score = `Value is to large, max: ${weights[scoreIndex]}`;
+        scoreError.score = `Value is too large, max: ${weights[scoreIndex]}`;
       }
       scoresError[scoreIndex] = scoreError;
     });

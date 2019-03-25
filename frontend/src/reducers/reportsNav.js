@@ -1,7 +1,7 @@
 
 const initialState = [
   { id: 0, path: 'information', label: 'Partners' },
-  { id: 1, path: 'management', label: 'Expression of Interest' },
+  { id: 1, path: 'management', label: 'Partnership Opportunities' },
   { id: 2, path: 'verification', label: 'Verification & Observations' },
 ];
 

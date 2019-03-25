@@ -18,9 +18,9 @@ import GridColumn from '../../../../../../common/grid/gridColumn';
 import { APPLICATION_STATUSES } from '../../../../../../../helpers/constants';
 
 const messages = {
-  title: 'Preselected Partner(s)',
+  title: 'Shortlisted Partner(s)',
   button: 'send',
-  noInfo: 'No preselected partner(s).',
+  noInfo: 'No shortlisted partner(s).',
   criteria: 'Criteria',
   score: 'Average Score',
   totalScore: 'Average total score',

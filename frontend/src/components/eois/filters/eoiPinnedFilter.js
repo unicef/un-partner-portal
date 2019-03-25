@@ -243,7 +243,7 @@ const mapStateToProps = (state, ownProps) => {
       country_code,
       agency: agencyQ,
       active,
-      locations,
+      locations: locations && Number(locations),
       specializations: specializationsQ,
       posted_from_date,
       posted_to_date,

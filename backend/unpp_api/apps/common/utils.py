@@ -1,44 +1,10 @@
-import os
-
-from logging.handlers import RotatingFileHandler
-
 from django.conf import settings
-from imagekit import ImageSpec
-from imagekit.processors import ResizeToFill
-
-
-class DeferredRotatingFileHandler(RotatingFileHandler):
-    """
-    RotatingFileHandler but with deferred loading of logs file
-    so the correct logs path is taken based on chosen ENV settings.
-
-    Based on http://codeinthehole.com/writing/a-deferred-logging-file-handler-for-django/
-    """
-
-    def __init__(self, filename, *args, **kwargs):
-        self.filename = filename
-        kwargs['delay'] = True
-        RotatingFileHandler.__init__(self, "/dev/null", *args, **kwargs)
-
-    def _open(self):
-        # We import settings here to avoid a circular reference as this module
-        # will be imported when settings.py is executed.
-        from django.conf import settings
-
-        # NOTE Be sure that settings.LOGS_PATH exist before running Django app.
-        self.baseFilename = os.path.join(settings.LOGS_PATH, self.filename)
-        return RotatingFileHandler._open(self)
+from rest_framework import serializers
 
 
 def get_countries_code_from_queryset(queryset):
     from common.serializers import CountryPointSerializer
     return list(set(map(lambda x: x.get("country_code"), CountryPointSerializer(queryset, many=True).data)))
-
-
-class Thumbnail(ImageSpec):
-    processors = [ResizeToFill(100, 50)]
-    format = 'JPEG'
-    options = {'quality': 80}
 
 
 def confirm(prompt='Confirm', default=False):
@@ -87,3 +53,39 @@ def get_absolute_frontend_url(relative_url):
         host = host[:-1]
 
     return 'http://' + host + relative_url
+
+
+def update_m2m_relation(obj, related_name, related_data_list, serializer_class, context=None, save_kwargs=None):
+    if related_data_list is None:
+        return
+    from common.serializers import CommonFileSerializer
+
+    valid_ids = []
+
+    serializer_instance = serializer_class()
+
+    for related_object_data in related_data_list:
+        # This is a workaround for a poorly thought out concept behind CommonFileSerializer
+        # where serialized value is invalid on updates
+        for attr_name, attr_value in list(related_object_data.items()):
+            if isinstance(serializer_instance.fields.get(attr_name), CommonFileSerializer) and \
+                    not isinstance(attr_value, int):
+                related_object_data.pop(attr_name)
+
+        related_object = serializer_class.Meta.model.objects.filter(id=related_object_data.get('id')).first()
+        is_update = bool(related_object)
+        related_serializer = serializer_class(
+            instance=related_object, data=related_object_data, partial=is_update, context=context or {}
+        )
+
+        if related_serializer.is_valid():
+            related_serializer.save(**(save_kwargs or {}))
+        elif not is_update:
+            raise serializers.ValidationError({
+                related_name: related_serializer.errors
+            })
+        valid_ids.append(related_serializer.instance.id)
+
+    related_manager = getattr(obj, related_name)
+    related_manager.exclude(id__in=valid_ids).delete()
+    related_manager.add(*serializer_class.Meta.model.objects.filter(id__in=valid_ids))

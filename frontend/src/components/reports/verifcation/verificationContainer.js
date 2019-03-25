@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
 import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
+import Typography from 'material-ui/Typography';
+import AlertDialog from '../../common/alertDialog';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import VerificationFilter from './verificationFilter';
 import PaginatedList from '../../common/list/paginatedList';
@@ -19,9 +21,19 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permission
 
 const messages = {
   exportReport: 'Export report',
+  report: 'Report download',
 };
 
 class VerificationContainer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showDownloadInfo: false,
+      downloadInfo: null,
+    };
+  }
+
   componentWillMount() {
     const { query } = this.props;
     this.props.loadReports(query);
@@ -48,7 +60,7 @@ class VerificationContainer extends Component {
       />);
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   verificationReport() {
@@ -57,7 +69,12 @@ class VerificationContainer extends Component {
     const queryPage = R.dissoc('page', query);
     const queryPageSize = R.dissoc('page_size', queryPage);
 
-    getVerificationReports(queryPageSize);
+    getVerificationReports(queryPageSize).then((data) => {
+      this.setState({
+        showDownloadInfo: true,
+        downloadInfo: data.length > 0 && data[0],
+      });
+    });
   }
 
   render() {
@@ -68,7 +85,7 @@ class VerificationContainer extends Component {
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading || loading} />
+        <Loader fullscreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <VerificationFilter />
           {!R.isEmpty(queryParams)
@@ -92,6 +109,12 @@ class VerificationContainer extends Component {
             templateCell={this.tableCell}
           />}
         </CustomGridColumn>
+        <AlertDialog
+          trigger={!!this.state.showDownloadInfo}
+          title={messages.report}
+          text={this.state.downloadInfo}
+          handleDialogClose={() => this.setState({ showDownloadInfo: false })}
+        />
       </React.Fragment>
     );
   }

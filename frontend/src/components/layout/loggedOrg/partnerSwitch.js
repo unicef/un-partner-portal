@@ -79,19 +79,20 @@ class PartnerSwitch extends Component {
         selected={partner.id === this.props.partnerId}
       >
         <Typography type="body2">
-          {`${partner.legal_name}, ${countries[partner.country_code]} `}
+          {`${countries[partner.country_code]} ${partner.is_hq ? ' - HQ' : ''}`}
         </Typography>
       </MenuItem>
     ));
   }
 
   render() {
-    const { classes, partners, name, partnerCountry, countries } = this.props;
+    const { classes, partners, partnerId, partnerCountry, countries } = this.props;
+    const partner = R.find(R.propEq('id', partnerId))(partners);
     return (
       <div>
         <GridRow alignItems="center">
           <Typography type="body2">
-            {name}
+            {`${partnerCountry} ${partner && partner.is_hq ? ' - HQ' : ''}`}
           </Typography>
           <IconButton
             className={classNames(classes.icon, classes.expand, {
@@ -104,9 +105,6 @@ class PartnerSwitch extends Component {
             <ExpandMoreIcon />
           </IconButton>
         </GridRow>
-        <Typography type="body2">
-          {`${name}, ${partnerCountry} `}
-        </Typography>
         <Menu
           id="switch-partner"
           anchorEl={this.state.anchorEl}

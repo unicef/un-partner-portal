@@ -4,9 +4,7 @@ import R from 'ramda';
 import Grid from 'material-ui/Grid';
 import Typography from 'material-ui/Typography';
 import GridColumn from '../../../../common/grid/gridColumn';
-import { countGoodAnswers } from '../../../../../helpers/verificationUtils';
 import { formatDateForPrint } from '../../../../../helpers/dates';
-import VerificationDetails from '../../buttons/viewVerificationSummaryButton';
 import VerificationText from '../../common/verificationText';
 
 const messages = {

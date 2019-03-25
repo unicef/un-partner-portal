@@ -4,7 +4,8 @@ import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent'; 
-import DownloadButton from '../../buttons/downloadCfeiButton'; 
+import DownloadButton from '../../buttons/downloadCfeiButton';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const download = 'download';
 
@@ -22,7 +23,7 @@ class PartnerDirectHeaderOptions extends Component {
     return [
       {
         name: download,
-        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+        content: <DownloadButton handleClick={() => { authorizedFileDownload({uri: `/projects/${id}/?export=pdf`}); }} />,
       },
     ];
   }

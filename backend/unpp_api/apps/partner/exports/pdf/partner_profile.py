@@ -23,7 +23,6 @@ WORKING_LANGUAGES_DISPLAY = dict(WORKING_LANGUAGES_CHOICES)
 COUNTRIES_DISPLAY = dict(COUNTRIES_ALPHA2_CODE)
 DONORS_DISPLAY = dict(PARTNER_DONORS_CHOICES)
 
-
 NO_INFO_PLACEHOLDER = '<i>Information not provided</i>'
 
 BOOLEAN_DISPLAY = {
@@ -44,7 +43,7 @@ class CustomParagraph(Paragraph):
     """
 
     def __init__(self, content, *args, **kwargs):
-        content = content or ''
+        content = str(content or NO_INFO_PLACEHOLDER)
         super(CustomParagraph, self).__init__(content, *args, **kwargs)
 
 
@@ -101,8 +100,9 @@ class PartnerProfilePDFExporter:
         for row_number, row in enumerate(table_rows):
             if mode == TableMode.HORIZONTAL:
                 formatted_rows.append([
-                    CustomParagraph(row[0], self.style_th),
-                ] + list(map(lambda cell: CustomParagraph(str(cell), self.style_normal), row[1:])))
+                                          CustomParagraph(row[0], self.style_th),
+                                      ] + list(
+                    map(lambda cell: CustomParagraph(str(cell), self.style_normal), row[1:])))
             else:
                 style = self.style_th if row_number == 0 else self.style_normal
                 formatted_rows.append(list(map(lambda cell: CustomParagraph(str(cell), style), row)))
@@ -113,6 +113,10 @@ class PartnerProfilePDFExporter:
         else:
             table.setStyle(self.vertical_table_style)
         return table
+
+    def wrap_paragraph(self, content, style=None):
+        style = style or self.style_normal
+        return CustomParagraph(content, style)
 
     def get_basic_information_table(self):
         table_rows = [
@@ -143,26 +147,25 @@ class PartnerProfilePDFExporter:
         ]
         return self.wrap_table(table_rows)
 
-    def get_legal_status_table(self):
-        table_rows = [
-            [
-                'Year of establishment in country of operation',
-                self.partner.profile.year_establishment,
-            ],
-            [
-                'Is the organization registered to operate in the country?',
-                BOOLEAN_DISPLAY[self.partner.profile.registered_to_operate_in_country],
-            ],
-            [
-                'Registration comment',
-                self.partner.profile.missing_registration_document_comment,
-            ],
-            [
-                'Does the Organization have a Governing Document?',
-                BOOLEAN_DISPLAY[self.partner.profile.have_governing_document],
-            ],
-        ]
-        return self.wrap_table(table_rows)
+    def get_legal_paragraph(self):
+        return ListFlowable([
+            ListItem([
+                self.wrap_paragraph('Year of establishment in country of operation', style=self.style_h4),
+                self.wrap_paragraph(self.partner.profile.year_establishment),
+            ]),
+            ListItem([
+                self.wrap_paragraph('Is the organization registered to operate in the country?', style=self.style_h4),
+                self.wrap_paragraph(BOOLEAN_DISPLAY[self.partner.profile.registered_to_operate_in_country]),
+            ]),
+            ListItem([
+                self.wrap_paragraph('Registration comment', style=self.style_h4),
+                self.wrap_paragraph(self.partner.profile.missing_registration_document_comment),
+            ]),
+            ListItem([
+                self.wrap_paragraph('Does the Organization have a Governing Document?', style=self.style_h4),
+                self.wrap_paragraph(BOOLEAN_DISPLAY[self.partner.profile.have_governing_document]),
+            ]),
+        ], bulletType='a')
 
     def get_mailing_address_table(self):
         table_rows = [
@@ -219,82 +222,103 @@ class PartnerProfilePDFExporter:
         return self.wrap_table(table_rows)
 
     def get_organization_head_table(self):
-        org_head = getattr(self.partner.hq or self.partner, 'org_head', None)
-        table_rows = [
-            [
-                'Full name',
-                getattr(org_head, 'fullname', None),
-            ],
-            [
-                'Job Title/Position',
-                getattr(org_head, 'job_title', None),
-            ],
-            [
-                'Telephone',
-                getattr(org_head, 'telephone', None),
-            ],
-            [
-                'Mobile (optional)',
-                getattr(org_head, 'mobile', None),
-            ],
-            [
-                'Fax (optional)',
-                getattr(org_head, 'fax', None),
-            ],
-            [
-                'Email',
-                getattr(org_head, 'email', None),
-            ],
-        ]
-        return self.wrap_table(table_rows)
+        tables = []
 
-    def get_connectivity_table(self):
-        table_rows = [
-            [
-                'Does the organization have reliable access to internet in all of its operations?',
-                BOOLEAN_DISPLAY[self.partner.profile.connectivity],
-            ],
-            [
-                'Please explain how communication is done with non-connected operations',
-                self.partner.profile.connectivity_excuse,
-            ],
-        ]
-        return self.wrap_table(table_rows)
+        for org_head in self.partner.organisation_heads.order_by('-created'):
+            table_rows = [
+                [
+                    'Full name',
+                    getattr(org_head, 'fullname') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Job Title/Position',
+                    getattr(org_head, 'job_title') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Telephone',
+                    getattr(org_head, 'telephone') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Mobile (optional)',
+                    getattr(org_head, 'mobile') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Fax (optional)',
+                    getattr(org_head, 'fax') or NO_INFO_PLACEHOLDER,
+                ],
+                [
+                    'Email',
+                    getattr(org_head, 'email') or NO_INFO_PLACEHOLDER,
+                ],
+            ]
+            tables.append(ListItem(self.wrap_table(table_rows)))
 
-    def get_working_languages_table(self):
-        table_rows = [
-            [
-                'Working language(s) of your organization',
-                ", ".join([WORKING_LANGUAGES_DISPLAY[code] for code in self.partner.profile.working_languages]),
-            ],
-            [
-                'If other, please state',
-                self.partner.profile.working_languages_other,
-            ],
-        ]
-        return self.wrap_table(table_rows)
+        return ListFlowable(tables, bulletType='a')
 
-    def get_ethics_table(self):
-        table_rows = [
-            [
-                'Does the organization have a policy or code of conduct to '
-                'safeguard against the violation and abuse of beneficiaries?',
-                BOOLEAN_DISPLAY[self.partner.mandate_mission.ethic_safeguard],
-            ],
-            [
-                'Please comment',
-                self.partner.mandate_mission.ethic_safeguard_comment,
-            ],
-            [
-                'Does the organization have a policy or code of conduct to safeguard against fraud and corruption?',
-                BOOLEAN_DISPLAY[self.partner.mandate_mission.ethic_fraud],
-            ],
-            [
-                'Please comment',
-                self.partner.mandate_mission.ethic_fraud_comment,
-            ],
-        ]
-        return self.wrap_table(table_rows)
+    def get_connectivity_paragraph(self):
+        return ListFlowable([
+            ListItem([
+                self.wrap_paragraph(
+                    'Does the organization have reliable access to internet in all of its operations?',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(BOOLEAN_DISPLAY[self.partner.profile.connectivity]),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Please explain how communication is done with non-connected operations', style=self.style_h4
+                ),
+                self.wrap_paragraph(self.partner.profile.connectivity_excuse),
+            ]),
+        ], bulletType='a')
+
+    def get_working_languages_paragraph(self):
+        return ListFlowable([
+            ListItem([
+                self.wrap_paragraph('Working language(s) of your organization', style=self.style_h4),
+                self.wrap_paragraph(
+                    ", ".join([WORKING_LANGUAGES_DISPLAY[code] for code in self.partner.profile.working_languages])
+                ),
+            ]),
+            ListItem([
+                self.wrap_paragraph('If other, please state', style=self.style_h4),
+                self.wrap_paragraph(self.partner.profile.working_languages_other),
+            ]),
+        ], bulletType='a')
+
+    def get_ethics_paragraphs(self):
+        return ListFlowable([
+            ListItem([
+                self.wrap_paragraph(
+                    'Briefly describe the organization’s mechanisms to safeguard against the violation '
+                    'and abuse of beneficiaries, including sexual exploitation and abuse.',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(self.partner.mandate_mission.ethic_safeguard_comment),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Are these mechanisms formally documented in an organizational policy or code of conduct?',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(BOOLEAN_DISPLAY[self.partner.mandate_mission.ethic_safeguard]),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Briefly describe the organization’s mechanisms to safeguard against '
+                    'fraud, corruption and other unethical behaviour.',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(self.partner.mandate_mission.ethic_fraud_comment),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Are these mechanisms formally documented in an organizational policy or code of conduct?',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(BOOLEAN_DISPLAY[self.partner.mandate_mission.ethic_fraud]),
+            ]),
+        ], bulletType='a')
 
     def get_experiences_table(self):
         table_rows = []
@@ -306,42 +330,56 @@ class PartnerProfilePDFExporter:
 
         return self.wrap_table(table_rows)
 
-    def get_country_presence_table(self):
-        table_rows = [
-            [
-                'Country',
-                ', '.join([COUNTRIES_DISPLAY[code] for code in self.partner.country_presence]),
-            ],
-            [
-                'Number of staff in country',
-                self.partner.get_staff_in_country_display()
-            ],
-            [
-                'Briefly describe the organization\'s engagement with the communities in which you operate',
-                self.partner.engagement_operate_desc
-            ],
-        ]
+    def get_country_presence_paragraph(self):
+        return ListFlowable([
+            ListItem([
+                self.wrap_paragraph('Country', style=self.style_h4),
+                self.wrap_paragraph(
+                    '; '.join([p.admin_level_1.name for p in self.partner.location_field_offices.all()])
+                ),
+            ]),
+            ListItem([
+                self.wrap_paragraph('Number of staff in country', style=self.style_h4),
+                self.wrap_paragraph(self.partner.get_staff_in_country_display()),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Briefly describe the organization\'s engagement with the communities in which you operate',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(self.partner.engagement_operate_desc),
+            ]),
 
-        return self.wrap_table(table_rows)
+        ], bulletType='a')
 
-    def get_security_table(self):
-        table_rows = [
-            [
-                'Does the organization have the ability to work in high-risk security locations?',
-                BOOLEAN_DISPLAY[self.partner.mandate_mission.security_high_risk_locations],
-            ],
-            [
-                'Does the organization have policies, procedures and practices related to security risk management',
-                BOOLEAN_DISPLAY[self.partner.mandate_mission.security_high_risk_policy],
-            ],
-            [
-                'Briefly describe the organization\'s ability, if any, to scale-up operations in emergencies or '
-                'other situations requiring rapid response.',
-                self.partner.mandate_mission.security_desc
-            ],
-        ]
+    def get_security_paragraph(self):
+        return ListFlowable([
+            ListItem([
+                self.wrap_paragraph(
+                    'Does the organization have the ability to work in high-risk security locations?',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(
+                    BOOLEAN_DISPLAY[self.partner.mandate_mission.security_high_risk_locations]
+                ),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Does the organization have policies, procedures and practices related to security risk management',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(BOOLEAN_DISPLAY[self.partner.mandate_mission.security_high_risk_policy]),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Briefly describe the organization\'s ability, if any, to scale-up operations in emergencies or '
+                    'other situations requiring rapid response.',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(self.partner.mandate_mission.security_desc),
+            ]),
 
-        return self.wrap_table(table_rows)
+        ], bulletType='a')
 
     def get_budget_table(self):
         table_rows = []
@@ -353,33 +391,46 @@ class PartnerProfilePDFExporter:
 
         return self.wrap_table(table_rows)
 
-    def get_major_donors_table(self):
-        table_rows = [
-            [
-                'Please select the type of donors that fund your agency',
-                ', '.join([DONORS_DISPLAY[code] for code in self.partner.fund.major_donors]),
-            ],
-            [
-                'Please list your main donors for programme activities',
-                self.partner.fund.main_donors_list,
-            ],
-            [
-                'Please list your main donors for core funding',
-                self.partner.fund.source_core_funding,
-            ],
-        ]
+    def get_major_donors_paragraph(self):
+        return ListFlowable([
+            ListItem([
+                self.wrap_paragraph(
+                    'Please select the type of donors that fund your agency',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(
+                    ', '.join([DONORS_DISPLAY[code] for code in self.partner.fund.major_donors])
+                ),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Please list your main donors for programme activities',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(self.partner.fund.main_donors_list),
+            ]),
+            ListItem([
+                self.wrap_paragraph(
+                    'Please list your main donors for core funding',
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(self.partner.fund.source_core_funding),
+            ]),
 
-        return self.wrap_table(table_rows)
+        ], bulletType='a')
 
-    def get_collaborations_partnership_table(self):
-        table_rows = []
+    def get_collaborations_partnership_paragraph(self):
+        items = []
         for cp in self.partner.collaborations_partnership.all():
-            table_rows.append((
-                cp.agency.name,
-                cp.description
-            ))
+            items.append(ListItem([
+                self.wrap_paragraph(
+                    cp.agency.name,
+                    style=self.style_h4
+                ),
+                self.wrap_paragraph(cp.description),
+            ]))
 
-        return self.wrap_table(table_rows)
+        return ListFlowable(items, bulletType='a')
 
     def get_accreditations_table(self):
         table_rows = [
@@ -412,21 +463,16 @@ class PartnerProfilePDFExporter:
         return self.wrap_table(table_rows, mode=TableMode.VERTICAL)
 
     def get_internal_controls_table(self):
-        table_rows = [
-            (
-                'Area of Responsibility',
-                'Segregation of Duties',
-                'Comment',
-            ),
-        ]
+        items = []
         for ic in self.partner.internal_controls.all():
-            table_rows.append((
-                ic.get_functional_responsibility_display(),
-                BOOLEAN_DISPLAY[ic.segregation_duties],
-                ic.comment
-            ))
+            items.append(ListItem([
+                self.wrap_paragraph(
+                    f'<b>{ic.get_functional_responsibility_display()}</b>: {BOOLEAN_DISPLAY[ic.segregation_duties]}'
+                ),
+                self.wrap_paragraph(ic.comment),
+            ]))
 
-        return self.wrap_table(table_rows, mode=TableMode.VERTICAL)
+        return ListFlowable(items, bulletType='a')
 
     def get_policy_areas_table(self):
         table_rows = [
@@ -501,21 +547,21 @@ class PartnerProfilePDFExporter:
                 CustomParagraph('Basic Information', self.style_h4),
                 self.get_basic_information_table(),
                 CustomParagraph('Legal Status', self.style_h4),
-                self.get_legal_status_table(),
+                self.get_legal_paragraph(),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([
                 CustomParagraph('Contact information', style=self.style_h3),
                 CustomParagraph('Mailing Address', self.style_h4),
                 self.get_mailing_address_table(),
+                CustomParagraph('Head(s) of Organization', self.style_h4),
+                self.get_organization_head_table(),
                 CustomParagraph('Key Personnel', self.style_h4),
                 self.get_key_personnel_table(),
-                CustomParagraph('Head of Organization', self.style_h4),
-                self.get_organization_head_table(),
                 CustomParagraph('Connectivity', self.style_h4),
-                self.get_connectivity_table(),
+                self.get_connectivity_paragraph(),
                 CustomParagraph('Working Languages', self.style_h4),
-                self.get_working_languages_table(),
+                self.get_working_languages_paragraph(),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([
@@ -530,7 +576,7 @@ class PartnerProfilePDFExporter:
                 CustomParagraph('Briefly describe the organization\'s governance structure', self.style_h4),
                 CustomParagraph(self.partner.mandate_mission.governance_structure, self.style_normal),
                 CustomParagraph('Ethics', self.style_h4),
-                self.get_ethics_table(),
+                self.get_ethics_paragraphs(),
                 CustomParagraph('Experience(s)', self.style_h4),
                 self.get_experiences_table(),
                 CustomParagraph(
@@ -538,9 +584,9 @@ class PartnerProfilePDFExporter:
                 ),
                 CustomParagraph(BOOLEAN_DISPLAY[self.partner.mandate_mission.population_of_concern], self.style_normal),
                 CustomParagraph('Country Presence', self.style_h4),
-                self.get_country_presence_table(),
+                self.get_country_presence_paragraph(),
                 CustomParagraph('Security', self.style_h4),
-                self.get_security_table(),
+                self.get_security_paragraph(),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([
@@ -551,14 +597,14 @@ class PartnerProfilePDFExporter:
                 ),
                 self.get_budget_table(),
                 CustomParagraph('Major Donors', self.style_h4),
-                self.get_major_donors_table(),
+                self.get_major_donors_paragraph(),
                 Spacer(1, self.margin / 2)
             ]),
             ListItem([
                 CustomParagraph('Collaboration', style=self.style_h3),
                 CustomParagraph('Has your organization collaborated with any UN agency?', self.style_h4),
                 CustomParagraph(BOOLEAN_DISPLAY[self.partner.collaborations_partnership.exists()], self.style_normal),
-                self.get_collaborations_partnership_table(),
+                self.get_collaborations_partnership_paragraph(),
                 CustomParagraph(
                     'Has the organization collaborated with or participated as a member of a cluster, '
                     'professional network, consortium or any similar institution?',
@@ -627,8 +673,7 @@ class PartnerProfilePDFExporter:
                 CustomParagraph(self.partner.profile.financial_control_system_desc, self.style_normal),
                 CustomParagraph('Internal Controls', self.style_h3),
                 CustomParagraph(
-                    'Policy Area - Does the organization have formal documented policies '
-                    'applicable to all operations that cover the following areas?',
+                    'Does the organization have segregation of duties in the following areas of responsibility?',
                     self.style_h4
                 ),
                 self.get_internal_controls_table(),
@@ -639,8 +684,7 @@ class PartnerProfilePDFExporter:
                 ),
                 CustomParagraph(BOOLEAN_DISPLAY[self.partner.profile.experienced_staff], self.style_normal),
                 CustomParagraph(
-                    'Policy Area - Does the organization have formal documented policies applicable '
-                    'to all operations that cover the following areas?',
+                    'Does the organization have documented policies in the following subject areas?',
                     self.style_h4
                 ),
                 self.get_policy_areas_table(),

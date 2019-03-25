@@ -1,10 +1,13 @@
-FROM python:3.6.6-alpine3.8
+FROM python:3.6.7-alpine3.8
 
 ARG env
 ENV ENV ${env:-dev}
 
 ARG requirement_file
 ENV REQUIREMENT_FILE ${requirement_file:-dev.pip}
+
+ARG GIT_VERSION
+ENV GIT_VERSION ${GIT_VERSION:-UNKNOWN}
 
 RUN apk update
 RUN apk add --upgrade --no-cache "postgresql-client" "postgresql-contrib" "postgresql-dev" bash curl
@@ -29,15 +32,16 @@ RUN pip install --upgrade pip && pip install -r $REQUIREMENT_FILE --trusted-host
 
 ADD . /code/
 
-RUN mkdir -p /data/unpp_api/logs
 RUN mkdir -p /data/staticserve
 RUN mkdir -p /data/uploads
-RUN touch /data/unpp_api/logs/django.log
 
 RUN chmod -R a+rw /data
 
 ADD worker-entrypoint.sh /
 RUN chmod +x /worker-entrypoint.sh
+
+ADD entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
 ENV PYTHONUNBUFFERED 1
 WORKDIR /code/
@@ -46,3 +50,5 @@ COPY wait-for-it.sh /usr/local/bin/wait-for-it.sh
 RUN chmod +x /usr/local/bin/wait-for-it.sh
 
 EXPOSE 8000
+
+CMD /./entrypoint.sh

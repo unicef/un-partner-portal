@@ -67,9 +67,10 @@ class ApplicationsToScoreListAPIView(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        open_eois_as_reviewer = user.eoi_as_reviewer.filter(completed_reason=None, completed_date=None)
         return Application.objects.filter(
-            eoi__in=open_eois_as_reviewer
+            eoi__reviewers=user,
+            eoi__completed_reason=None,
+            eoi__completed_date=None,
         ).exclude(assessments__reviewer=user).order_by('eoi__modified').distinct('eoi__modified', 'eoi')
 
 
@@ -141,7 +142,12 @@ class SubmittedCNListAPIView(PartnerIdsMixin, ListAPIView):
     pagination_class = SmallPagination
 
     def get_queryset(self):
-        return Application.objects.filter(partner_id__in=self.get_partner_ids())
+        applications = Application.objects.filter(partner_id__in=self.get_partner_ids())
+        applications = applications.filter(
+            Q(eoi=None) | Q(eoi__is_published=True)
+        )
+
+        return applications
 
 
 class PendingOffersListAPIView(PartnerIdsMixin, ListAPIView):

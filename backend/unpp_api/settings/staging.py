@@ -3,7 +3,7 @@ from .base import *  # noqa: ignore=F403
 
 
 # dev overrides
-DEBUG = True
+DEBUG = False
 IS_STAGING = True
 
 extend_list_avoid_repeats(INSTALLED_APPS, [

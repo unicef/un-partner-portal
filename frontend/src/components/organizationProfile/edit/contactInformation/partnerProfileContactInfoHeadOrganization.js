@@ -1,7 +1,7 @@
 import React from 'react';
-import { FormSection } from 'redux-form';
+import { formValueSelector, FormSection } from 'redux-form';
 import PropTypes from 'prop-types';
-import Grid from 'material-ui/Grid';
+import { connect } from 'react-redux';
 import RadioForm from '../../../forms/radioForm';
 import { BOOL_VAL } from '../../../../helpers/formHelper';
 import TextFieldForm from '../../../forms/textFieldForm';
@@ -18,15 +18,17 @@ const messages = {
   mobile: 'Mobile (optional)',
   fax: 'Fax (optional)',
   email: 'Email',
+  hqHeads: 'HQ - Head(s) of Organization',
+  heads: 'Country office - Head(s) of Organization',
 };
 
-const authorisedOfficerForm = (head, readOnly) => (
+const authorisedOfficerForm = (head, index, readOnly, isHq) => (
   <CustomGridColumn>
     <GridRow columns={3}>
       <TextFieldForm
         label={messages.fullname}
         fieldName={`${head}.fullname`}
-        readOnly
+        readOnly={readOnly}
       />
       <TextFieldForm
         label={messages.jobTitle}
@@ -60,7 +62,10 @@ const authorisedOfficerForm = (head, readOnly) => (
         label={messages.email}
         fieldName={`${head}.email`}
         validation={[email]}
-        readOnly
+        readOnly={readOnly}
+        textFieldProps={{
+          "type": "email"
+        }}
       />
     </GridRow>
     <GridRow columns={3}>
@@ -81,23 +86,42 @@ const authorisedOfficerForm = (head, readOnly) => (
 );
 
 const PartnerProfileContactInfoHeadOrganization = (props) => {
-  const { readOnly } = props;
+  const { readOnly, hqOrgHeads } = props;
 
   return (<FormSection name="org_head">
-    <ArrayForm
-      limit={15}
-      initial
-      label={messages.officers}
-      fieldName="organisation_heads"
-      outerField={officer => authorisedOfficerForm(officer, readOnly)}
-      readOnly={readOnly}
-    />
+    <GridColumn>
+      {hqOrgHeads ?
+        <ArrayForm
+          limit={15}
+          initial
+          label={messages.hqHeads}
+          fieldName="hq_organisation_heads"
+          outerField={(officer, index) => authorisedOfficerForm(officer, index, true)}
+          readOnly
+        />
+        : null}
+      <ArrayForm
+        limit={15}
+        initial
+        label={hqOrgHeads && messages.heads}
+        fieldName="organisation_heads"
+        outerField={(officer, index) => authorisedOfficerForm(officer, index, readOnly, !hqOrgHeads)}
+        readOnly={readOnly}
+      />
+    </GridColumn>
   </FormSection>
   );
 };
 
+
 PartnerProfileContactInfoHeadOrganization.propTypes = {
   readOnly: PropTypes.bool,
+  hqOrgHeads: PropTypes.array,
 };
 
-export default PartnerProfileContactInfoHeadOrganization;
+const selector = formValueSelector('partnerProfile');
+export default connect(
+  state => ({
+    hqOrgHeads: selector(state, 'mailing.org_head.hq_organisation_heads'),
+  }),
+)(PartnerProfileContactInfoHeadOrganization);

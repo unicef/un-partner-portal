@@ -1,8 +1,12 @@
 import itertools
+import json
 import random
 
 from datetime import date
+
+from background_task.models import Task
 from django.urls import reverse
+from rest_framework import status
 
 from agency.models import Agency
 from agency.roles import AgencyRole
@@ -205,46 +209,94 @@ class TestVerificationsAndObservationsReportAPIView(BaseAPITestCase):
             self.assertEqual(list_response.data['count'], partners.filter(flags__category=flag_category).count())
 
 
-class TestBasicExportAPIViews(BaseAPITestCase):
+class TestBackgroundExportAPIViews(BaseAPITestCase):
+    # TODO: This only check if the jobs have been scheduled, test execution too
 
     user_type = BaseAPITestCase.USER_AGENCY
     agency_role = AgencyRole.EDITOR_ADVANCED
     initial_factories = []
 
     def test_profile_report(self):
-        PartnerFactory.create_batch(40)
+        PartnerFactory.create_batch(60)
         url = reverse('reports:partner-profile-export-xlsx')
         response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        self.assertResponseStatusIs(response, status_code=status.HTTP_202_ACCEPTED)
+
+        task = Task.objects.first()
+        self.assertIsNotNone(task)
+
+        task_params = json.loads(task.task_params)
+        exporter_class_name: str = task_params[0][0]
+        send_to: str = task_params[0][-1]
+
+        self.assertTrue(exporter_class_name.endswith('PartnerProfileReportXLSLExporter'), msg=exporter_class_name)
+        self.assertEqual(self.user.email, send_to)
 
     def test_contact_report(self):
-        PartnerFactory.create_batch(40)
+        PartnerFactory.create_batch(60)
         url = reverse('reports:partner-contact-export-xlsx')
         response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        self.assertResponseStatusIs(response, status_code=status.HTTP_202_ACCEPTED)
+
+        task = Task.objects.first()
+        self.assertIsNotNone(task)
+
+        task_params = json.loads(task.task_params)
+        exporter_class_name: str = task_params[0][0]
+        send_to: str = task_params[0][-1]
+
+        self.assertTrue(exporter_class_name.endswith('PartnerContactInformationXLSLExporter'), msg=exporter_class_name)
+        self.assertEqual(self.user.email, send_to)
 
     def test_mapping_report(self):
-        PartnerFactory.create_batch(40)
+        PartnerFactory.create_batch(60)
         url = reverse('reports:partner-mapping-export-xlsx')
         response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        self.assertResponseStatusIs(response, status_code=status.HTTP_202_ACCEPTED)
+
+        task = Task.objects.first()
+        self.assertIsNotNone(task)
+
+        task_params = json.loads(task.task_params)
+        exporter_class_name: str = task_params[0][0]
+        send_to: str = task_params[0][-1]
+
+        self.assertTrue(exporter_class_name.endswith('PartnerMappingReportXLSLExporter'), msg=exporter_class_name)
+        self.assertEqual(self.user.email, send_to)
 
     def test_project_report(self):
-        OpenEOIFactory.create_batch(20)
-        DirectEOIFactory.create_batch(20)
+        OpenEOIFactory.create_batch(99, is_published=True)
+        DirectEOIFactory.create_batch(99, is_published=True)
         url = reverse('reports:projects-details-export-xlsx')
         response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        self.assertResponseStatusIs(response, status_code=status.HTTP_202_ACCEPTED)
+
+        task = Task.objects.first()
+        self.assertIsNotNone(task)
+
+        task_params = json.loads(task.task_params)
+        exporter_class_name: str = task_params[0][0]
+        send_to: str = task_params[0][-1]
+
+        self.assertTrue(exporter_class_name.endswith('ProjectDetailsXLSLExporter'), msg=exporter_class_name)
+        self.assertEqual(self.user.email, send_to)
 
     def test_verifications_observations_report(self):
-        PartnerFactory.create_batch(40)
-        PartnerVerificationFactory.create_batch(40)
-        PartnerFlagFactory.create_batch(80)
+        PartnerFactory.create_batch(60)
+        PartnerVerificationFactory.create_batch(60)
+        PartnerFlagFactory.create_batch(120)
         url = reverse('reports:verifications-observations-export-xlsx')
         response = self.client.get(url)
-        self.assertResponseStatusIs(response)
-        self.assertEqual(response['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        self.assertResponseStatusIs(response, status_code=status.HTTP_202_ACCEPTED)
+
+        task = Task.objects.first()
+        self.assertIsNotNone(task)
+
+        task_params = json.loads(task.task_params)
+        exporter_class_name: str = task_params[0][0]
+        send_to: str = task_params[0][-1]
+
+        self.assertTrue(
+            exporter_class_name.endswith('PartnerVerificationsObservationsReportXLSLExporter'), msg=exporter_class_name
+        )
+        self.assertEqual(self.user.email, send_to)

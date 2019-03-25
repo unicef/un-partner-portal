@@ -6,6 +6,7 @@ import {
   stopLoading,
   saveErrorMsg,
 } from './apiStatus';
+import { saveSelectedItems } from './selectableListItems';
 
 export const REPORTS_CFEI_LOAD_STARTED = 'REPORTS_CFEI_LOAD_STARTED';
 export const REPORTS_CFEI_LOAD_SUCCESS = 'REPORTS_CFEI_LOAD_SUCCESS';
@@ -23,14 +24,15 @@ const saveCfeiReports = (state, action) => {
 };
 
 const messages = {
-  loadFailed: 'Loading Expression of interests reports failed.',
+  loadFailed: 'Loading Partner Opportunities reports failed.',
 };
 
 const initialState = {
   columns: [
+    { name: 'displayID', title: 'Project ID' },
     { name: 'title', title: 'Project Title', width: 250 },
     { name: 'locations', title: 'Country' },
-    { name: 'project_locations', title: 'Project Location' },
+    { name: 'locations_project', title: 'Project Location' },
     { name: 'type_display', title: 'Type of expresssion of interest' },
   ],
   loading: false,
@@ -45,7 +47,15 @@ export const loadCfeiReportsList = params => (dispatch) => {
   return getProjectReports(params)
     .then((reports) => {
       dispatch(reportsCfeiLoadEnded());
+      reports.results = R.map(item => {
+        item = R.assoc('locations_project', item.locations, item);
+        item.locations = R.map(location =>
+          R.assocPath(['admin_level_1', 'name'], item.displayID, location), item.locations)
+        return item;
+      }, reports.results);
       dispatch(reportsCfeiLoadSuccess(reports));
+
+      dispatch(saveSelectedItems(reports.results.map(item => item.id)));
     })
     .catch((error) => {
       dispatch(reportsCfeiLoadEnded());

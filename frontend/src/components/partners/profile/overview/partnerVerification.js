@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
+import Typography from 'material-ui/Typography';
 import { formatDateForPrint } from '../../../../helpers/dates';
-import MainContentWrapper from '../../../../components/common/mainContentWrapper';
-import HeaderNavigation from '../../../../components/common/headerNavigation';
+import MainContentWrapper from '../../../../components/common/mainContentWrapper'; 
 import PaginatedList from '../../../../components/common/list/paginatedList';
 import TableWithStateInUrl from '../../../../components/common/hoc/tableWithStateInUrl';
 import { isQueryChanged } from '../../../../helpers/apiHelper';
@@ -38,7 +38,7 @@ const tableCells = ({ row, column, hovered, value }) => {
     </TableCell>);
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 class PartnerVerificationsList extends Component {

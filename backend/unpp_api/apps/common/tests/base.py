@@ -114,8 +114,9 @@ class BaseAPITestCase(APITestCase):
         self.client.force_login(user)
         yield
         self.client.logout()
-        self.client.force_login(original_user)
-        self.client.headers.update(original_headers)
+        if original_user:
+            self.client.force_login(original_user)
+            self.client.headers.update(original_headers)
 
     def tearDown(self):
         self.client.clean_headers()

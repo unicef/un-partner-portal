@@ -1,0 +1,38 @@
+/* Required height of parents of the Full Page Intro and Intro itself */
+/* line 4, ../scss/style.scss */
+html,
+body,
+.view {
+  height: 100%; }
+
+/* Navbar animation */
+/* line 11, ../scss/style.scss */
+.navbar {
+  background-color: rgba(0, 0, 0, 0); }
+
+/* line 15, ../scss/style.scss */
+.top-nav-collapse {
+  background-color: #2196F3; }
+
+/* Adding color to the Navbar on mobile */
+@media only screen and (max-width: 768px) {
+  /* line 21, ../scss/style.scss */
+  .navbar {
+    background-color: #2196F3; } }
+/* Footer color for sake of consistency with Navbar */
+/* line 27, ../scss/style.scss */
+.page-footer {
+  background-color: #2196F3; }
+
+@media (min-width: 992px) {
+  /* line 32, ../scss/style.scss */
+  .navbar-expand-lg .navbar-nav .nav-link {
+    padding-right: 1rem;
+    padding-left: 1rem; } }
+/* line 37, ../scss/style.scss */
+.text-underline {
+  text-decoration: underline; }
+
+/* UN Blue background */
+
+/*# sourceMappingURL=style.css.map */

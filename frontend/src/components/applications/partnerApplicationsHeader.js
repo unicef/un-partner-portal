@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { browserHistory as history } from 'react-router';
-import Typography from 'material-ui/Typography';
 import HeaderNavigation from '../common/headerNavigation';
 import { PROJECT_TYPES } from '../../helpers/constants';
 import NewCfeiModalButton from '../eois/modals/newCfei/newCfeiModalButton';

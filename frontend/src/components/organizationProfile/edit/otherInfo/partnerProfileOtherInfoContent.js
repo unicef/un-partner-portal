@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import TextFieldForm from '../../../forms/textFieldForm';
 import CheckboxForm from '../../../forms/checkboxForm';
 import FileForm from '../../../forms/fileForm';
-import GridColumn from '../../../common/grid/gridColumn';
+import GridColumn from '../../../common/grid/customGridColumn';
 
 const messages = {
   otherInfo: 'Other information the organization may wish to share? (optional)',
