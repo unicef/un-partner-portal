@@ -120,6 +120,7 @@ class ApplicationsFilter(django_filters.FilterSet):
     agency = CharFilter(method='filter_agency')
     did_win = BooleanFilter(widget=BooleanWidget())
     cfei_active = BooleanFilter(method='filter_cfei_active', widget=BooleanWidget())
+    eoi = CharFilter(method='filter_eoi_type')
 
     applications_status = ChoiceFilter(method='filter_applications_status', choices=EXTENDED_APPLICATION_STATUSES)
 
@@ -199,6 +200,9 @@ class ApplicationsFilter(django_filters.FilterSet):
         if value:
             return queryset.filter(eoi__is_completed=False)
         return queryset.filter(eoi__is_completed=True)
+
+    def filter_eoi_type(self, quesryset, name, value):
+        return quesryset.filter(eoi__display_type=value)
 
 
 class ApplicationsEOIFilter(django_filters.FilterSet):
