@@ -13,10 +13,9 @@ import NotificationsList from '../notifications/notificationsList';
 import Logout from './logout';
 import logo from '../../img/logo.png';
 import { checkPermission, COMMON_PERMISSIONS } from '../../helpers/permissions';
-import SpreadContent from '../common/spreadContent';
 
 const message = {
-  maintenance: 'The UN Partner Portal will be down on 23 March 2019 for scheduled maintenance. The UN Partner Portal will resume service on 24 March 2019. We apologize for any inconvenience and appreciate your patience. Thank you for using UN Partner Portal! ',
+  maintenance: 'The UN Partner Portal will be down on 23 March 2019 for scheduled maintenance. The UN Partner Portal will resume service on 24 March 2019.  We apologize for any inconvenience and appreciate your patience. Thank you for using UN Partner Portal! ',
 };
 
 const styleSheet = theme => ({
@@ -53,7 +52,12 @@ const styleSheet = theme => ({
   },
   banner: {
     color: '#FFF',
+    minWidth: '76%',
     lineHeight: '1.25em',
+  },
+  bannerRoot: {
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 
@@ -105,9 +109,7 @@ class MainAppBar extends Component {
           position="static"
           color="primary"
         >
-        <SpreadContent>
-
-      
+        <div className={classes.bannerRoot}>
       <Typography type="body2" className={classes.banner} color="primary">{message.maintenance}</Typography>
       <Grid
             container
@@ -124,7 +126,7 @@ class MainAppBar extends Component {
               </IconButton>
             </Grid>
           </Grid>
-        </SpreadContent>
+        </div>
          
         </AppBar>
         <Popover
