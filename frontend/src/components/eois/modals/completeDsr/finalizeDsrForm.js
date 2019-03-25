@@ -39,6 +39,7 @@ const mapCompletionReasons = (disableNoC, disablePar) => (item) => {
 const FinalizeDsrForm = (props) => {
   const { handleSubmit, completionReasons, timePeriods, completedReason, hasWinners } = props;
   const checkIfNotCancelled = completedReason !== 'cancelled';
+  const checkIfAccepted = completedReason === 'accepted_retention' || completedReason === 'accepted';
   const completedReasonAccepted = [];
   const completedReasonCancelled = [];
   completedReasonCancelled.push(completionReasons[0]);
@@ -70,22 +71,20 @@ const FinalizeDsrForm = (props) => {
         disabled={!hasWinners}
         column
       />}
-      {acceptedWithRetention && <GridColumn>
+      {acceptedWithRetention && 
         <RadioForm
           fieldName="completed_reason"
-          values={completionReasons}
+          values={completedReasonAccepted}
           disabled={!hasWinners}
           column
-        />
-
-        <SelectForm
-          fieldName="completed_retention"
-          placeholder={messages.retentionPlaceholder}
-          label={messages.retentionLabel}
-          values={timePeriods}
-          formControlStyle={formControlStyle}
-        />
-      </GridColumn>}
+        />}
+      {checkIfAccepted && <SelectForm
+        fieldName="completed_retention"
+        placeholder={messages.retentionPlaceholder}
+        label={messages.retentionLabel}
+        values={timePeriods}
+        formControlStyle={formControlStyle}
+      />}
       <RadioForm
         fieldName="completed_reason"
         values={completedReasonCancelled}
@@ -110,14 +109,14 @@ FinalizeDsrForm.propTypes = {
   completionReasons: PropTypes.array,
   timePeriods: PropTypes.array,
   hasWinners: PropTypes.bool,
-  completedReason: PropTypes.array,
+  completedReason: PropTypes.string,
 };
 
 const finalizeDsr = reduxForm({
   form: 'finalizeDsr',
 })(FinalizeDsrForm);
 
-const mapStateToProps = (state, { params: { id, type } }, ownProps) => {
+const mapStateToProps = (state, { params: { id, type } }) => {
   const completionReasons = selectNormalizedDsrFinalizeOptions(state);
   const status = selectCfeiStatus(state, id);
   const reviewStarted = (status === PROJECT_STATUSES.OPE && type !== PROJECT_TYPES.DIRECT);

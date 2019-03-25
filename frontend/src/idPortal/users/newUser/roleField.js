@@ -19,7 +19,6 @@ const Office = (values, readOnly, officesFilter, id, ...props) => (member, index
 
   if (!fields.get(index).is_role_editable && id) {
     newValues = officesFilter.filter(value => ownOffice === value.value);
-  console.log(!fields.get(index).is_role_editable, id);
   }
 
   return (
