@@ -30,9 +30,10 @@ function buildHeaders(authorize = false, extraHeaders = {}) {
     'Cache-Control': 'no-cache',
     'Client-Timezone-Name': moment.tz.guess(),
   };
-  if (authorize) headers = { ...headers, Authorization: `token ${token}` };
+  if (authorize && token) headers = { ...headers, Authorization: `token ${token}` };
   if (partnerId) headers = { ...headers, 'Partner-ID': partnerId };
   if (officeId) headers = { ...headers, 'Agency-Office-ID': officeId };
+  
   return { ...headers, ...extraHeaders };
 }
 
@@ -108,6 +109,30 @@ function authorizedPostUpload({ uri, body = {}, params }) {
     .then(response => response.data);
 }
 
+export function authorizedFileDownload({ uri }) {
+  const opt = {
+    headers: buildHeaders(true),
+    responseType: 'blob'
+  };
+  return axios.get(`${host}${uri}`, { ...opt }).then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+
+    const filename_match = response.headers['content-disposition'].match(/filename="(.+)"/);
+    if (filename_match) {
+      link.setAttribute('download', filename_match[1]);
+    }
+    else {
+      link.setAttribute('download', "export.pdf");
+    }
+
+    document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+  });
+}
 
 // Accounts
 export function postRegistration(body) {
@@ -132,24 +157,24 @@ export const passwordResetConfirm = post.bind(null, '/rest-auth/password/reset/c
 
 // Config
 export function getCountries() {
-  return get('/config/countries');
+  return get('/config/countries/');
 }
 
 export function getSectors() {
-  return get('/config/sectors');
+  return get('/config/sectors/');
 }
 
 // Project
 export function getOpenCfei(filters, options) {
-  return authorizedGet({ uri: '/projects/open', params: filters, options });
+  return authorizedGet({ uri: '/projects/open/', params: filters, options });
 }
 
 export function getPinnedCfei(filters, options) {
-  return authorizedGet({ uri: '/projects/pins', params: filters, options });
+  return authorizedGet({ uri: '/projects/pins/', params: filters, options });
 }
 
 export function getDirectCfei(filters, options) {
-  return authorizedGet({ uri: '/projects/direct', params: filters, options });
+  return authorizedGet({ uri: '/projects/direct/', params: filters, options });
 }
 
 export function postOpenCfei(body) {
@@ -205,11 +230,11 @@ export function uploadCommonFile(body) {
 }
 
 export function getOpenCfeiDetails(id, options) {
-  return authorizedGet({ uri: `/projects/${id}`, options });
+  return authorizedGet({ uri: `/projects/${id}/`, options });
 }
 
 export function getUnsolicitedCN(params, options) {
-  return authorizedGet({ uri: '/projects/unsolicited', params, options });
+  return authorizedGet({ uri: '/projects/unsolicited/', params, options });
 }
 
 export function patchPinnedCfei(body) {
@@ -242,7 +267,7 @@ export function notifyReviewer(id, reviewerId) {
 
 // Applications
 export function getOpenCfeiApplications(id, filters, options) {
-  return authorizedGet({ uri: `/projects/${id}/applications`, params: filters, options });
+  return authorizedGet({ uri: `/projects/${id}/applications/`, params: filters, options });
 }
 
 export function getProjectApplication(projectId, options) {
@@ -280,26 +305,30 @@ export function getApplicationReviews(applicationId, options) {
 export function postApplicationReview(applicationId, reviewerId, body) {
   return authorizedPost({
     uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
-    body });
+    body
+  });
 }
 
 export function putApplicationReview(applicationId, reviewerId, body) {
   return authorizedPut({
     uri: `/projects/applications/${applicationId}/reviewer-assessments/${reviewerId}/`,
-    body });
+    body
+  });
 }
 
 export function getApplicationFeedback(applicationId, params, options) {
   return authorizedGet({
     uri: `/projects/application/${applicationId}/feedback/`,
     params,
-    options });
+    options
+  });
 }
 
 export function postApplicationFeedback(applicationId, body) {
   return authorizedPost({
     uri: `/projects/application/${applicationId}/feedback/`,
-    body });
+    body
+  });
 }
 
 export function postUnsolicitedCN(body) {
@@ -307,7 +336,7 @@ export function postUnsolicitedCN(body) {
 }
 
 export function getPartnerApplications(params, options) {
-  return authorizedGet({ uri: '/projects/applications', params, options });
+  return authorizedGet({ uri: '/projects/applications/', params, options });
 }
 
 export function getApplicationComparison(id, params, options) {
@@ -316,7 +345,7 @@ export function getApplicationComparison(id, params, options) {
 
 // Partners
 export function getPartnerProfileDetails(partnerId, options) {
-  return authorizedGet({ uri: `/partners/${partnerId}`, options });
+  return authorizedGet({ uri: `/partners/${partnerId}/`, options });
 }
 
 export function getPartnerProfileSummary(partnerId, options) {
@@ -324,23 +353,23 @@ export function getPartnerProfileSummary(partnerId, options) {
 }
 
 export function getPartnerNames(params, options) {
-  return get('/partners/short', params, options);
+  return get('/partners/short/', params, options);
 }
 
 export function getPartnersList(params, options) {
-  return authorizedGet({ uri: '/partners', params, options });
+  return authorizedGet({ uri: '/partners/', params, options });
 }
 
 export function getMembersList(id, params, options) {
-  return authorizedGet({ uri: `/agencies/${id}/members`, params, options });
+  return authorizedGet({ uri: `/agencies/${id}/members/`, params, options });
 }
 
 export function getPartnerMembersList(id, params, options) {
-  return authorizedGet({ uri: `/partners/${id}/members`, params, options });
+  return authorizedGet({ uri: `/partners/${id}/members/`, params, options });
 }
 
 export function getNotifications(params, options) {
-  return authorizedGet({ uri: '/notifications', params, options });
+  return authorizedGet({ uri: '/notifications/', params, options });
 }
 
 export function patchNotification(id, body) {
@@ -360,7 +389,7 @@ export function getOffices() {
 }
 
 export function getPartnerOrganizationProfiles(id, options) {
-  return authorizedGet({ uri: `/partners/${id}/org-profile`, options });
+  return authorizedGet({ uri: `/partners/${id}/org-profile/`, options });
 }
 
 export function createCountryProfile(id, body) {
@@ -368,7 +397,7 @@ export function createCountryProfile(id, body) {
 }
 
 export function getPartnerVerifications(id, params, options) {
-  return authorizedGet({ uri: `/partners/${id}/verifications`, params, options });
+  return authorizedGet({ uri: `/partners/${id}/verifications/`, params, options });
 }
 
 export function postPartnerVerifications(id, body) {
@@ -413,7 +442,7 @@ export function sendForDecision(id) {
 
 // Agencies
 export function getAgencyMembers(id, params = { page_size: 100 }, options) {
-  return authorizedGet({ uri: `/agencies/${id}/members`, params, options },
+  return authorizedGet({ uri: `/agencies/${id}/members/`, params, options },
   );
 }
 
@@ -448,45 +477,45 @@ export function getPendingOffers(params, options) {
 }
 
 export function getAdminOneLocations(countryCode, options) {
-  return authorizedGet({ uri: '/common/admin-levels', params: countryCode, options });
+  return authorizedGet({ uri: '/common/admin-levels/', params: countryCode, options });
 }
 
 // Reports
 
 export function getPartnerReports(params, options) {
-  return authorizedGet({ uri: '/reports/partners', params, options });
+  return authorizedGet({ uri: '/reports/partners/', params, options });
 }
 
 export function getProjectReports(params, options) {
-  return authorizedGet({ uri: '/reports/projects', params, options });
+  return authorizedGet({ uri: '/reports/projects/', params, options });
 }
 
 export function getVerificationsReports(params, options) {
-  return authorizedGet({ uri: '/reports/verifications-observations', params, options });
+  return authorizedGet({ uri: '/reports/verifications-observations/', params, options });
 }
 
 export function getPartnerProfileReports(params, options) {
-  return authorizedGet({ uri: '/reports/partners/profile/export/xlsx', params, options });
+  return authorizedGet({ uri: '/reports/partners/profile/export/xlsx/', params, options });
 }
 
 export function getPartnerContactReports(params, options) {
-  return authorizedGet({ uri: '/reports/partners/contact/export/xlsx', params, options });
+  return authorizedGet({ uri: '/reports/partners/contact/export/xlsx/', params, options });
 }
 
 export function getProjectDetailsReports(params, options) {
-  return authorizedGet({ uri: '/reports/projects/details/export/xlsx', params, options });
+  return authorizedGet({ uri: '/reports/projects/details/export/xlsx/', params, options });
 }
 
 export function getPartnerVerificationReports(params, options) {
-  return authorizedGet({ uri: '/reports/verifications-observations/export/xlsx', params, options });
+  return authorizedGet({ uri: '/reports/verifications-observations/export/xlsx/', params, options });
 }
 
 export function getPartnerMappingReports(params, options) {
-  return authorizedGet({ uri: '/reports/partners/mapping/export/xlsx', params, options });
+  return authorizedGet({ uri: '/reports/partners/mapping/export/xlsx/', params, options });
 }
 
 export function getClarificationRequests(cfeId, params) {
-  return authorizedGet({ uri: `/projects/${cfeId}/questions`, params });
+  return authorizedGet({ uri: `/projects/${cfeId}/questions/`, params });
 }
 
 export function getClarificationAnswers(cfeiId, params) {
@@ -502,7 +531,7 @@ export function postClarificationAnswer(cfeiId, body) {
 }
 
 export function deleteClarificationAnswer(id) {
-  return authorizedDelete({ uri: `/projects/answers/${id}` });
+  return authorizedDelete({ uri: `/projects/answers/${id}/` });
 }
 
 // ID portal

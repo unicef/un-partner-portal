@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { compose, any } from 'ramda';
+import Typography from 'material-ui/Typography';
 import withStyles from 'material-ui/styles/withStyles';
 import { TableCell } from 'material-ui/Table';
 import { browserHistory as history, withRouter } from 'react-router';
@@ -51,7 +52,7 @@ const HeaderActionsBase = (props) => {
 };
 
 const mapStateToPropsForHeaderActions = (state, ownProps) => ({
-  changeDisabled: selectCfeiStatus(state, ownProps.params.id) !== PROJECT_STATUSES.OPE,
+  changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
   status: selectCfeiStatus(state, ownProps.params.id),
 });
 
@@ -116,7 +117,7 @@ class ApplicationsListContainer extends Component {
       return <OrganizationTypeCell orgType={row.type_org} />;
     }
 
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   render() {
@@ -172,7 +173,7 @@ const mapStateToProps = (state, ownProps) => ({
   loading: state.partnersApplicationsList.status.loading,
   query: ownProps.location.query,
   id: ownProps.params.id,
-  changeDisabled: selectCfeiStatus(state, ownProps.params.id) !== PROJECT_STATUSES.OPE,
+  changeDisabled: selectCfeiStatus(state, ownProps.params.id) === PROJECT_STATUSES.OPE,
   allowedToEdit: !isCfeiCompleted(state, ownProps.params.id)
     && (isUserAFocalPoint(state, ownProps.params.id) || isUserACreator(state, ownProps.params.id)),
 });

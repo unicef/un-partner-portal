@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.db import transaction
 
 from rest_framework import serializers
@@ -9,8 +7,6 @@ from rest_framework.validators import UniqueValidator
 from account.declaration import PartnerDeclarationPDFCreator
 from account.forms import CustomPasswordResetForm
 from common.consts import (
-    FUNCTIONAL_RESPONSIBILITY_CHOICES,
-    POLICY_AREA_CHOICES,
     COLLABORATION_EVIDENCE_MODES,
 )
 from common.serializers import CommonFileBase64UploadSerializer
@@ -18,10 +14,7 @@ from partner.models import (
     Partner,
     PartnerProfile,
     PartnerHeadOrganization,
-    PartnerInternalControl,
     PartnerMember,
-    PartnerBudget,
-    PartnerPolicyArea,
     PartnerRegistrationDocument,
     PartnerGoverningDocument,
     PartnerCollaborationEvidence,
@@ -32,16 +25,15 @@ from partner.serializers import (
     PartnerSerializer,
     PartnerProfileSerializer,
     PartnerHeadOrganizationRegisterSerializer,
-    PartnerMemberSerializer,
     PartnerGoverningDocumentSerializer,
     PartnerRegistrationDocumentSerializer,
     PartnerCollaborationEvidenceSerializer,
 )
-from partner.validators import PartnerRegistrationValidator
 from account.models import User, UserProfile
+from sanctionslist.scans import sanctions_scan_partner
 
 
-class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
+class SimpleAccountSerializer(serializers.ModelSerializer):
 
     date_joined = serializers.DateTimeField(required=False, read_only=True)
     fullname = serializers.CharField(required=False)
@@ -61,7 +53,7 @@ class RegisterSimpleAccountSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def save(self):
-        user = super(RegisterSimpleAccountSerializer, self).save()
+        user = super(SimpleAccountSerializer, self).save()
         if 'password' in self.validated_data:
             user.set_password(self.validated_data['password'])
             user.save()
@@ -93,23 +85,17 @@ class PartnerDeclarationSerializer(serializers.Serializer):
 
 class PartnerRegistrationSerializer(serializers.Serializer):
 
-    user = RegisterSimpleAccountSerializer()
+    user = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
 
     partner = PartnerSerializer()
     partner_profile = PartnerProfileSerializer()
     partner_head_organization = PartnerHeadOrganizationRegisterSerializer()
-    partner_member = PartnerMemberSerializer()
 
     governing_document = PartnerGoverningDocumentSerializer(required=False)
     registration_document = PartnerRegistrationDocumentSerializer(required=False)
     recommendation_document = PartnerRecommendationDocumentSerializer(required=False)
 
     declaration = PartnerDeclarationSerializer(many=True, write_only=True)
-
-    class Meta:
-        validators = (
-            PartnerRegistrationValidator(),
-        )
 
     def validate(self, attrs):
         validated_data = super(PartnerRegistrationSerializer, self).validate(attrs)
@@ -169,9 +155,7 @@ class PartnerRegistrationSerializer(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        user_serializer = RegisterSimpleAccountSerializer(data=validated_data.pop('user'))
-        user_serializer.is_valid()
-        user = user_serializer.save()
+        user = validated_data.pop('user')
 
         self.partner = Partner.objects.create(**validated_data['partner'])
         self.save_documents(validated_data, user)
@@ -182,42 +166,32 @@ class PartnerRegistrationSerializer(serializers.Serializer):
         partner_head_org['partner_id'] = self.partner.pk
         PartnerHeadOrganization.objects.create(**partner_head_org)
 
-        responsibilities = []
-        for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
-            responsibilities.append(
-                PartnerInternalControl(partner=self.partner, functional_responsibility=responsibility)
-            )
-        PartnerInternalControl.objects.bulk_create(responsibilities)
+        partner_member, _ = PartnerMember.objects.get_or_create(
+            partner=self.partner,
+            user=user,
+            defaults={
+                'role': PartnerRole.ADMIN.name,
+                'title': 'Administrator'
+            }
+        )
 
-        policy_areas = []
-        for policy_area in list(POLICY_AREA_CHOICES._db_values):
-            policy_areas.append(PartnerPolicyArea(partner=self.partner, area=policy_area))
-
-        PartnerPolicyArea.objects.bulk_create(policy_areas)
-
-        budgets = []
-        for year in [date.today().year, date.today().year-1, date.today().year-2]:
-            budgets.append(PartnerBudget(partner=self.partner, year=year))
-        PartnerBudget.objects.bulk_create(budgets)
-
-        partner_member = validated_data['partner_member']
-        partner_member['partner_id'] = self.partner.id
-        partner_member['user'] = user_serializer.instance
-        partner_member['role'] = PartnerRole.ADMIN.name
-        self.partner_member = PartnerMember.objects.create(**validated_data['partner_member'])
-
-        self.partner.declaration = PartnerDeclarationPDFCreator(
-            validated_data['declaration'], self.partner, user
-        ).get_as_common_file()
         self.partner.save()
-
         self.partner = Partner.objects.get(pk=self.partner.pk)
+
+        Partner.objects.filter(pk=self.partner.pk).update(
+            declaration=PartnerDeclarationPDFCreator(
+                validated_data['declaration'], self.partner, user
+            ).get_as_common_file()
+        )
+
+        sanctions_scan_partner(self.partner)
+        from partner.serializers import PartnerMemberSerializer
         return {
             "partner": PartnerSerializer(instance=self.partner).data,
-            "user": user_serializer.data,
+            "user": SimpleAccountSerializer(instance=user).data,
             "partner_profile": PartnerProfileSerializer(instance=self.partner.profile).data,
             "partner_head_organization": PartnerHeadOrganizationRegisterSerializer(instance=self.partner.org_head).data,
-            "partner_member": PartnerMemberSerializer(instance=self.partner_member).data,
+            "partner_member": PartnerMemberSerializer(instance=partner_member).data,
         }
 
 

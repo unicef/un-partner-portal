@@ -22,9 +22,8 @@ export const applicationsCnEnded = () => ({ type: APPLICATIONS_CN_LOAD_ENDED });
 
 const initialState = {
   columns: [
-    { name: 'id', title: 'ID' },
-    { name: 'project_title', title: 'Project Title', width: 200 },
-    { name: 'eoi_id', title: 'CFEI ID' },
+    { name: 'project_title', title: 'Project Title', width: 250 },
+    { name: 'project_displayID', title: 'CFEI ID' },
     { name: 'agency_name', title: 'UN Agency' },
     { name: 'country', title: 'Country' },
     { name: 'specializations', title: 'Sector' },
@@ -47,6 +46,7 @@ const saveApplicationsCn = (state, action) => {
       specializations: R.path(['specializations'], item) ? normalizeSingleCfei(item).specializations : [],
       application_date: item.application_date,
       application_status: item.application_status,
+      project_displayID: item.project_displayID,
     }), action.response.results);
 
   return R.assoc('items', applications, R.assoc('totalCount', action.response.count, state));

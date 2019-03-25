@@ -42,7 +42,7 @@ export function normalizeSuggestion(suggestion, previousSuggestion) {
   if (!suggestion) return previousSuggestion;
 
   if (has('clear', suggestion)) {
-    return previousSuggestion && previousSuggestion.filter((_, index) => index !== suggestion.index);
+    return Array.isArray(previousSuggestion) && previousSuggestion.filter((_, index) => index !== suggestion.index);
   }
   if (Array.isArray(previousSuggestion)) return uniq(previousSuggestion.concat(suggestion));
   return suggestion;
@@ -69,10 +69,12 @@ export function getSuggestions(value, suggestionsPool) {
 export function getAsyncSuggestions(value, asyncFunc, search, selected, extra) {
   const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
+
   return inputLength === 0
     ? []
-    : asyncFunc({ [search]: value, page_size: 5, exclude: selected && selected.length > 0 ? selected.join(',') : [], extra }).then(response => response);
+    : asyncFunc({ [search]: value, page_size: 5, exclude: Array.isArray(selected) && selected.length > 0 ? selected.join(',') : [], extra }).then(response => response);
 }
 
 export const debouncedAsyncSuggestions = _.debounce(getAsyncSuggestions, 500, {
-  leading: true });
+  leading: true
+});

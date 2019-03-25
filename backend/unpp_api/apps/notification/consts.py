@@ -1,6 +1,5 @@
 
 class NotificationType(object):
-    # TODO: Investigate usage and replace references + improve naming
     ACTIVE_ACCOUNT_PROFILE_CREATE = 'account_active_profile_create'
     ACTIVE_ACCOUNT_SEND_TO_ORG_HEAD = 'account_active_send_to_org_head'
     DUPLICATE_ORGANIZATION_ACCOUNT = 'account_org_duplicate'
@@ -22,6 +21,8 @@ class NotificationType(object):
     ADDED_AS_CFEI_FOCAL_POINT = 'added_as_cfei_local_point'
     DJANGO_ADMIN_NEW_PARTNER_FOR_DELETION = 'superadmin_new_cso_for_deletion'
     NEW_ESCALATED_FLAG = 'new_escalated_flag'
+    CFEI_DRAFT_SENT_FOR_REVIEW = 'cfei_draft_sent_for_review'
+    DSR_DRAFT_SENT_FOR_REVIEW = 'dsr_draft_sent_for_review'
     CFEI_SENT_FOR_DECISION_MAKING = 'cfei_sent_for_decision_making'
     CFEI_CLARIFICATION_DEADLINE_PASSED = 'cfei_clarification_deadline_passed'
 
@@ -91,7 +92,7 @@ NOTIFICATION_DATA = {
         'subject': 'UN New Partnership Opportunity'
     },
     NotificationType.CFEI_DEADLINE_UPDATE: {
-        'template_name': 'Update_CFEI_prev_invited_submited_app',
+        'template_name': 'Update_CFEI_prev_invited_submitted_app',
         'subject': 'CFEI Deadline Updated'
     },
     NotificationType.SELECTED_AS_CFEI_REVIEWER: {
@@ -118,9 +119,17 @@ NOTIFICATION_DATA = {
         'template_name': 'new_escalated_flag',
         'subject': 'CSO Profile Flagged'
     },
+    NotificationType.CFEI_DRAFT_SENT_FOR_REVIEW: {
+        'template_name': 'cfei_draft_sent_for_review',
+        'subject': 'CFEI sent for review'
+    },
+    NotificationType.DSR_DRAFT_SENT_FOR_REVIEW: {
+        'template_name': 'cfei_draft_sent_for_review',
+        'subject': 'DSR sent for review'
+    },
     NotificationType.CFEI_SENT_FOR_DECISION_MAKING: {
         'template_name': 'cfei_sent_for_decision_making',
-        'subject': 'CFEI winner ready to be picked'
+        'subject': 'Prospective Partner Identified for CFEI'
     },
     NotificationType.CFEI_CLARIFICATION_DEADLINE_PASSED: {
         'template_name': 'cfei_clarification_deadline_passed',

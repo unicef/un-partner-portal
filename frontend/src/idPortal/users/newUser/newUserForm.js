@@ -34,6 +34,9 @@ const NewUserForm = (props) => {
             fieldName="email"
             validation={[email]}
             readOnly={!R.isNil(id)}
+            textFieldProps={{
+              "type": "email"
+            }}
           />
           <RoleField formName="newUserForm" />
         </GridColumn>

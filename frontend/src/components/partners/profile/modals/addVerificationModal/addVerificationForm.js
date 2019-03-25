@@ -1,17 +1,31 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
-import PropTypes from 'prop-types'; 
+import { withStyles } from 'material-ui/styles';
+import PropTypes from 'prop-types';
 import GridColumn from '../../../../common/grid/gridColumn';
 import VerificationQuestion from './verificationQuestion';
 import ObservationsTable from './observationsTable';
+import CheckboxForm from '../../../../forms/checkboxForm';
+
+const styleSheet = (theme) => {
+  const spacing = theme.spacing.unit;
+  return {
+    question: {
+      padding: `${spacing}px ${spacing}px ${spacing}px 0px`,
+      alignItems: 'center',
+      backgroundColor: theme.palette.common.lightGreyBackground,
+    },
+  };
+};
 
 const messages = {
-  certUpload: 'Has the CSO/partner uploaded its valid, non-expired registration certificate issued by the correct government body?',
+  certUpload: 'Has the CSO/partner uploaded its valid, non-expired registration certificate issued by the correct government body, or otherwise indicated eligibility to operate in the country?',
   mmConsistent: 'Are the mandate and mission of the CSO/partner consistent with that of the UN?',
   indicateResults: 'Does the CSO/partner have mechanisms to combat fraud and corruption, prevent sexual exploitation and abuse, and protect and safeguard beneficiaries?',
   observationsPose: 'Do these observations pose unacceptable risk to the UN?',
   riskRelated: 'Are there any other risk-related observations associated with the CSO/partner that are not captured in UN Partner Portal, but which pose unacceptable risk to the UN?',
+  confirmVerification: 'I certify that the information provided in this verification form is accurate to the best of my knowledge.',
 };
 
 const verificationQuestions = [
@@ -38,7 +52,7 @@ const verificationQuestions = [
     question: messages.observationsPose,
     questionFieldName: 'is_yellow_flag',
     commentFieldName: 'yellow_flag_comment',
-  }, 
+  },
   {
     id: 4,
     question: messages.riskRelated,
@@ -48,7 +62,7 @@ const verificationQuestions = [
 ];
 
 const AddVerification = (props) => {
-  const { handleSubmit, readOnly, isYellowFlag, notCertUploaded } = props;
+  const { classes, handleSubmit, readOnly, isYellowFlag, notCertUploaded } = props;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -94,11 +108,21 @@ const AddVerification = (props) => {
           readOnly={readOnly}
         />
       </GridColumn>
+      <GridColumn>
+        <div className={classes.question}>
+          <CheckboxForm
+            fieldName="confirm_verification"
+            label={messages.confirmVerification}
+            labelType="body2"
+            optional
+          /></div>
+      </GridColumn>
     </form >
   );
 };
 
 AddVerification.propTypes = {
+  classes: PropTypes.object,
   /**
      * callback for form submit
      */
@@ -120,4 +144,6 @@ const mapStateToProps = state => ({
   notCertUploaded: selector(state, 'is_cert_uploaded') === false,
 });
 
-export default connect(mapStateToProps, null)(formAddVerification);
+const connected = connect(mapStateToProps, null)(formAddVerification);
+
+export default withStyles(styleSheet, { name: 'AddVerification' })(connected);

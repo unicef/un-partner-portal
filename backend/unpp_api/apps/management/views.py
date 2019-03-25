@@ -54,8 +54,7 @@ class UserViewSet(CreateAPIView, ListAPIView, UpdateAPIView):
 
             queryset = User.objects.filter(query).distinct('id')
 
-        # We don't want user to edit own account
-        return queryset.exclude(id=self.request.user.id)
+        return queryset.order_by('-id')
 
 
 class OfficeListView(ListAPIView):

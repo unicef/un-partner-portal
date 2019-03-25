@@ -10,8 +10,7 @@ import SpreadContent from '../common/spreadContent';
 import LocationsMap from '../forms/fields/projectFields/locationField/locationsMap';
 
 const messages = {
-  defaultCountryCode: 'RUS',
-  defaultCountryName: 'Russia',
+  defaultCountryCode: 'US',
 };
 
 const styleSheet = theme => ({
@@ -48,7 +47,7 @@ class PartnerMapping extends Component {
   }
 
   render() {
-    const { locations } = this.props;
+    const { locations, country_code } = this.props;
 
     return (
       <HeaderList
@@ -58,8 +57,8 @@ class PartnerMapping extends Component {
           locations={locations}
           showMap
           readOnly
-          currentCountryCode={messages.defaultCountryCode}
-          currentCountry={messages.defaultCountryName}
+          currentCountryCode={country_code || messages.defaultCountryCode}
+          currentCountry={country_code || messages.defaultCountryCode}
           removeAllLocations={() => {}}
         />
       </HeaderList>);
@@ -73,6 +72,7 @@ PartnerMapping.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const selectionIds = state.selectableList.items;
+  const { query: { country_code } = {} } = ownProps.location;
 
   let locations = [];
 
@@ -88,6 +88,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     locations,
+    country_code,
   };
 };
 

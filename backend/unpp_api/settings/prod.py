@@ -10,7 +10,7 @@ extend_list_avoid_repeats(INSTALLED_APPS, [
     'rest_framework_swagger',
 ])
 
-DEFAULT_FROM_EMAIL = 'noreply@unpp.org'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'UN Partner Portal <noreply@unpartnerportal.org>')
 
 # Sentry Configs
 INSTALLED_APPS += (

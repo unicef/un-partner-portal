@@ -4,6 +4,15 @@ import { withStyles } from 'material-ui/styles';
 import { LinearProgress } from 'material-ui/Progress';
 import DatePoint from './timeline/datePoint';
 import { getToday, dayDifference } from '../../helpers/dates';
+import DateLegend from './timeline/dateLegend';
+
+const messages = {
+  posted: 'Posted',
+  clarification: 'Clarification Request Deadline',
+  deadline: 'Application Deadline',
+  notification: 'Notification of results',
+  estimated: 'Estimated start date',
+};
 
 const styleSheet = theme => ({
   root: {
@@ -15,6 +24,7 @@ const styleSheet = theme => ({
   icons: {
     display: 'flex',
     alignItems: 'center',
+    height: '40px',
   },
   bar: {
     width: `calc(100% - ${theme.spacing.unit * 4}px)`,
@@ -27,6 +37,7 @@ const calcDistance = (min, max, point) => {
   const maxDateRange = Math.abs(dayDifference(min, max));
   let currentDayDifference = dayDifference(min, point);
   if (currentDayDifference === 0) currentDayDifference = 0;
+  
   return Math.abs(Math.floor((currentDayDifference / maxDateRange) * 100));
 };
 
@@ -46,50 +57,61 @@ class Timeline extends Component {
       startDate } = this.props;
     const fill = calcDistance(postedDate, startDate, getToday());
     return (
-      <div className={classes.root}>
-        <div className={classes.icons}>
-          <DatePoint
-            date={postedDate}
-            label="Posted"
-            align="left"
-            color="green"
-            position="top-start"
-          />
-          <DatePoint
-            date={clarificationDate}
-            label="Clarification Request Deadline"
-            align="center"
-            color="orange"
-            position="bottom-start"
-            flexSize={calcDistance(postedDate, startDate, clarificationDate)}
-          />
-          <DatePoint
-            bold
-            date={deadlineDate}
-            label="Application Deadline"
-            align="center"
-            color="red"
-            position="top-start"
-            flexSize={calcDistance(clarificationDate, startDate, deadlineDate)}
-          />
-          <DatePoint
-            date={notificationDate}
-            label="Notification of results"
-            align="center"
-            color="blue"
-            position="bottom-end"
-            flexSize={calcDistance(deadlineDate, startDate, notificationDate)}
-          />
-          <DatePoint
-            date={startDate}
-            label="Estimated start date"
-            align="right"
-            color="dark"
-            position="top-end"
-            fullWidth
-          />
+      <div>
+        <div className={classes.root}>
+          <div className={classes.icons}>
+            <DatePoint
+              date={postedDate}
+              open
+              align="left"
+              color="green"
+              position="top-start"
+            />
+            <DatePoint
+              date={clarificationDate}
+              align="center"
+              open
+              color="orange"
+              position="bottom"
+              flexSize={calcDistance(postedDate, startDate, clarificationDate) || 0}
+            />
+            <DatePoint
+              bold
+              open
+              date={deadlineDate}
+              align="center"
+              color="red"
+              position="top"
+              flexSize={calcDistance(clarificationDate, startDate, deadlineDate) || 0}
+            />
+            <DatePoint
+              date={notificationDate}
+              open
+              align="center"
+              color="blue"
+              position="bottom"
+              flexSize={calcDistance(deadlineDate, startDate, notificationDate) || 0}
+            />
+            <DatePoint
+              date={startDate}
+              align="right"
+              color="dark"
+              position="top-end"
+              open
+              fullWidth
+            />
+          </div>
+          <LinearProgress className={classes.bar} mode="determinate" value={fill} />
+
+
         </div>
-        <LinearProgress className={classes.bar} mode="determinate" value={fill} />
+        <div className={classes.icons}>
+          <DateLegend label={messages.posted} color="green" />
+          <DateLegend label={messages.clarification} color="orange" />
+          <DateLegend label={messages.deadline} color="red" />
+          <DateLegend label={messages.notification} color="blue" />
+          <DateLegend label={messages.estimated} color="dark" />
+        </div>
       </div>
     );
   }

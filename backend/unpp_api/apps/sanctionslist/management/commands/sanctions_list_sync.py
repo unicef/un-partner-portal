@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from django.core.management.base import BaseCommand
 
-from sanctionslist.etl import parse_unsc_list
+from sanctionslist.etl import sync_sanction_list
 from sanctionslist.models import SanctionedItem
 
 
@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
         self.stdout.write('Start sanctions list sync.')
         try:
-            parse_unsc_list()
+            sync_sanction_list()
         except Exception as e:
             self.stderr.write(f'Error syncing sanctions list {e}')
         self.stdout.write('Sanctions list sync complete.')

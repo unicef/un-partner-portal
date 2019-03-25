@@ -33,6 +33,7 @@ description: >-
 | WFP\_API\_TOKEN | _self-explanatory_ |
 | UNPP\_FRONTEND\_HOST | hostname of where the frontend is located |
 | ALERTS\_EMAIL | \(_optional_\) email where Django error reports will be sent |
+| MAP\_BOX\_KEY | [Mapbox](https://www.mapbox.com/) API key |
 
 ### Frontend
 

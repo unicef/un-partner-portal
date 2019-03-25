@@ -74,6 +74,9 @@ const BasicInformation = (props) => {
             placeholder="Provide Email"
             fieldName="json.partner_head_organization.email"
             validation={[email]}
+            textFieldProps={{
+              "type": "email"
+            }}
           />
         </Grid>
       </Grid>

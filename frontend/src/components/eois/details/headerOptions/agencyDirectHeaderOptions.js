@@ -28,6 +28,7 @@ import {
   isUserACreator,
   selectCfeiDetails,
 } from '../../../../store';
+import { authorizedFileDownload } from '../../../../helpers/api/api';
 
 const edit = 'edit';
 const del = 'del';
@@ -52,6 +53,10 @@ class AgencyDirectHeaderOptions extends Component {
       params: { id },
       handleDialogOpen,
       hasEditDraftPermission,
+      hasEditSentPermission,
+      status,
+      isPublished,
+      isAdvEd,
       hasDeleteDraftPermission,
       isFocalPoint,
       isCreator } = this.props;
@@ -59,12 +64,13 @@ class AgencyDirectHeaderOptions extends Component {
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+        content: <DownloadButton handleClick={() => { authorizedFileDownload({ uri: `/projects/${id}/?export=pdf` }); }} />,
       },
     ];
 
-    if (hasEditDraftPermission && isCreator
-      || hasDeleteDraftPermission && isFocalPoint) {
+    if ((hasEditDraftPermission && isCreator)
+      || (!isPublished && status === 'Sen' && (hasEditSentPermission && isAdvEd && isFocalPoint))
+      || (hasDeleteDraftPermission && isFocalPoint)) {
       options.push(
         {
           name: edit,
@@ -74,8 +80,8 @@ class AgencyDirectHeaderOptions extends Component {
         });
     }
 
-    if (hasDeleteDraftPermission && isCreator
-      || hasDeleteDraftPermission && isFocalPoint) {
+    if ((hasDeleteDraftPermission && isCreator)
+      || (hasDeleteDraftPermission && isFocalPoint)) {
       options.push(
         {
           name: del,
@@ -105,25 +111,21 @@ class AgencyDirectHeaderOptions extends Component {
     const {
       params: { id },
       handleDialogOpen,
-      hasEditSentPermission,
       hasEditPublishedPermission,
       isPublished,
-      status,
       isCompleted,
-      isAdvEd,
       isMFT,
       isFocalPoint } = this.props;
 
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+        content: <DownloadButton handleClick={() => { authorizedFileDownload({ uri: `/projects/${id}/?export=pdf` }); }} />,
       },
     ];
 
     if ((!isCompleted && isPublished && this.isActionAllowed(hasEditPublishedPermission))
-      || (!isPublished && status === 'Sen' && ((hasEditSentPermission && isAdvEd && isFocalPoint)
-        || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)))) {
+      || (!isCompleted && hasEditPublishedPermission && isMFT && isFocalPoint)) {
       options.push(
         {
           name: edit,
@@ -139,6 +141,16 @@ class AgencyDirectHeaderOptions extends Component {
 
     if (cfei.direct_selected_partners && cfei.direct_selected_partners.length > 0) {
       return cfei.direct_selected_partners[0].partner_is_verified;
+    }
+
+    return false;
+  }
+
+  isPartnerProfileComplete() {
+    const { cfei } = this.props;
+
+    if (cfei.direct_selected_partners && cfei.direct_selected_partners.length > 0) {
+      return cfei.direct_selected_partners[0].partner_profile_is_complete;
     }
 
     return false;
@@ -170,10 +182,10 @@ class AgencyDirectHeaderOptions extends Component {
 
         {!isPublished && !isCompleted && hasPublishPermission &&
           (((isFocalPoint || isCreator) && isAdvEd) || (isFocalPoint && isMFT))
-          && <PublishDsrButton disabled={!this.isPartnerVerified()} handleClick={() => handleDialogOpen(publish)} />}
+          && <PublishDsrButton isVerified={this.isPartnerVerified()} isComplete={this.isPartnerProfileComplete()} handleClick={() => handleDialogOpen(publish)} />}
 
         <DropdownMenu
-          options={status === 'Dra' ? this.sendOptions() : this.publishOptions()}
+          options={(status === 'Dra' || (status === 'Sen' && isAdvEd)) ? this.sendOptions() : this.publishOptions()}
         />
 
         {dialogOpen[cancel] && <CancelDsrModal

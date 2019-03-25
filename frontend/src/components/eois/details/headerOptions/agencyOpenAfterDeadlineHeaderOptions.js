@@ -12,6 +12,7 @@ import EditCfeiModal from '../../modals/editCfei/editCfeiModal';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 import DownloadButton from '../../buttons/downloadCfeiButton';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const edit = 'edit';
 const manage = 'manage';
@@ -30,7 +31,7 @@ const PartnerOpenAfterDeadlineHeaderOptions = (props) => {
         options={
           [{
             name: download,
-            content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+            content: <DownloadButton handleClick={() => { authorizedFileDownload({uri: `/projects/${id}/?export=pdf`}); }} />,
           },
           {
             name: edit,

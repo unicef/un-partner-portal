@@ -4,6 +4,7 @@ import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { PROJECT_STATUSES } from '../../../../helpers/constants';
+import { authorizedFileDownload } from '../../../../helpers/api/api';
 import DropdownMenu from '../../../common/dropdownMenu';
 import SpreadContent from '../../../common/spreadContent';
 import EditButton from '../../buttons/editCfeiButton';
@@ -18,6 +19,7 @@ import AddInformedPartners from '../../modals/callPartners/addInformedPartners';
 import ManageReviewersModal from '../../modals/manageReviewers/manageReviewersModal';
 import CompleteCfeiModal from '../../modals/completeCfei/completeCfeiModal';
 import CancelCfeiModal from '../../modals/completeCfei/cancelCfeiModal';
+import DeleteCfeiModal from '../../modals/completeCfei/deleteCfeiModal';
 import SendCfeiButton from '../../buttons/sendCfeiButton';
 import DeleteButton from '../../buttons/deleteCfeiButton';
 import PublishCfeiButton from '../../buttons/publishCfeiButton';
@@ -33,8 +35,14 @@ import {
   isUserACreator,
   cfeiHasRecommendedPartner,
   isSendForDecision,
+  isCfeiClarificationDeadlinePassed,
 } from '../../../../store';
 import CancelCfeiButton from '../../buttons/cancelCfeiButton';
+
+const messages = {
+  updateDeadlineDate: 'Update Application Deadline date to publish this CFEI',
+  updateClarificationDate: 'Update Application Clarificatin Deadline date to publish this CFEI',
+}
 
 const del = 'del';
 const edit = 'edit';
@@ -105,7 +113,7 @@ class PartnerOpenHeaderOptions extends Component {
     const options = [
       {
         name: download,
-        content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
+        content: <DownloadButton handleClick={() => { authorizedFileDownload({ uri: `/projects/${id}/?export=pdf` }); }} />,
       },
     ];
 
@@ -149,8 +157,8 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    if (hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA
-      || (hasEditSentPermission && isFocalPoint)) {
+    if (!isPublished && (hasManageDraftPermission && isCreator && status === PROJECT_STATUSES.DRA
+      || (hasEditSentPermission && isFocalPoint))) {
       options.push(
         {
           name: del,
@@ -158,7 +166,7 @@ class PartnerOpenHeaderOptions extends Component {
         });
     }
 
-    if (isPublished && this.isPuslishPermissionAllowed(hasCancelPublishPermission)) {
+    if (!isPublished && this.isPuslishPermissionAllowed(hasCancelPublishPermission)) {
       options.push(
         {
           name: cancel,
@@ -177,6 +185,7 @@ class PartnerOpenHeaderOptions extends Component {
       isPublished,
       status,
       isDeadlinePassed,
+      isClarificationRequestPassed,
       isAdvEd,
       isPAM,
       hasPublishPermission,
@@ -191,17 +200,23 @@ class PartnerOpenHeaderOptions extends Component {
         {isPublished && this.isFinalizeAllowed(hasFinalizePermission)
           && <Complete handleClick={() => handleDialogOpen(complete)} />}
 
-        {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission &&
+        {!isCompleted && status === PROJECT_STATUSES.DRA && isCreator && hasSendPermission && !isPAM &&
           <SendCfeiButton handleClick={() => handleDialogOpen(send)} />}
 
         {!isPublished && !isCompleted && hasPublishPermission &&
           (((isFocalPoint || isCreator) && isAdvEd) || (isCreator && isPAM))
-          && <PublishCfeiButton disabled={isDeadlinePassed} handleClick={() => handleDialogOpen(publish)} />}
+          && <PublishCfeiButton tooltipInfo={isDeadlinePassed && messages.updateDeadlineDate || isClarificationRequestPassed && messages.updateClarificationDate}
+            disabled={isDeadlinePassed || isClarificationRequestPassed} handleClick={() => handleDialogOpen(publish)} />}
 
         <DropdownMenu
           options={this.sendOptions()}
         />
 
+        {dialogOpen[del] && <DeleteCfeiModal
+          id={id}
+          dialogOpen={dialogOpen[del]}
+          handleDialogClose={handleDialogClose}
+        />}
         {dialogOpen[cancel] && <CancelCfeiModal
           id={id}
           dialogOpen={dialogOpen[cancel]}
@@ -271,6 +286,7 @@ PartnerOpenHeaderOptions.propTypes = {
   hasFinalizePermission: PropTypes.bool,
   hasRecommendedPartner: PropTypes.bool,
   isDeadlinePassed: PropTypes.bool,
+  isClarificationRequestPassed: PropTypes.bool,
   isCompleted: PropTypes.bool,
   isAdvEd: PropTypes.bool,
   isMFT: PropTypes.bool,
@@ -286,6 +302,7 @@ const mapStateToProps = (state, ownProps) => ({
   isCompleted: isCfeiCompleted(state, ownProps.id),
   isPublished: isCfeiPublished(state, ownProps.id),
   isDeadlinePassed: isCfeiDeadlinePassed(state, ownProps.id),
+  isClarificationRequestPassed: isCfeiClarificationDeadlinePassed(state, ownProps.id),
   hasRecommendedPartner: cfeiHasRecommendedPartner(state, ownProps.id),
   status: selectCfeiStatus(state, ownProps.id),
   hasManageDraftPermission: checkPermission(AGENCY_PERMISSIONS.CFEI_DRAFT_MANAGE, state),

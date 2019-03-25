@@ -7,7 +7,6 @@ from cached_property import threaded_cached_property
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save
-from django.utils import timezone
 
 from model_utils.models import TimeStampedModel
 
@@ -17,20 +16,29 @@ from common.database_fields import FixedTextField
 
 class UserManager(BaseUserManager):
 
-    def _create_user(self, fullname, email, password,
-                     is_staff, is_superuser, **extra_fields):
-        now = timezone.now()
+    def _create_user(self, fullname, email, password, is_staff, is_superuser, **kwargs):
         email = self.normalize_email(email)
-        user = self.model(fullname=fullname, email=email,
-                          is_staff=is_staff, is_active=True,
-                          is_superuser=is_superuser, last_login=now,
-                          date_joined=now, **extra_fields)
+        user = self.model(
+            fullname=fullname,
+            email=email,
+            is_staff=is_staff,
+            is_active=True,
+            is_superuser=is_superuser,
+            **kwargs
+        )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, fullname, email, password=None, **extra_fields):
-        return self._create_user(fullname, email, password, False, False, **extra_fields)
+    def create_user(self, **kwargs):
+        return self._create_user(
+            kwargs.pop('fullname', None),
+            kwargs.pop('email', None),
+            kwargs.pop('password', None),
+            False,
+            False,
+            **kwargs
+        )
 
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -111,13 +119,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @threaded_cached_property
     def partner_ids(self):
-        partner_members = self.partner_members.exclude(partner__is_locked=True)
-        partner_ids = []
-        for partner_member in partner_members:
-            partner_ids.append(partner_member.partner.id)
-            if partner_member.partner.is_hq:
-                partner_ids.extend(partner_member.partner.country_profiles.values_list('id', flat=True))
-
+        partner_ids = set(self.partner_members.values_list('partner_id', flat=True))
+        partner_ids.update(
+            set(filter(None, self.partner_members.values_list('partner__children__id', flat=True)))
+        )
         return partner_ids
 
     def get_partner_ids_i_can_access(self):

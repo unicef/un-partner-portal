@@ -22,9 +22,9 @@ from partner.models import (
 
 
 class PartnerAdmin(admin.ModelAdmin):
-    search_fields = ('legal_name', 'country_code')
+    search_fields = ('legal_name', 'country_code', 'migrated_original_id')
     list_display = ('legal_name', 'display_type', 'country_code', 'hq')
-    list_filter = ('display_type', 'is_active', 'is_locked')
+    list_filter = ('display_type', 'is_active', 'is_locked', 'migrated_from')
 
 
 class PartnerMemberAdmin(admin.ModelAdmin):

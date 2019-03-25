@@ -14,6 +14,7 @@ from django.core import mail
 from rest_framework import status
 
 from account.models import User
+from agency.agencies import UNICEF, WFP
 from agency.models import Agency
 from agency.roles import VALID_FOCAL_POINT_ROLE_NAMES, AgencyRole
 from common.headers import CustomHeader
@@ -34,7 +35,7 @@ from common.factories import (
     UserFactory,
     PartnerFactory,
     get_new_common_file,
-    DirectEOIFactory)
+    DirectEOIFactory, FinalizedEOIFactory)
 from common.models import Specialization, CommonFile
 from common.consts import (
     SELECTION_CRITERIA_CHOICES,
@@ -49,10 +50,6 @@ from project.views import PinProjectAPIView
 from project.serializers import ConvertUnsolicitedSerializer
 
 filename = os.path.join(settings.PROJECT_ROOT, 'apps', 'common', 'tests', 'test.doc')
-
-
-def partner_has_finished(*args, **kwargs):
-    return True
 
 
 class TestPinUnpinWrongEOIAPITestCase(BaseAPITestCase):
@@ -178,7 +175,7 @@ class TestOpenProjectsAPITestCase(BaseAPITestCase):
         ])
         response = self.client.post(self.url, data=payload)
         self.assertResponseStatusIs(response, status_code=status.HTTP_201_CREATED)
-        eoi = EOI.objects.last()
+        eoi = EOI.objects.order_by('id').last()
         self.assertEquals(response.data['title'], payload['title'])
         self.assertEquals(eoi.created_by.id, self.user.id)
         self.assertEquals(response.data['id'], eoi.id)
@@ -375,7 +372,7 @@ class TestDirectProjectsAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['eoi']['title'], payload['eoi']['title'])
         self.assertEquals(response.data['eoi']['created_by'], self.user.id)
         self.assertEquals(response.data['eoi']['display_type'], CFEI_TYPES.direct)
-        self.assertEquals(response.data['eoi']['id'], EOI.objects.last().id)
+        self.assertEquals(response.data['eoi']['id'], EOI.objects.order_by('id').last().id)
         app = Application.objects.get(pk=response.data['applications'][0]['id'])
         self.assertEquals(app.submitter, self.user)
         self.assertEquals(
@@ -402,7 +399,7 @@ class TestPartnerApplicationsAPITestCase(BaseAPITestCase):
         OpenEOIFactory.create_batch(self.quantity, display_type='NoN')
         PartnerSimpleFactory.create_batch(self.quantity)
 
-    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_create(self):
         self.client.set_headers({
             CustomHeader.PARTNER_ID.value: self.user.partner_members.first().partner.id
@@ -451,7 +448,7 @@ class TestAgencyApplicationsAPITestCase(BaseAPITestCase):
         AgencyMemberFactory.create_batch(self.quantity)
         PartnerSimpleFactory.create_batch(self.quantity)
 
-    @mock.patch('partner.models.Partner.has_finished', partner_has_finished)
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_create(self):
         eoi = OpenEOIFactory(display_type='NoN', agency=self.user.agency)
         eoi.focal_points.add(self.user)
@@ -868,7 +865,17 @@ class TestReviewSummaryAPIViewAPITestCase(BaseAPITestCase):
         self.assertEquals(response.data['review_summary_comment'], payload['review_summary_comment'])
 
         payload = {
-            'review_summary_comment': "comment",
+            'review_summary_comment': "comment2",
+            'review_summary_attachment': None
+        }
+        response = self.client.patch(url, data=payload)
+        self.assertResponseStatusIs(response)
+        self.assertEquals(
+            response.data['review_summary_comment'], payload['review_summary_comment']
+        )
+
+        payload = {
+            'review_summary_comment': "comment3",
             'review_summary_attachment': file_id
         }
         response = self.client.patch(url, data=payload)
@@ -1033,6 +1040,7 @@ class TestLocationRequiredOnCFEICreate(BaseAPITestCase):
         create_response = self.client.post(url, data=payload)
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
+    @mock.patch('partner.models.Partner.profile_is_complete', lambda _: True)
     def test_create_application(self):
         eoi = OpenEOIFactory(agency=self.user.agency)
         apply_url = reverse('projects:partner-applications', kwargs={'pk': eoi.pk})
@@ -1279,6 +1287,45 @@ class TestDirectSelectionTestCase(BaseAPITestCase):
         })
         self.assertResponseStatusIs(patch_response)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_patch_attachments(self):
+        project = OpenEOIFactory(created_by=self.user)
+        project_url = reverse('projects:eoi-detail', kwargs={'pk': project.pk})
+        project_response = self.client.get(project_url)
+        self.assertResponseStatusIs(project_response)
+
+        patch_payload = {
+            "attachments": project_response.data['attachments'] + [
+                {
+                    'description': 'Test Description',
+                    'file': get_new_common_file().pk
+                },
+            ],
+        }
+
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+        self.assertEqual(
+            len(patch_response.data['attachments']),
+            len(patch_payload['attachments']),
+        )
+
+        for attachment in patch_payload['attachments']:
+            attachment['description'] = 'TEST'
+
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+        for attachment in patch_response.data['attachments']:
+            self.assertEqual(attachment['description'], 'TEST')
+
+        patch_payload['attachments'].pop(0)
+        patch_response = self.client.patch(project_url, patch_payload)
+        self.assertResponseStatusIs(patch_response)
+        self.assertEqual(
+            len(patch_response.data['attachments']),
+            len(patch_payload['attachments']),
+        )
+
 
 class TestEOIPublish(BaseAPITestCase):
 
@@ -1479,9 +1526,56 @@ class TestEOIPDFExport(BaseAPITestCase):
         OpenEOIFactory,
     ]
 
-    def test_download_pdf(self):
+    def test_download_project_pdf(self):
         eoi = EOI.objects.first()
         url = reverse('projects:eoi-detail', kwargs={'pk': eoi.pk}) + '?export=pdf'
         response = self.client.get(url)
         self.assertResponseStatusIs(response, status.HTTP_200_OK)
         self.assertEqual(response.content_type, 'application/pdf')
+
+
+class TestFinalizedCFEIDetailsViewPermissions(BaseAPITestCase):
+
+    def test_applications_details_view(self):
+        eoi: EOI = FinalizedEOIFactory(agency=UNICEF.model_instance)
+        winning_application = eoi.applications.filter(did_win=True).first()
+        application_url = reverse('projects:application', kwargs={"pk": winning_application.id})
+        review_summary_url = reverse('projects:review-summary', kwargs={"pk": eoi.id})
+        reviewers_url = reverse('projects:eoi-reviewers-assessments', kwargs={"eoi_id": eoi.id})
+        applications_url = reverse('projects:applications', kwargs={"pk": eoi.id})
+
+        unicef_member = AgencyMemberFactory(
+            office=AgencyOfficeFactory(agency=UNICEF.model_instance),
+            role=AgencyRole.EDITOR_ADVANCED.name
+        )
+
+        with self.login_as_user(unicef_member.user):
+            application_details_response = self.client.get(application_url)
+            self.assertResponseStatusIs(application_details_response)
+
+            review_summary_response = self.client.get(review_summary_url)
+            self.assertResponseStatusIs(review_summary_response)
+
+            reviewers_response = self.client.get(reviewers_url)
+            self.assertResponseStatusIs(reviewers_response)
+
+            applications_response = self.client.get(applications_url)
+            self.assertResponseStatusIs(applications_response)
+
+        wfp_member = AgencyMemberFactory(
+            office=AgencyOfficeFactory(agency=WFP.model_instance),
+            role=AgencyRole.EDITOR_ADVANCED.name
+        )
+
+        with self.login_as_user(wfp_member.user):
+            application_details_response = self.client.get(application_url)
+            self.assertResponseStatusIs(application_details_response, status.HTTP_403_FORBIDDEN)
+
+            review_summary_response = self.client.get(review_summary_url)
+            self.assertResponseStatusIs(review_summary_response, status.HTTP_403_FORBIDDEN)
+
+            reviewers_response = self.client.get(reviewers_url)
+            self.assertResponseStatusIs(reviewers_response, status.HTTP_403_FORBIDDEN)
+
+            applications_response = self.client.get(applications_url)
+            self.assertResponseStatusIs(applications_response, status.HTTP_403_FORBIDDEN)

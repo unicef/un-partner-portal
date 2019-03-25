@@ -35,7 +35,7 @@ const renderCells = ({ row, column, value }) => {
       </TableCell>);
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };
 
 renderCells.propTypes = {

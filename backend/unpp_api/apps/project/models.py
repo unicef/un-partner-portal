@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from datetime import date
 
 from django.conf import settings
+from django.core.validators import MinLengthValidator
 from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
@@ -26,7 +27,9 @@ class EOI(TimeStampedModel):
     """
     Call of Expression of Interest
     """
-    displayID = models.TextField(max_length=32, unique=True, editable=False)
+    displayID = models.TextField(max_length=32, unique=True, editable=False, validators=[
+        MinLengthValidator(1),
+    ])
     display_type = models.CharField(
         max_length=3, choices=CFEI_TYPES, default=CFEI_TYPES.open, verbose_name='Type of Call'
     )
@@ -91,10 +94,20 @@ class EOI(TimeStampedModel):
     preselected_partners = ArrayField(models.IntegerField(), default=list)
 
     class Meta:
-        ordering = ['id']
+        ordering = (
+            '-created',
+        )
+        verbose_name = 'Project'
+        verbose_name_plural = 'Projects'
 
     def __str__(self):
-        return "CFEI {} <pk:{}>".format(self.title, self.id)
+        return f"[{self.pk}] {self.verbose_type} #{self.displayID} {self.title}"
+
+    @property
+    def verbose_type(self):
+        if self.is_direct:
+            return 'Direct Selection / Retention'
+        return 'Call for Expression of Interest'
 
     @property
     def status(self):
@@ -158,7 +171,9 @@ class EOI(TimeStampedModel):
         return sum(map(lambda x: x.get('weight'), self.assessments_criteria)) == 100 if self.has_weighting else True
 
     def get_absolute_url(self):
-        return get_absolute_frontend_url("/cfei/open/{}/overview".format(self.pk))
+        return get_absolute_frontend_url(
+            f"/cfei/{'open' if self.is_open else 'direct'}/{self.pk}/overview"
+        )
 
     @property
     def completed_reason_display(self):
@@ -182,6 +197,15 @@ class EOI(TimeStampedModel):
         applications = self.applications.filter(status=APPLICATION_STATUSES.preselected)
 
         return applications.count() == applications.filter(assessments__completed=True).distinct().count()
+
+    @property
+    def winning_partners(self):
+        if self.is_completed:
+            winners = []
+            for application in self.applications.filter(did_win=True).prefetch_related('partner'):
+                winners.append(application.partner)
+
+            return winners
 
 
 class EOIAttachment(TimeStampedModel):
@@ -298,7 +322,7 @@ class Application(TimeStampedModel):
     objects = ApplicationQuerySet.as_manager()
 
     class Meta:
-        ordering = ['id']
+        ordering = ('-id',)
         unique_together = (("eoi", "partner"), )
 
     def __str__(self):

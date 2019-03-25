@@ -32,6 +32,7 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             'Project Name',
             'Date of Publication',
             'Partnership Selection Modality',
+            'Country',
             'Location(s)',
             'Sector(s)',
             'Area(s) of Specialization',
@@ -64,6 +65,9 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             location_names = "\n".join(set([
                 f"{l.admin_level_1.name} ({l.admin_level_1.country_name})" for l in eoi.locations.all()
             ]))
+            country_names = "\n".join(set([
+                l.admin_level_1.country_name for l in eoi.locations.all()
+            ]))
 
             sectors_specializations = eoi.specializations.values('name', 'category__name').distinct()
             sectors = "\n".join(set([s['category__name'] for s in sectors_specializations]))
@@ -76,16 +80,22 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
             winners = []
             winner_types = []
             winner_experiences = []
+            winner_vendor_numbers = []
             for application in eoi.applications.winners():
                 winners.append(application.partner.legal_name)
                 winner_types.append(application.partner.get_display_type_display())
                 winner_experiences.append(boolean_display[application.partner.experiences.exists()])
+                winner_vendor_numbers.append('; '.join(
+                    f'{agency}: {number}' for agency, number in
+                    application.partner.vendor_numbers.values_list('agency__name', 'number')
+                ))
 
             worksheet.write_row(current_row, 0, (
                 eoi.pk,
                 eoi.title,
                 eoi.published_timestamp,
                 eoi.selection_mode,
+                country_names,
                 location_names,
                 sectors,
                 specializations,
@@ -99,7 +109,7 @@ class ProjectDetailsXLSLExporter(BaseXLSXExporter):
                 partner_type_application.get(PARTNER_TYPES.red_cross, 0),
                 eoi.applications.filter(partner__experiences=None).count(),
                 '\n'.join(winners),
-                'N/A',  # TODO: vendor number
+                '\n'.join(winner_vendor_numbers),
                 '\n'.join(winner_types),
                 '\n'.join(winner_experiences),
             ))

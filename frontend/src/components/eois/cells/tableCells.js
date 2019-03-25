@@ -1,6 +1,7 @@
 import React from 'react';
 import { pluck } from 'ramda';
 import { TableCell } from 'material-ui/Table';
+import Typography from 'material-ui/Typography';
 import EoiSectorCell from './eoiSectorCell';
 import EoiPartnersStatusCell from './eoiPartnersStatusCell';
 import EoiStatusCell from './eoiStatusCell';
@@ -10,6 +11,8 @@ import CountriesCell from '../../partners/countriesCell';
 import EoiDSPartnersCell from './eoiDSPartnersCell';
 import { formatDateForPrint } from '../../../helpers/dates';
 import EoiFocalPointCell from './eoiFocalPointCell';
+import EoiAgencyFocalCell from './eoiAgencyFocalCell';
+import CountriesCellCfeiID from '../../partners/countriesCellCfeiID';
 
 export default type => ({ row, column, value }) => {
   if (column.name === 'focal_points') {
@@ -18,9 +21,13 @@ export default type => ({ row, column, value }) => {
     </TableCell>);
   } else if (column.name === 'title' || column.name === 'project_title') {
     return <EoiNameCell title={row.title || row.project_title} id={`${row.id}`} />;
-  } else if (column.name === 'country_code') {
+  } else if (column.name === 'country_code' || column.name === 'country') {
     return (
-      <CountriesCell countries={row.country_code} />
+      <CountriesCell countries={row.country_code || row.country} />
+    );
+  } else if (column.name === 'country_code_cfei') {
+    return (
+      <CountriesCellCfeiID countries={row.country_code} cfeiID={row.displayID} />
     );
   } else if (column.name === 'specializations') {
     return (
@@ -32,6 +39,10 @@ export default type => ({ row, column, value }) => {
       <TableCell padding="dense">
         {row.agency.name}
       </TableCell>);
+  } else if (column.name === 'agency_focal') {
+    return <TableCell padding="dense" >
+      <EoiAgencyFocalCell agency={row.agency.name} focalPoints={row.focal_points} />
+    </TableCell>;
   } else if (column.name === 'status' && type === 'open') {
     return (
       <TableCell >
@@ -81,5 +92,5 @@ export default type => ({ row, column, value }) => {
       </TableCell>);
   }
 
-  return <TableCell>{value}</TableCell>;
+  return <TableCell><Typography>{value}</Typography></TableCell>;
 };

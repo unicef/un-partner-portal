@@ -3,8 +3,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Button from 'material-ui/Button';
+import Typography from 'material-ui/Typography';
+import Checkbox from 'material-ui/Checkbox';
 import { TableCell } from 'material-ui/Table';
 import { withRouter } from 'react-router';
+import { withStyles } from 'material-ui/styles';
 import CfeiManagementFilter from './cfeiManagementFilter';
 import CustomGridColumn from '../../common/grid/customGridColumn';
 import SelectableList from '../selectableList';
@@ -16,11 +19,26 @@ import LocationsCell from './locationsCell';
 import PartnerMapping from '../partnerMapping';
 import Loader from '../../common/loader';
 import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
+import { HeaderActions } from '../partnerInformation/partnerInfoContainer';
 
 const messages = {
   exportReport: 'Export report',
-  projectMapping: 'Map of CSOs',
+  projectMapping: 'Map of Partnership Opportunities',
 };
+
+const styleSheet = () => ({
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  root: {
+    color: '#FFF',
+    '&$checked': {
+      color: '#FFF',
+    },
+  },
+  checked: {},
+});
 
 class CfeiManagementContainer extends Component {
   componentWillMount() {
@@ -43,10 +61,10 @@ class CfeiManagementContainer extends Component {
   tableCell({ row, column, value }) {
     if (column.name === 'locations') {
       return <CountriesCell locations={value} />;
-    } else if (column.name === 'project_locations') {
-      return <LocationsCell locations={row.locations} />;
+    } else if (column.name === 'locations_project') {
+      return <LocationsCell locations={row.locations_project} />;
     }
-    return <TableCell>{value}</TableCell>;
+    return <TableCell><Typography>{value}</Typography></TableCell>;
   }
 
   projectReport() {
@@ -64,13 +82,13 @@ class CfeiManagementContainer extends Component {
 
   render() {
     const { items, columns, totalCount, loading,
-      query, reportsLoading, hasCFEIReportPermission } = this.props;
+      query, reportsLoading, hasCFEIReportPermission, selectionIds } = this.props;
 
     const queryParams = R.omit(['page', 'page_size'], query);
 
     return (
       <React.Fragment>
-        <Loader fullScreen loading={reportsLoading || loading} />
+        <Loader fullscreen loading={reportsLoading || loading} />
         <CustomGridColumn>
           <CfeiManagementFilter
             clearSelections={() => this.listRef
@@ -99,6 +117,7 @@ class CfeiManagementContainer extends Component {
             columns={columns}
             loading={loading}
             hideList={R.isEmpty(queryParams)}
+            componentHeaderAction={<HeaderActions checked={items.length === selectionIds.length} listRef={this.listRef} />}
             itemsCount={totalCount}
             templateCell={this.tableCell}
           />
@@ -138,6 +157,6 @@ const mapDispatch = dispatch => ({
 });
 
 const connectedCfeiManagementContainer =
-    connect(mapStateToProps, mapDispatch)(CfeiManagementContainer);
+  connect(mapStateToProps, mapDispatch)(CfeiManagementContainer);
 
 export default withRouter(connectedCfeiManagementContainer);

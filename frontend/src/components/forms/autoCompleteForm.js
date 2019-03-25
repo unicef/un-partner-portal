@@ -8,9 +8,11 @@ import { Field } from 'redux-form';
 import { withStyles } from 'material-ui/styles';
 import { renderText, AutocompleteRenderer } from '../../helpers/formHelper';
 import { required, warning } from '../../helpers/validation';
-import { getSuggestions,
+import {
+  getSuggestions,
   getAsyncSuggestions,
-  normalizeSuggestion } from './autocompleteHelpers/autocompleteFunctions';
+  normalizeSuggestion
+} from './autocompleteHelpers/autocompleteFunctions';
 
 const _ = require('lodash');
 

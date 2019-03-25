@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import TextFieldForm from '../../textFieldForm';
 import DatePickerForm from '../../datePickerForm';
 import FileForm from '../../fileForm';
@@ -64,8 +65,8 @@ export const OtherInfo = props => (<TextFieldForm
 />);
 
 
-const attachmentForm = props => member => (
-  <GridColumn spacing={8} columns={2}>
+const attachmentForm = props => (member, index, fields) => {
+  return <GridColumn spacing={8} columns={2}>
     <FileForm
       fieldName={`${member}.file`}
       label={'Attachment'}
@@ -75,10 +76,12 @@ const attachmentForm = props => member => (
     <TextFieldForm
       fieldName={`${member}.description`}
       label="Description"
-      optional
+      optional={R.isNil(fields.get(index).file)}
+      warn={!R.isNil(fields.get(index).file)}
       {...props}
     />
-  </GridColumn>);
+  </GridColumn>
+};
 
 export const Attachments = props => (
   <ArrayForm

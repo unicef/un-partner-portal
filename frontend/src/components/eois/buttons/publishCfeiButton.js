@@ -5,16 +5,15 @@ import ButtonWithTooltipEnabled from '../../common/buttonWithTooltipEnabled';
 
 const messages = {
   text: 'Publish',
-  tooltipInfo: 'Update Application Deadline date to publish this CFEI',
 };
 
 const PublishCfeiButton = (props) => {
-  const { handleClick, disabled } = props;
+  const { handleClick, disabled, tooltipInfo } = props;
   return disabled ?
     <ButtonWithTooltipEnabled
       name="publish"
       text={messages.text}
-      tooltipText={messages.tooltipInfo}
+      tooltipText={tooltipInfo}
       onClick={handleClick}
       disabled={disabled}
     />
@@ -30,6 +29,7 @@ const PublishCfeiButton = (props) => {
 PublishCfeiButton.propTypes = {
   handleClick: PropTypes.func,
   disabled: PropTypes.bool,
+  tooltipInfo: PropTypes.string,
 };
 
 export default PublishCfeiButton;

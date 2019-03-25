@@ -2,8 +2,10 @@ from __future__ import absolute_import
 
 from collections import defaultdict
 
+from django.conf import settings
 from django.db import connections
 from django.db.migrations.recorder import MigrationRecorder
+from django.urls import reverse
 from rest_framework import status as statuses
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from account.authentication import CustomAzureADBBCOAuth2
 from agency.agencies import UNHCR
 from agency.permissions import AgencyPermission
 from agency.roles import AgencyRole
@@ -52,6 +55,7 @@ from common.consts import (
     OTHER_AGENCIES_DSR_COMPLETED_REASONS,
     CFEI_TYPES,
     CFEI_STATUSES,
+    FLAG_CATEGORIES,
 )
 from partner.roles import PartnerRole
 
@@ -138,10 +142,16 @@ class GeneralConfigAPIView(APIView):
             "flag-type-choices": flag_type_choices,
             "flag-types": FLAG_TYPES,
             "flag-category-choices": USER_CREATED_FLAG_CATEGORIES,
+            "all-flag-category-choices": FLAG_CATEGORIES,
             "notification-frequency-choices": NOTIFICATION_FREQUENCY_CHOICES,
             "cfei-types": CFEI_TYPES,
             "cfei-statuses": CFEI_STATUSES,
             "business-areas": BUSINESS_AREAS,
+            "version": settings.GIT_VERSION,
+            "active-directory-login-url": reverse('accounts:social-login', kwargs={
+                'backend': 'azuread-b2c-oauth2'
+            }),
+            "active-directory-logout-url": CustomAzureADBBCOAuth2().logout_url,
         }
         return Response(data, status=statuses.HTTP_200_OK)
 

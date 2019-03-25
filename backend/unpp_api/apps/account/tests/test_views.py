@@ -7,13 +7,16 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from django.core import mail
+from faker import Faker
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 from common.consts import PARTNER_TYPES, FUNCTIONAL_RESPONSIBILITY_CHOICES
+from common.factories import UserFactory
 from common.tests.base import BaseAPITestCase
 from partner.models import Partner
-from account.models import User
+
+
+fake = Faker()
 
 
 class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
@@ -22,18 +25,12 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
 
     def setUp(self):
         super(TestRegisterPartnerAccountAPITestCase, self).setUp()
-        email = "test@myorg.org"
-        User.objects.create(fullname=email, email=email)
+        self.client.force_login(UserFactory())
         self.data = {
             "partner": {
                 "legal_name": "My org legal name",
                 "country_code": "PL",
                 "display_type": PARTNER_TYPES.international,
-            },
-            "user": {
-                "email": email,
-                "password": "Test123!",
-                "fullname": "Leszek Orzeszek",
             },
             "partner_profile": {
                 "alias_name": "Name Inc.",
@@ -61,14 +58,6 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
     def test_register_partner(self):
         payload = self.data.copy()
         url = reverse('accounts:registration')
-        response = self.client.post(url, data=payload)
-
-        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
-        self.assertEquals(
-            response.data, {'user': {'email': [u'This field must be unique.']}}
-        )
-
-        payload['user']['email'] = "new-user@myorg.org"
         response = self.client.post(url, data=payload)
         self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn('document', response.data['non_field_errors'][0])
@@ -107,9 +96,6 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
             response.data['partner']['legal_name'], payload['partner']['legal_name']
         )
         self.assertEquals(
-            response.data['user']['email'], payload['user']['email']
-        )
-        self.assertEquals(
             response.data['partner_profile']['former_legal_name'], payload['partner_profile']['former_legal_name']
         )
         self.assertEquals(
@@ -118,16 +104,7 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
         self.assertEquals(
             response.data['partner_head_organization']['email'], payload['partner_head_organization']['email']
         )
-        self.assertEquals(
-            response.data['partner_member']['title'], payload['partner_member']['title']
-        )
         partner_id = response.data['partner']['id']
-        self.assertEquals(response.data['user'].get("password"), None)
-
-        # confirm that partner was created by logging in
-        url = reverse('rest_login')
-        response = self.client.post(url, data=payload['user'], format='json')
-        self.assertResponseStatusIs(response)
 
         partner = Partner.objects.get(id=partner_id)
         self.assertEqual(partner.legal_name, payload['partner']['legal_name'])
@@ -142,35 +119,19 @@ class TestRegisterPartnerAccountAPITestCase(BaseAPITestCase):
             partner.internal_controls.count(), len(list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values))
         )
 
-        # check if logout endpoint works correctly
-        url = reverse('rest_logout')
-        response = self.client.post(url, data={}, format='json')
-        self.assertResponseStatusIs(response)
 
-        url = reverse('rest_login')
-        user_data = payload['user']
-        user_data['password'] = 'fail'
-        response = self.client.post(url, data=user_data, format='json')
-        self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+class PreventDuplicateRegistrationsAPITestCase(BaseAPITestCase):
 
-
-class PreventDuplicateRegistrationsAPITestCase(APITestCase):
+    with_session_login = False
 
     def setUp(self):
         super(PreventDuplicateRegistrationsAPITestCase, self).setUp()
-        self.email = "test@myorg.org"
-        self.password = 'Test123!'
 
         self.data = {
             "partner": {
                 "legal_name": "Org Name",
                 "country_code": "PL",
                 "display_type": PARTNER_TYPES.international,
-            },
-            "user": {
-                "email": self.email,
-                "password": self.password,
-                "fullname": "John Doe",
             },
             "partner_profile": {
                 "alias_name": "Alias Org Name",
@@ -202,63 +163,51 @@ class PreventDuplicateRegistrationsAPITestCase(APITestCase):
     def test_fails_to_register_duplicate_partner_in_same_country(self):
         url = reverse('accounts:registration')
 
-        response = self.client.post(url, data=self.data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
-        self.assertTrue(status.is_success(response.status_code))
+        with self.login_as_user(UserFactory()):
+            response = self.client.post(url, data=self.data, format='json')
+            self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+
         self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
-        self.assertEquals(response.data['user']['email'], self.data['user']['email'])
 
-        duplicate_partner_data = self.data.copy()
-        duplicate_partner_data['user'] = {
-            "email": 'anotehr@mail.com',
-            "password": 'Test123123!',
-            "fullname": "John Doe Jr.",
-        }
+        with self.login_as_user(UserFactory()):
+            duplicate_partner_data = self.data.copy()
+            duplicate_partner_data['partner_head_organization']['email'] = fake.email()
 
-        response = self.client.post(url, data=duplicate_partner_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(len(response.data['non_field_errors']), 1)
+            response = self.client.post(url, data=duplicate_partner_data, format='json')
+            self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+            self.assertEqual(len(response.data['partner']['non_field_errors']), 1)
 
     def test_allows_to_register_duplicate_partner_in_different_country(self):
         url = reverse('accounts:registration')
 
-        response = self.client.post(url, data=self.data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
-        self.assertTrue(status.is_success(response.status_code))
-        self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
-        self.assertEquals(response.data['user']['email'], self.data['user']['email'])
+        with self.login_as_user(UserFactory()):
+            response = self.client.post(url, data=self.data, format='json')
+            self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+            self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
 
-        duplicate_partner_data = self.data.copy()
-        duplicate_partner_data['user'] = {
-            "email": 'anotehr@mail.com',
-            "password": 'Test123123!',
-            "fullname": "John Doe Jr.",
-        }
-        duplicate_partner_data['partner']['country_code'] = 'GB'
+        with self.login_as_user(UserFactory()):
+            duplicate_partner_data = self.data.copy()
+            duplicate_partner_data['partner_head_organization']['email'] = fake.email()
+            duplicate_partner_data['partner']['country_code'] = 'GB'
 
-        response = self.client.post(url, data=duplicate_partner_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            response = self.client.post(url, data=duplicate_partner_data, format='json')
+            self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
 
     def test_fails_to_register_different_partner_for_existing_org_head(self):
         url = reverse('accounts:registration')
 
-        response = self.client.post(url, data=self.data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=response.content)
-        self.assertTrue(status.is_success(response.status_code))
-        self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
-        self.assertEquals(response.data['user']['email'], self.data['user']['email'])
+        with self.login_as_user(UserFactory()):
+            response = self.client.post(url, data=self.data, format='json')
+            self.assertResponseStatusIs(response, status.HTTP_201_CREATED)
+            self.assertEquals(response.data['partner']['legal_name'], self.data['partner']['legal_name'])
 
-        duplicate_partner_data = self.data.copy()
-        duplicate_partner_data['user'] = {
-            "email": 'anotehr@mail.com',
-            "password": 'Test123123!',
-            "fullname": "John Doe Jr.",
-        }
-        duplicate_partner_data['partner']['legal_name'] = 'Other Organization'
+        with self.login_as_user(UserFactory()):
+            duplicate_partner_data = self.data.copy()
+            duplicate_partner_data['partner']['legal_name'] = 'Other Organization'
 
-        response = self.client.post(url, data=duplicate_partner_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(len(response.data['non_field_errors']), 1)
+            response = self.client.post(url, data=duplicate_partner_data, format='json')
+            self.assertResponseStatusIs(response, status.HTTP_400_BAD_REQUEST)
+            self.assertIsNotNone(response.data['partner_head_organization']['email'])
 
 
 class TestUserProfileUpdateAPITestCase(BaseAPITestCase):

@@ -117,6 +117,8 @@ const saveUCN = (state, action) => {
     id: ucn.id,
     reviewers: [],
     focal_points: [],
+    partner_verified: R.path(['partner', 'partner_additional', 'is_verified'], ucn),
+    partner_flags: R.path(['partner', 'partner_additional', 'flagging_status'], ucn),
     partner_id: R.path(['partner', 'id'], ucn),
     partner_name: R.path(['partner', 'legal_name'], ucn),
     display_type: R.path(['partner', 'display_type'], ucn),
@@ -144,6 +146,11 @@ export function selectCfeiTitle(state, id) {
   return title;
 }
 
+export function selectCfeiAgency(state, id) {
+  const { [id]: { agency = 0 } = {} } = state;
+  return agency;
+}
+
 export function selectCfeiStatus(state, id) {
   const { [id]: { status = null } = {} } = state;
   return status;
@@ -157,6 +164,16 @@ export function selectCfeiDisplayStatus(state, id) {
 export function selectCfeiConverted(state, id) {
   const { [id]: { eoiConverted = null } = {} } = state;
   return eoiConverted;
+}
+
+export function selectPartnerVerified(state, id) {
+  const { [id]: { partner_verified = null } = {} } = state;
+  return partner_verified;
+}
+
+export function selectPartnerFlagStatus(state, id) {
+  const { [id]: { partner_flags = null } = {} } = state;
+  return partner_flags;
 }
 
 export function selectCfeiCompletedReason(state, id) {
@@ -221,7 +238,7 @@ export function selectCfeiWinnersStatus(state, id) {
 
 export function isUserAReviewer(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
-  if (cfei) return cfei.reviewers.includes(userId);
+  if (cfei && cfei.reviewers) return cfei.reviewers.includes(userId);
   return false;
 }
 
@@ -243,14 +260,14 @@ export function cfeiHasPartnerAccepted(state, cfeId) {
 
 export function isUserACreator(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
-  if (cfei) return cfei.created_by === userId;
+  if (cfei && cfei.created_by) return cfei.created_by === userId;
   return false;
 }
 
 export function isUserAFocalPoint(state, cfeiId, userId) {
   const cfei = R.prop(cfeiId, state);
 
-  if (cfei) {
+  if (cfei && cfei.focal_points) {
     return cfei.focal_points.includes(userId);
   }
   return false;

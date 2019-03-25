@@ -6,6 +6,7 @@ import {
   stopLoading,
   saveErrorMsg,
 } from './apiStatus';
+import { saveSelectedItems } from './selectableListItems';
 
 export const REPORTS_PARTNER_LOAD_STARTED = 'REPORTS_PARTNER_LOAD_STARTED';
 export const REPORTS_PARTNER_LOAD_SUCCESS = 'REPORTS_PARTNER_LOAD_SUCCESS';
@@ -41,11 +42,16 @@ const initialState = {
 
 export const loadPartnerReportsList = params => (dispatch) => {
   dispatch(reportsPartnerLoadStarted());
-  
+
   return getPartnerReports(params)
     .then((reports) => {
       dispatch(reportsPartnerLoadEnded());
+      reports.results = R.map(item => {
+        item.offices = R.map(office => R.assocPath(['admin_level_1', 'name'], item.legal_name, office), item.offices)
+        return item;
+      }, reports.results);
       dispatch(reportsPartnerLoadSuccess(reports));
+      dispatch(saveSelectedItems(reports.results.map(item => item.id)));
     })
     .catch((error) => {
       dispatch(reportsPartnerLoadEnded());

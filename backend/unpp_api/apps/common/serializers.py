@@ -50,6 +50,8 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
 
                 related_serializer = self.fields[related_name].child.__class__
                 for idx, object_data in enumerate(model_data):
+                    save_kwargs = {}
+
                     for field in self.exclude_fields.get(related_name, []):
                         field in object_data and object_data.pop(field)
 
@@ -62,7 +64,7 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                     object_data['partner_id'] = instance.id
 
                     if not _id and hasattr(related_manager.model, 'created_by'):
-                        object_data['created_by'] = self.context['request'].user.id
+                        save_kwargs['created_by'] = self.context['request'].user
 
                     serializer = related_serializer(
                         related_serializer.Meta.model.objects.filter(id=_id).first(),
@@ -76,13 +78,13 @@ class MixinPartnerRelatedSerializer(serializers.ModelSerializer):
                             }
                         })
 
-                    valid_ids.append(serializer.save().id)
+                    valid_ids.append(serializer.save(**save_kwargs).id)
 
-                # user can add and remove on update
-                to_be_removed = related_manager.exclude(id__in=valid_ids)
-                if hasattr(related_manager.model, 'editable'):
-                    to_be_removed.exclude(editable=False)
-                to_be_removed.delete()
+                if valid_ids:
+                    to_be_removed = related_manager.exclude(id__in=valid_ids)
+                    if hasattr(related_manager.model, 'editable'):
+                        to_be_removed.exclude(editable=False)
+                    to_be_removed.delete()
 
 
 class MixinPreventManyCommonFile(object):

@@ -14,13 +14,13 @@ const messages = {
 
 function loggedOrg(props) {
   const { role, name, logo } = props;
-  
+
   return (
     <GridColumn>
-      <Typography type="caption">
-        {messages.logged}  {name}
+      <Typography style={{ whiteSpace: 'pre-line' }} type="caption">
+        {`${messages.logged} \n ${name}`}
       </Typography>
-      {logo && <img alt={name} src={logo} />}
+      {logo && <img style={{ maxHeight: '120px' }} alt={name} src={logo} />}
       {role === ROLES.AGENCY && <AgencySwitch />}
       {role === ROLES.PARTNER && <PartnerSwitch />}
     </GridColumn>

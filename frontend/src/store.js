@@ -312,7 +312,7 @@ export const selectNormalizedCfeiStatuses = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['cfei-statuses']);
 
 export const selectNormalizedFlagTypes = state =>
-  mapValuesForSelectionField(state.partnerProfileConfig['flag-types']);
+  mapValuesForSelectionField(state.partnerProfileConfig['flag-types'], 'value');
 
 export const selectCountriesWithOptionalLocations = state =>
   state.partnerProfileConfig['countries-with-optional-location'];
@@ -354,6 +354,9 @@ export const selectCfeiDetails = (state, id) =>
 export const selectCfeiTitle = (state, id) =>
   cfeiDetailsSelector.selectCfeiTitle(state.cfeiDetails.data, id);
 
+export const selectCfeiAgency = (state, id) =>
+  cfeiDetailsSelector.selectCfeiAgency(state.cfeiDetails.data, id);
+
 export const selectCfeiCriteria = (state, id) =>
   cfeiDetailsSelector.selectCfeiCriteria(state.cfeiDetails.data, id);
 
@@ -374,6 +377,12 @@ export const selectCfeiCompletedReasonDisplay = (state, id) =>
 
 export const isCfeiCompleted = (state, id) =>
   cfeiDetailsSelector.isCfeiCompleted(state.cfeiDetails.data, id);
+
+export const selectPartnerVerified = (state, id) =>
+  cfeiDetailsSelector.selectPartnerVerified(state.cfeiDetails.data, id);
+
+export const selectPartnerFlagStatus = (state, id) =>
+  cfeiDetailsSelector.selectPartnerFlagStatus(state.cfeiDetails.data, id);
 
 export const isUserFinishedReview = (state, id) =>
   cfeiDetailsSelector.isUserFinishedReview(state.cfeiDetails.data, id);
@@ -468,6 +477,9 @@ export const selectNormalizedCompletionReasons = state =>
 
 export const selectNormalizedFlagCategoryChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['flag-category-choices'], 'value');
+
+export const selectAllFlagCategoryChoices = state =>
+  mapValuesForSelectionField(state.partnerProfileConfig['all-flag-category-choices'], 'value');
 
 export const selectNormalizedFlagTypeChoices = state =>
   mapValuesForSelectionField(state.partnerProfileConfig['flag-type-choices'], 'value');

@@ -1,8 +1,10 @@
-import { getPartnerProfileReports,
+import {
+  getPartnerProfileReports,
   getPartnerContactReports,
   getProjectDetailsReports,
   getPartnerVerificationReports,
-  getPartnerMappingReports } from '../helpers/api/api';
+  getPartnerMappingReports
+} from '../helpers/api/api';
 import download from 'downloadjs';
 import {
   clearError,
@@ -11,6 +13,7 @@ import {
   saveErrorMsg,
 } from './apiStatus';
 import { formatDateForPrint } from '../helpers/dates';
+import { errorToBeAdded } from './errorReducer';
 
 export const REPORTS_GENERATE_LOAD_STARTED = 'REPORTS_GENERATE_LOAD_STARTED';
 export const REPORTS_GENERATE_LOAD_SUCCESS = 'REPORTS_GENERATE_LOAD_SUCCESS';
@@ -23,11 +26,23 @@ export const reportsGenerateLoadEnded = () => ({ type: REPORTS_GENERATE_LOAD_END
 
 const messages = {
   loadFailed: 'Generating reports failed.',
+  sentEmail: 'Report will be sent to email.',
+  tooManyResults: 'Too many objects selected for export. Use filters to narrow down the search.',
+
 };
 
 const initialState = {
   loading: false,
 };
+
+const handleError = (dispatch, error) => {
+  debugger;
+  if (error.response.status === 400) {
+    dispatch(errorToBeAdded(error, 'export_report', messages.tooManyResults));
+  } else if (error.response.status === 202) {
+    dispatch(errorToBeAdded(error, 'export_report', messages.sentEmail));
+  }
+} 
 
 export const getPartnerProfileReport = params => (dispatch) => {
   dispatch(reportsGenerateLoadStarted());
@@ -40,6 +55,8 @@ export const getPartnerProfileReport = params => (dispatch) => {
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
       dispatch(reportsGenerateLoadFailure(error));
+
+      handleError(dispatch, error);
     });
 };
 
@@ -54,6 +71,8 @@ export const getPartnerContactReport = params => (dispatch) => {
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
       dispatch(reportsGenerateLoadFailure(error));
+
+      handleError(dispatch, error);
     });
 };
 
@@ -68,6 +87,8 @@ export const getPartnerMappingReport = params => (dispatch) => {
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
       dispatch(reportsGenerateLoadFailure(error));
+
+      handleError(dispatch, error);
     });
 };
 
@@ -82,6 +103,8 @@ export const getProjectReport = params => (dispatch) => {
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
       dispatch(reportsGenerateLoadFailure(error));
+
+      handleError(dispatch, error);
     });
 };
 
@@ -96,6 +119,8 @@ export const getVerificationReport = params => (dispatch) => {
     .catch((error) => {
       dispatch(reportsGenerateLoadEnded());
       dispatch(reportsGenerateLoadFailure(error));
+
+      handleError(dispatch, error);
     });
 };
 

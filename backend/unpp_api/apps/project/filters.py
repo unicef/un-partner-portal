@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from datetime import date
+from functools import reduce
+
 from django.db.models import Q
 import django_filters
 from django_filters.filters import CharFilter, DateFilter, BooleanFilter, ModelMultipleChoiceFilter, ChoiceFilter
@@ -33,7 +35,7 @@ class BaseProjectFilter(django_filters.FilterSet):
     posted_from_date = DateFilter(name='created', lookup_expr='date__gte')
     posted_to_date = DateFilter(name='created', lookup_expr='date__lte')
     selected_source = CharFilter(lookup_expr='iexact')
-    status = ChoiceFilter(method='filter_status', choices=CFEI_STATUSES, label='Status')
+    status = CommaSeparatedListFilter(custom_method='filter_status', choices=CFEI_STATUSES, label='Statuses')
     focal_points = ModelMultipleChoiceFilter(
         widget=CSVWidget(), queryset=User.objects.all()
     )
@@ -66,8 +68,7 @@ class BaseProjectFilter(django_filters.FilterSet):
             return queryset.filter(is_published=False)
         return queryset
 
-    def filter_status(self, queryset, name, value):
-        # Logic here should match EOI.status property
+    def filter_status(self, queryset, values):
         filters = {
             CFEI_STATUSES.draft: Q(
                 is_published=False,
@@ -95,7 +96,13 @@ class BaseProjectFilter(django_filters.FilterSet):
             ),
         }
 
-        return queryset.filter(filters.get(value, Q()))
+        queries = [filters.get(val) for val in values]
+
+        if queries:
+            query = reduce(lambda x, y: x | y, queries)
+            queryset = queryset.filter(query)
+
+        return queryset
 
 
 class ApplicationsFilter(django_filters.FilterSet):

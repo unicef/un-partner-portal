@@ -71,7 +71,7 @@ class PartnerProfileIdentification extends Component {
     const governingDocs = R.map(item => (R.is(String, item.document) ? R.dissoc('document', item) : item),
       identification.governing_documents);
 
-    const registrationDocs = R.filter(item => (R.is(String, item.document) ? R.dissoc('document', item) : item),
+    const registrationDocs = R.map(item => (R.is(String, item.document) ? R.dissoc('document', item) : item),
       identification.registration_documents);
 
     identification = R.assoc('governing_documents', governingDocs, identification);

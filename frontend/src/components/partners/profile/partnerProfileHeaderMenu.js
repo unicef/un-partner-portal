@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 import { compose } from 'ramda';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import Save from 'material-ui-icons/Save';
+import IconWithTextButton from '../../common/iconWithTextButton';
 import AlertDialog from '../../common/alertDialog';
 import DropdownMenu from '../../common/dropdownMenu';
 import SpreadContent from '../../common/spreadContent';
@@ -13,6 +15,7 @@ import AddVerificationModal from './modals/addVerificationModal/addVerificationM
 import AddFlagModal from './modals/addFlagModal/addFlagModal';
 import withMultipleDialogHandling from '../../common/hoc/withMultipleDialogHandling';
 import { checkPermission, AGENCY_PERMISSIONS } from '../../../helpers/permissions';
+import { authorizedFileDownload } from "../../../helpers/api/api";
 
 const addVerification = 'addVerification';
 const addObservation = 'addObservation';
@@ -21,8 +24,9 @@ const messages = {
   warning: 'Warning',
   verifyPartner: 'Partner profile is not verified. Please verify partner before adding an observation.',
   addVerification: 'Partner profile can not be verified until HQ profile will be verified.',
-  hasFinished: 'Partner profile has not filled all required informations.',
+  hasFinished: 'This profile cannot be verified as the partner has not completed their profile.',
   hasSanctionMatch: 'Partner has sanction match observation and can not be verified.',
+  download: 'Download as PDF',
 };
 
 class PartnerProfileHeaderMenu extends Component {
@@ -40,6 +44,7 @@ class PartnerProfileHeaderMenu extends Component {
 
   profileOptions() {
     const {
+      partnerId,
       hasVerifyHqPermission,
       hasVerifyAllCSOPermission,
       hasVerifyAssignedCSOPermission,
@@ -49,7 +54,14 @@ class PartnerProfileHeaderMenu extends Component {
       agencyCountryCode,
       handleDialogOpen } = this.props;
 
-    const options = [];
+    const options = [{
+      name: '',
+      content: <IconWithTextButton
+        icon={<Save />}
+        text={messages.download}
+        onClick={() => authorizedFileDownload({ uri: `/partners/${partnerId}/?export=pdf` })}
+      />,
+    }];
 
     if (partnerProfile.isLocked === false) {
       if (hasVerifyHqPermission || hasVerifyAllCSOPermission
@@ -76,7 +88,7 @@ class PartnerProfileHeaderMenu extends Component {
 
       if (hasAddFlagAllPermission
         || (hasAddFlagCSOPermission && !partnerProfile.isHq
-            && agencyCountryCode === partnerProfile.countryCode)) {
+          && agencyCountryCode === partnerProfile.countryCode)) {
         options.push(
           {
             name: addObservation,
@@ -143,6 +155,7 @@ class PartnerProfileHeaderMenu extends Component {
 }
 
 PartnerProfileHeaderMenu.propTypes = {
+  partnerId: PropTypes.string,
   params: PropTypes.object,
   dialogOpen: PropTypes.object,
   partnerProfile: PropTypes.object,
@@ -157,10 +170,11 @@ PartnerProfileHeaderMenu.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
+  partnerId: ownProps.params.id,
   partnerProfile: state.agencyPartnerProfile.data[ownProps.params.id] || {},
   agencyCountryCode: state.session.officeCountryCode,
   hasAddFlagAllPermission:
-     checkPermission(AGENCY_PERMISSIONS.ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES, state),
+    checkPermission(AGENCY_PERMISSIONS.ADD_FLAG_OBSERVATION_ALL_CSO_PROFILES, state),
   hasAddFlagCSOPermission:
     checkPermission(AGENCY_PERMISSIONS.ADD_FLAG_OBSERVATION_COUNTRY_CSO_PROFILES, state),
   hasVerifyHqPermission: checkPermission(AGENCY_PERMISSIONS.VERIFY_INGO_HQ, state),

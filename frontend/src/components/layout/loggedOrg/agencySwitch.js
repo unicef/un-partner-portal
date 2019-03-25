@@ -42,13 +42,15 @@ class AgencySwitch extends Component {
   }
 
   handleRequestClose(office) {
-    const { startRefresh, stopRefresh, officeId } = this.props;
+    const { startRefresh, stopRefresh } = this.props;
+
     if (office.id) {
       this.props.saveNewCurrentOffice({
         officeId: office.office.id,
         officeName: office.office.name,
         officeRole: office.role_display,
         permissions: office.permissions,
+        officeCountryCode: office.office.country,
       });
 
       this.setState({ open: false });

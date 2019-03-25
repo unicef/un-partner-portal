@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { submit } from 'redux-form';
 import ControlledModal from '../../../common/modals/controlledModal';
 import Loader from '../../../common/loader';
-import { updateCfei } from '../../../../reducers/newCfei';
-import EditDateCfeiForm from './editDateCfeiForm';
+import { updateCfei } from '../../../../reducers/newCfei'; 
+import EditFocalPointForm from './editDateCfeiForm';
 
 const messages = {
   title: {
@@ -54,7 +54,7 @@ class EditDateCfeiModal extends Component {
               label: messages.save,
             },
           }}
-          content={<EditDateCfeiForm id={id} onSubmit={this.onFormSubmit} type={type} />}
+          content={<EditFocalPointForm id={id} onSubmit={this.onFormSubmit} type={type} />}
         />
         <Loader loading={showLoading} fullscreen />
       </React.Fragment>

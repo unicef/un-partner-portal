@@ -1,3 +1,4 @@
+from agency.agencies import UNHCR, UNICEF, WFP
 from partner.models import Partner
 from reports.exports.excel.base import BaseXLSXExporter
 
@@ -42,10 +43,12 @@ class PartnerVerificationsObservationsReportXLSLExporter(BaseXLSXExporter):
             'Profile Verification Status',
             'Date of Verification Status',
             'Does Profile Include Risk Flags?',
+            'Category of Risk',
             'Risk Flag Comments',
             'Date of Risk Flag\n(if applicable)',
             'Agency Raising\nRisk Flag',
             'Has Risk Flag been Escalated?',
+            'HQ\nVerification Status',
             '# Partner Selections\nin the Last Year?'
         ]
         worksheet = self.workbook.add_worksheet('Verifications and Observations')
@@ -63,6 +66,7 @@ class PartnerVerificationsObservationsReportXLSLExporter(BaseXLSXExporter):
             latest_verification = partner.verifications.order_by('-created').last()
             flags = partner.flags.exclude(is_valid=False).exclude(submitter=None).order_by('created')
             comments_display = '\n\n'.join([f.comment for f in flags])
+            category_display = '\n\n'.join([f.get_category_display() or '' for f in flags])
             flag_dates_display = '\n\n'.join([str(f.created.date()) for f in flags])
             flag_agencies_display = '\n\n'.join([f.submitter.agency.name for f in flags])
             flag_has_been_escalated_display = '\n\n'.join([
@@ -74,18 +78,20 @@ class PartnerVerificationsObservationsReportXLSLExporter(BaseXLSXExporter):
                 partner.profile.acronym,
                 partner.get_display_type_display(),
                 boolean_display[partner.is_hq],
-                'N/A',  # TODO: UNHCR Vendor Code
-                'N/A',  # TODO: UNICEF Vendor Code
-                'N/A',  # TODO: WFP Vendor Code
+                getattr(partner.vendor_numbers.filter(agency=UNHCR.model_instance).first(), 'number', 'N/A'),
+                getattr(partner.vendor_numbers.filter(agency=UNICEF.model_instance).first(), 'number', 'N/A'),
+                getattr(partner.vendor_numbers.filter(agency=WFP.model_instance).first(), 'number', 'N/A'),
                 partner.get_country_code_display(),
                 partner.last_update_timestamp,
                 verified_display[getattr(latest_verification, 'is_verified', None)],
                 getattr(latest_verification, 'created', None),
                 boolean_display[flags.exists()],
+                category_display,
                 comments_display,
                 flag_dates_display,
                 flag_agencies_display,
                 flag_has_been_escalated_display,
+                verified_display[partner.hq.is_verified] if partner.hq else 'N/A',
                 partner.applications.winners().count(),
             ))
             current_row += 1

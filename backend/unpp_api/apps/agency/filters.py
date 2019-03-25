@@ -45,7 +45,7 @@ class AgencyUserFilter(django_filters.FilterSet):
         elif value is False:
             queryset = queryset.exclude(agency_members__role__in=VALID_FOCAL_POINT_ROLE_NAMES)
 
-        return queryset
+        return queryset.distinct('id')
 
     def filter_reviewers(self, queryset, name, value):
         if value is True:
@@ -53,7 +53,7 @@ class AgencyUserFilter(django_filters.FilterSet):
         elif value is False:
             queryset = queryset.exclude(agency_members__role__in=VALID_REVIEWER_ROLE_NAMES)
 
-        return queryset
+        return queryset.distinct('id')
 
 
 class AgencyFilter(django_filters.FilterSet):

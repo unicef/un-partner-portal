@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import R from 'ramda';
 import { patchApplication } from '../helpers/api/api';
 
@@ -13,7 +12,8 @@ export const deleteApplication = applicationId => ({ type: DELETE_APPLICATION, a
 export const loadPartnerApplication = (cfeiId, application) => (
   { type: LOAD_PARTNER_APPLICATION_SUCCESS, cfeiId, application });
 
-const deletePartnerApplication = (state, applicationId) => R.filter(item => item.id === applicationId, state);
+const deletePartnerApplication = (state, applicationId) =>
+  R.filter(item => item.id === applicationId, state);
 
 export const updateApplication = (cfeiId, applicationId, body) => (dispatch, getState) =>
   patchApplication(applicationId, body)

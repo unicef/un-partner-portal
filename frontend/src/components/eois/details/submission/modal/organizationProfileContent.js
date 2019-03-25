@@ -56,18 +56,7 @@ const OrganizationProfileContent = (props) => {
 
   return (
     <div>
-      <PaddedContent big>
-        <div className={classes.root}>
-          <Typography type="headline"> {profileName}</Typography>
-          {<VerifiedUser
-            className={classNames({
-              [classes.iconVerified]: verifiedStatus,
-              [classes.iconNotVerified]: !verifiedStatus,
-            })}
-          />}
-          {flag ? <Flag /> : null}
-        </div>
-      </PaddedContent>
+      <div className={classes.root} />
       <OrganizationProfileOverview partnerId={partnerId} />
     </div>
   );

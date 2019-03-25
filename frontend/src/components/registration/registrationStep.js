@@ -13,7 +13,9 @@ const messages = {
   continue: 'Continue',
   register: 'Register',
   cancel: 'Cancel',
-  terms: <div>{'I have read and agree to the'} <a href="">{'Terms of Use and Privacy Policy'}</a> {'on UN Partner Portal'}</div>,
+  terms: <div>{'I have read and agree to the '}
+    <a href="https://unpartnerportalcso.zendesk.com/hc/en-us/article_attachments/360017929314/UN_Partner_Portal_Privacy_Policy_.pdf">{'Terms of Use'}</a>
+    {' and '}<a href="https://unpartnerportalcso.zendesk.com/hc/en-us/article_attachments/360018648633/UN_Partner_Portal_Terms_of_Use.pdf">{'Privacy Policy'}</a> {'on UN Partner Portal'}</div>,
 };
 
 const styleSheet = () => ({

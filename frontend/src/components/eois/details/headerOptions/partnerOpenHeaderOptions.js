@@ -8,33 +8,40 @@ import PinnedCell from '../../cells/pinnedCell';
 import DownloadButton from '../../buttons/downloadCfeiButton';
 import PinButton from '../../buttons/pinItemButton';
 import { checkPermission, PARTNER_PERMISSIONS } from '../../../../helpers/permissions';
+import { authorizedFileDownload } from "../../../../helpers/api/api";
 
 const download = 'download';
 
 const PartnerOpenHeaderOptions = (props) => {
   const { params: { id }, hasPermission } = props;
 
+  let dropdownOptions = [
+    {
+      name: download,
+      content: <DownloadButton handleClick={() => { authorizedFileDownload({ uri: `/projects/${id}/?export=pdf` }); }} />,
+    },
+  ]
+
+  if (hasPermission) {
+    dropdownOptions.push(
+      {
+        name: 'pinItem',
+        content: <PinButton id={id} />,
+      });
+  }
+
   return (
     <Grid container direction="row" alignItems="center" wrap="nowrap" spacing={0}>
       <Grid item>
         <PinnedCell id={id} />
       </Grid>
-      {hasPermission && <Grid item>
+      <Grid item>
         <DropdownMenu
           options={
-            [
-              {
-                name: download,
-                content: <DownloadButton handleClick={() => { window.open(`/api/projects/${id}/?export=pdf`, '_self'); }} />,
-              },
-              {
-                name: 'pinItem',
-                content: <PinButton id={id} />,
-              },
-            ]
+            dropdownOptions
           }
         />
-      </Grid>}
+      </Grid>
     </Grid>
   );
 };

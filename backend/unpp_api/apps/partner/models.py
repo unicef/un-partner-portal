@@ -1,28 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from operator import attrgetter
-
-from datetime import date
-import os
 import logging
+import warnings
+from datetime import date
+from operator import attrgetter
 
 from cached_property import threaded_cached_property
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from django.core.validators import MinValueValidator
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.validators import MinValueValidator, MinLengthValidator
+from django.db import models
 from django.db.models import Q, Count
 from django.db.models.signals import post_save
+from django_countries.fields import Country
 from model_utils.models import TimeStampedModel
 
 from account.models import User
 from common.base_models import MigratedTimeStampedModel
-from common.database_fields import FixedTextField
-from common.validators import MaxCurrentYearValidator, PastDateValidator, FutureDateValidator
-from common.countries import COUNTRIES_ALPHA2_CODE
-from common.utils import Thumbnail
 from common.consts import (
     SATISFACTION_SCALES,
     PARTNER_REVIEW_TYPES,
@@ -44,6 +40,10 @@ from common.consts import (
     FLAG_TYPES,
     FLAG_CATEGORIES,
 )
+from common.countries import COUNTRIES_ALPHA2_CODE
+from common.database_fields import FixedTextField
+from common.validators import max_current_year_validator, past_date_validator, \
+    future_date_validator
 from partner.roles import PartnerRole, PARTNER_ROLE_PERMISSIONS
 from review.models import PartnerFlag
 
@@ -51,7 +51,12 @@ logger = logging.getLogger(__name__)
 
 
 class Partner(MigratedTimeStampedModel):
-    legal_name = models.CharField(max_length=255)
+    legal_name = models.TextField(max_length=255, validators=[
+        MinLengthValidator(1),
+    ], db_index=True)
+    legal_name_length = models.IntegerField(
+        default=0, editable=False, db_index=True
+    )  # Maintained in DB, see migration 0091
     display_type = models.CharField(max_length=3, choices=PARTNER_TYPES, verbose_name='Organization Type')
     hq = models.ForeignKey('self', null=True, blank=True, related_name='children')
     country_code = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE)
@@ -78,10 +83,13 @@ class Partner(MigratedTimeStampedModel):
     declaration = models.ForeignKey('common.CommonFile', null=True, blank=True)
 
     class Meta:
-        ordering = ('id', )
+        ordering = ('-created', )
+        unique_together = (
+            'legal_name', 'country_code', 'hq'
+        )
 
     def __str__(self):
-        return "Partner: {} <pk:{}>".format(self.legal_name, self.id)
+        return f"[{self.pk}] {self.legal_name} ({self.display_type}) in {self.get_country_code_display()}"
 
     @property
     def is_international(self):
@@ -146,7 +154,7 @@ class Partner(MigratedTimeStampedModel):
 
     @property
     def is_verified(self):
-        return getattr(self.verifications.order_by('-created').last(), 'is_verified', None)
+        return getattr(self.verifications.order_by('created').last(), 'is_verified', None)
 
     @property
     def can_be_verified(self):
@@ -187,7 +195,7 @@ class Partner(MigratedTimeStampedModel):
         return getattr(self.hq, 'declaration', self.declaration)
 
     @property
-    def has_finished(self):
+    def profile_is_complete(self):
         if not self.profile.identification_is_complete:
             return False
         if not self.profile.contact_is_complete:
@@ -204,11 +212,29 @@ class Partner(MigratedTimeStampedModel):
             return False
         return True
 
-    profile_is_complete = has_finished
+    @property
+    def has_finished(self):
+        warnings.warn(
+            'Partner.has_finished will be removed in the future, use Partner.profile_is_complete',
+            PendingDeprecationWarning
+        )
+        return self.profile_is_complete
 
     @property
     def org_head(self):
         return self.organisation_heads.order_by('-created').first()
+
+    @property
+    def country(self):
+        return Country(self.country_code)
+
+    @property
+    def country_iso_alpha2(self):
+        return Country(self.country_code).code
+
+    @property
+    def country_iso_alpha3(self):
+        return Country(self.country_code).alpha3
 
     @property
     def last_update_timestamp(self):
@@ -223,7 +249,7 @@ class Partner(MigratedTimeStampedModel):
         for field_name in timestamp_fields:
             try:
                 update_timestamps.append(attrgetter(field_name)(self))
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, AttributeError):
                 pass
 
         update_timestamps.extend(self.directors.values_list("modified", flat=True))
@@ -270,7 +296,7 @@ class PartnerProfile(TimeStampedModel):
         null=True,
         blank=True,
         validators=(
-            MaxCurrentYearValidator(),
+            max_current_year_validator,
             MinValueValidator(1800),  # red cross since 1863 year
         )
     )
@@ -343,10 +369,10 @@ class PartnerProfile(TimeStampedModel):
     explain = models.TextField(max_length=5000, null=True, blank=True, verbose_name="Please explain")
 
     class Meta:
-        ordering = ('id', )
+        ordering = ('-created', )
 
     def __str__(self):
-        return "PartnerProfile <pk:{}>".format(self.id)
+        return f"[{self.pk}] PartnerProfile of {self.partner}"
 
     @property
     def registration_date(self):
@@ -441,6 +467,7 @@ class PartnerProfile(TimeStampedModel):
             'staff_in_country': self.partner.staff_in_country,
             'staff_globally': self.partner.staff_globally,
             'country_presence': len(self.partner.country_presence) > 0 if self.partner.is_hq else True,
+            'pinned_location_office_on_map': self.partner.location_field_offices.exists(),
             'experiences': all([
                 exp.is_complete for exp in self.partner.experiences.all()
             ]) if self.partner.experiences.exists() else False,
@@ -451,6 +478,7 @@ class PartnerProfile(TimeStampedModel):
             required_fields.pop('staff_globally')
         else:
             required_fields.pop('staff_in_country')
+            required_fields.pop('pinned_location_office_on_map')
         return all(required_fields.values())
 
     @property
@@ -575,15 +603,15 @@ class PartnerMailingAddress(TimeStampedModel):
         choices=MAILING_TYPES,
         default=MAILING_TYPES.street
     )
-    street = models.CharField(max_length=200, null=True, blank=True)
-    po_box = models.CharField(max_length=200, null=True, blank=True)
-    city = models.CharField(max_length=200, null=True, blank=True)
+    street = models.CharField(max_length=1000, null=True, blank=True)
+    po_box = models.CharField(max_length=1000, null=True, blank=True)
+    city = models.CharField(max_length=1000, null=True, blank=True)
     country = models.CharField(max_length=2, choices=COUNTRIES_ALPHA2_CODE, null=True, blank=True)
-    zip_code = models.CharField(max_length=200, null=True, blank=True)
-    telephone = models.CharField(max_length=255, null=True, blank=True)
-    fax = models.CharField(max_length=255, null=True, blank=True)
-    website = models.URLField(null=True, blank=True)
-    org_email = models.EmailField(null=True, blank=True)
+    zip_code = models.CharField(max_length=1000, null=True, blank=True)
+    telephone = models.CharField(max_length=1000, null=True, blank=True)
+    fax = models.CharField(max_length=1000, null=True, blank=True)
+    website = models.URLField(max_length=1000, null=True, blank=True)
+    org_email = models.EmailField(max_length=1000, null=True, blank=True)
 
     class Meta:
         ordering = ('id', )
@@ -617,9 +645,12 @@ class Person(TimeStampedModel):
             self.job_title,
             self.telephone,
             self.email,
-            hasattr(self, 'authorized') and self.authorized is not None,
-            hasattr(self, 'board_member') and self.board_member is not None,
         }
+        if hasattr(self, 'authorized'):
+            required_fields.add(self.authorized is not None)
+        if hasattr(self, 'board_member'):
+            required_fields.add(self.board_member is not None)
+
         return all(required_fields)
 
 
@@ -649,6 +680,9 @@ class PartnerPolicyArea(TimeStampedModel):
 
     class Meta:
         ordering = ('id', )
+        unique_together = (
+            'partner', 'area'
+        )
 
     def __str__(self):
         return "PartnerPolicyArea <pk:{}>".format(self.id)
@@ -732,7 +766,7 @@ class PartnerReporting(TimeStampedModel):
     publish_annual_reports = models.NullBooleanField()
     last_report = models.DateField(verbose_name='Date of most recent annual report', null=True, blank=True)
     report = models.ForeignKey('common.CommonFile', null=True, blank=True, related_name="reports")
-    link_report = models.URLField(null=True, blank=True)
+    link_report = models.URLField(max_length=1000, null=True, blank=True)
 
     class Meta:
         ordering = ('id', )
@@ -767,8 +801,7 @@ class PartnerMandateMission(TimeStampedModel):
                      'beneficiaries, including sexual exploitation and abuse.'
     )
     ethic_safeguard = models.NullBooleanField(
-        verbose_name='Does the organization have a policy or code of conduct to '
-                     'safeguard against the violation and abuse of beneficiaries?'
+        verbose_name='Are these mechanisms formally documented in an organizational policy or code of conduct?'
     )
     ethic_safeguard_policy = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="ethic_safeguard_policies"
@@ -856,6 +889,9 @@ class PartnerInternalControl(TimeStampedModel):
 
     class Meta:
         ordering = ('id', )
+        unique_together = (
+            'partner', 'functional_responsibility'
+        )
 
     def __str__(self):
         return "PartnerInternalControl <pk:{}>".format(self.id)
@@ -874,7 +910,7 @@ class PartnerBudget(TimeStampedModel):
     partner = models.ForeignKey(Partner, related_name="budgets")
     year = models.PositiveSmallIntegerField(
         help_text="Enter valid year.",
-        validators=[MaxCurrentYearValidator(), MinValueValidator(1800)]  # red cross since 1863 year
+        validators=[max_current_year_validator, MinValueValidator(1800)]  # red cross since 1863 year
     )
     budget = models.CharField(max_length=3, choices=BUDGET_CHOICES, null=True, blank=True)
 
@@ -902,7 +938,7 @@ class PartnerFunding(TimeStampedModel):
         ordering = ('id', )
 
     def __str__(self):
-        return "PartnerFunding <pk:{}>".format(self.id)
+        return f"PartnerFunding {self.partner}"
 
 
 class PartnerCollaborationPartnership(TimeStampedModel):
@@ -911,8 +947,10 @@ class PartnerCollaborationPartnership(TimeStampedModel):
     agency = models.ForeignKey(
         'agency.Agency', related_name="collaborations_partnership", blank=True, null=True
     )
-    description = models.CharField(max_length=5000, blank=True, null=True)
-    partner_number = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(max_length=10000, blank=True, null=True)
+    partner_number = models.CharField(
+        max_length=200, blank=True, null=True, verbose_name='Please provide your Vendor/Partner Number (If applicable)'
+    )
 
     class Meta:
         ordering = ('id', )
@@ -938,7 +976,7 @@ class PartnerCollaborationEvidence(TimeStampedModel):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="collaboration_evidences")
     partner = models.ForeignKey(Partner, related_name="collaboration_evidences")
     mode = models.CharField(max_length=3, choices=COLLABORATION_EVIDENCE_MODES, blank=True, null=True)
-    organization_name = models.CharField(max_length=200, blank=True, null=True)
+    organization_name = models.CharField(max_length=1000, blank=True, null=True)
     date_received = models.DateField(verbose_name='Date Received', null=True)
     evidence_file = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name="collaboration_evidences"
@@ -967,8 +1005,8 @@ class PartnerOtherInfo(TimeStampedModel):
     partner = models.OneToOneField(Partner, related_name="other_info")
     info_to_share = models.TextField(max_length=5000, null=True, blank=True)
     org_logo = models.ForeignKey(
-        'common.CommonFile', null=True, blank=True, related_name="others_info")
-    org_logo_thumbnail = models.ImageField(null=True, blank=True)
+        'common.CommonFile', null=True, blank=True, related_name="others_info"
+    )
 
     other_doc_1 = models.ForeignKey(
         'common.CommonFile', null=True, blank=True, related_name='other_info_doc_1'
@@ -988,33 +1026,9 @@ class PartnerOtherInfo(TimeStampedModel):
     def __str__(self):
         return "PartnerOtherInfo <pk:{}>".format(self.id)
 
-    def save(self, *args, **kwargs):
-        thumbnail_missing = bool(self.org_logo and not self.org_logo_thumbnail.name)
-        logo_has_changed = bool(
-            self.org_logo and self.org_logo_thumbnail.name and
-            self.org_logo.file_field.name not in self.org_logo_thumbnail.name
-        )
-
-        if thumbnail_missing or logo_has_changed:
-            try:
-                image_generator = Thumbnail(source=open(self.org_logo.file_field.path, 'rb'))
-                img = image_generator.generate()
-                new_filename = "thumbnail_{}".format(self.org_logo.file_field.name)
-                new_filepath = "{}/{}".format(
-                    os.path.dirname(self.org_logo.file_field.path), new_filename
-                )
-                os.mknod(new_filepath)
-                self.org_logo_thumbnail.name = new_filename
-                with open(new_filepath, "wb") as thumb:
-                    thumb.write(img.read())
-                os.chmod(new_filepath, 0o644)
-
-            except Exception as exp:
-                logger.exception(exp)
-        elif self.org_logo in ['', None] and self.org_logo_thumbnail.name is not None:
-            self.org_logo_thumbnail.delete()
-
-        super(PartnerOtherInfo, self).save(*args, **kwargs)
+    @property
+    def org_logo_thumbnail(self):
+        return self.org_logo and self.org_logo.thumbnail_url
 
 
 class PartnerMember(TimeStampedModel):
@@ -1030,7 +1044,7 @@ class PartnerMember(TimeStampedModel):
         )
 
     def __str__(self):
-        return "PartnerMember: {} <pk:{}>".format(self.title, self.id)
+        return f"<{self.pk}>[{self.user}] `{self.get_role_display()}` in `{self.partner}`"
 
     def get_role_display(self):
         # This is one of the "magical" django methods and cannot be called directly using super call
@@ -1086,10 +1100,10 @@ class PartnerRegistrationDocument(TimeStampedModel):
     editable = models.BooleanField(default=True)
     issuing_authority = models.TextField()
     issue_date = models.DateField(validators=(
-        PastDateValidator(),
+        past_date_validator,
     ))
     expiry_date = models.DateField(validators=(
-        FutureDateValidator(),
+        future_date_validator,
     ), null=True, blank=True)
 
     class Meta:
@@ -1108,6 +1122,18 @@ def create_partner_additional_models(sender, instance, created, **kwargs):
         PartnerMandateMission.objects.create(partner=instance)
         PartnerFunding.objects.create(partner=instance)
         PartnerOtherInfo.objects.create(partner=instance)
+
+        responsibilities = []
+        for responsibility in list(FUNCTIONAL_RESPONSIBILITY_CHOICES._db_values):
+            responsibilities.append(
+                PartnerInternalControl(partner=instance, functional_responsibility=responsibility)
+            )
+        PartnerInternalControl.objects.bulk_create(responsibilities)
+
+        policy_areas = []
+        for policy_area in list(POLICY_AREA_CHOICES._db_values):
+            policy_areas.append(PartnerPolicyArea(partner=instance, area=policy_area))
+        PartnerPolicyArea.objects.bulk_create(policy_areas)
 
 
 post_save.connect(create_partner_additional_models, sender=Partner)

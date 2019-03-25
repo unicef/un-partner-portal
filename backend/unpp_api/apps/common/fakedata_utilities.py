@@ -27,6 +27,7 @@ from common.factories import (
     UserFactory,
     get_partner_name,
     DirectEOIFactory,
+    FinalizedEOIFactory,
 )
 from common.models import (
     AdminLevel1,
@@ -71,10 +72,6 @@ from project.models import (
 from review.models import (
     PartnerFlag,
     PartnerVerification,
-)
-from sanctionslist.models import (
-    SanctionedName,
-    SanctionedNameMatch,
 )
 
 
@@ -126,9 +123,6 @@ def clean_up_data_in_db():
 
         PartnerFlag,
         PartnerVerification,
-
-        SanctionedName,
-        SanctionedNameMatch,
     ]
 
     if not settings.IS_PROD:
@@ -193,11 +187,15 @@ def generate_fake_data(country_count=3):
             for partner_type, display_type in PARTNER_TYPES:
                 if partner_type == PARTNER_TYPES.international:
                     name_parts = ingo_hqs[index].legal_name.split(' ') + [country_code]
+                    hq = ingo_hqs[index]
                     partner_kwargs = {
                         'legal_name': f'{"-".join(name_parts)}.{partner_type}'.lower(),
-                        'hq': ingo_hqs[index]
+                        'hq': hq
                     }
                     ingo_partners_created += 1
+                    if country_code not in hq.country_presence:
+                        hq.country_presence.append(country_code)
+                        hq.save()
                 else:
                     def get_legal_name():
                         name_parts = get_partner_name().split(" ")
@@ -249,7 +247,11 @@ def generate_fake_data(country_count=3):
             print(f'Creating {agency.name} in {country_name}')
             index += 1
             office = AgencyOfficeFactory(country=country_code, agency=agency)
-            for role_name, display_name in AgencyRole.get_choices(agency=agency):
+            roles = AgencyRole.get_choices(agency=agency) + [
+                (AgencyRole.HQ_EDITOR.value, AgencyRole.HQ_EDITOR.name)
+            ]
+
+            for role_name, display_name in roles:
                 user = UserFactory(
                     email=f'agency-{index}-{USERNAME_AGENCY_ROLE_POSTFIXES[role_name]}@{agency.name.lower()}.org',
                     is_superuser=True,
@@ -270,3 +272,5 @@ def generate_fake_data(country_count=3):
             else:
                 focal_point_role = AgencyRole.EDITOR_ADVANCED
             AgencyMemberFactory.create_batch(random.randint(5, 10), office=office, role=focal_point_role.name)
+
+        FinalizedEOIFactory.create_batch(5, agency=agency)

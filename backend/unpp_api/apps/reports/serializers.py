@@ -45,6 +45,7 @@ class ProjectReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = EOI
         fields = (
+            'displayID',
             'id',
             'title',
             'locations',

@@ -11,7 +11,6 @@ import { checkPermission, AGENCY_PERMISSIONS } from '../../../../../helpers/perm
 
 const messages = {
   vendorID: 'Vendor/Partner ID:',
-  area: 'Implementing Business Area:',
   delete: 'Delete',
 };
 
@@ -55,10 +54,6 @@ class PartnerUnDataContent extends Component {
         <div className={classes.center}>
           <Typography type="body2">{messages.vendorID}</Typography>&nbsp;
           <Typography type="body1">{vendorNumber ? vendorNumber.number : '-'}</Typography>
-        </div>
-        <div className={classes.center}>
-          <Typography type="body2">{messages.area}</Typography>&nbsp;
-          <Typography type="body1">{vendorNumber ? vendorNumber.business_area_display : '-'}</Typography>
         </div>
         {vendorNumber && hasVendorPermission && <div className={classes.delete}>
           <DeleteVendorNumber />

@@ -49,7 +49,8 @@ export const editCfeiProcessed = () => ({ type: EDIT_CFEI_PROCESSED });
 const mergeLocations = countries => (acc, next) => {
   if (!R.has('locations', next)) {
     const newNext = R.assoc('locations', [
-      { admin_level_1:
+      {
+        admin_level_1:
         {
           name: countries[next.country],
           country_code: next.country,
@@ -72,6 +73,9 @@ const prepareBody = (body, getState) => {
         0,
         body.countries,
       ).locations, newBody);
+    if (newBody.attachments && R.isNil(newBody.attachments[0].file)) {
+      newBody = R.assoc('attachments', [], newBody);
+    }
   }
   return newBody;
 };
@@ -138,12 +142,14 @@ export const updateCfei = (body, id) => (dispatch, getState) => {
       dispatch(loadCfeiDetailSuccess(cfei));
       if (cfei.direct_selected_partners) {
         cfei.direct_selected_partners.forEach((selectedPartner) => {
-          dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
-            id: selectedPartner.id,
-            application_status: selectedPartner.application_status,
-          },
-          selectedPartner,
-          getState }));
+          dispatch(loadSuccess(APPLICATION_DETAILS, {
+            results: {
+              id: selectedPartner.id,
+              application_status: selectedPartner.application_status,
+            },
+            selectedPartner,
+            getState
+          }));
         });
       }
     }).catch((error) => {
@@ -169,12 +175,14 @@ export const updateDsr = (body, id) => (dispatch, getState) => {
       dispatch(loadCfeiDetailSuccess(cfei));
       if (cfei.direct_selected_partners) {
         cfei.direct_selected_partners.forEach((selectedPartner) => {
-          dispatch(loadSuccess(APPLICATION_DETAILS, { results: {
-            id: selectedPartner.id,
-            application_status: selectedPartner.application_status,
-          },
-          selectedPartner,
-          getState }));
+          dispatch(loadSuccess(APPLICATION_DETAILS, {
+            results: {
+              id: selectedPartner.id,
+              application_status: selectedPartner.application_status,
+            },
+            selectedPartner,
+            getState
+          }));
         });
       }
     }).catch((error) => {

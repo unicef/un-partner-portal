@@ -17,7 +17,7 @@ import Loader from '../../common/loader';
 
 
 const messages = {
-  title: 'Partner Decisions From 5 Past Days',
+  title: 'Partner Decisions From Past 5 Days',
   decisionDate: 'Decision date',
   accepted: 'accepted',
   declined: 'declined',

@@ -45,7 +45,7 @@ const mapStateToProps = (state, ownProps) => {
     clarification: cfei && cfei.clarification_request_deadline_date,
     deadline: cfei && cfei.deadline_date,
     start: cfei && cfei.start_date,
-    posted: cfei && cfei.created,
+    posted: cfei && (cfei.published_timestamp || cfei.created),
     notif: cfei && cfei.notif_results_date,
   };
 };

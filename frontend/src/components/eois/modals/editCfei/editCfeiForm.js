@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+import { reduxForm, formValueSelector } from 'redux-form';
 import PropTypes from 'prop-types';
 import Typography from 'material-ui/Typography';
 import * as fields from '../../../forms/fields/projectFields/commonFields';
@@ -22,7 +22,9 @@ const EditCfeiForm = (props) => {
     clarification_request_deadline_date,
     form,
     focalPointNameArray,
+    attachments,
   } = props;
+
   return (
     <form onSubmit={handleSubmit}>
       <GridColumn>
@@ -36,6 +38,7 @@ const EditCfeiForm = (props) => {
           <fields.StartDate minDate={start_date} />
           <fields.EndDate minDate={deadline_date} />
         </ProjectDetails>
+        <fields.Attachments />
         <Typography type="headline">
           {messages.selectionCriteria}
         </Typography>
@@ -54,6 +57,8 @@ EditCfeiForm.propTypes = {
   focalPointNameArray: PropTypes.array,
 };
 
+const selector = formValueSelector('editCfei');
+
 const mapStateToProps = (state, ownProps) => {
   const cfei = selectCfeiDetails(state, ownProps.id);
   const focalPoints = cfei.focal_points_detail.map(
@@ -62,6 +67,7 @@ const mapStateToProps = (state, ownProps) => {
     item => item.name);
 
   return {
+    attachments: selector(state, 'attachments'),
     initialValues: {
       title: cfei.title,
       specializations: cfei.specializations,
@@ -79,6 +85,7 @@ const mapStateToProps = (state, ownProps) => {
       other_information: cfei.other_information,
       has_weighting: cfei.has_weighting,
       assessments_criteria: cfei.assessments_criteria,
+      attachments: cfei.attachments,
     },
     focalPointNameArray,
   };
