@@ -20,9 +20,10 @@ const styleSheet = (theme) => {
 };
 
 const messages = {
-  certUpload: 'Has the CSO/partner uploaded its valid, non-expired registration certificate issued by the correct government body, or otherwise indicated eligibility to operate in the country?',
-  mmConsistent: 'Are the mandate and mission of the CSO/partner consistent with that of the UN?',
-  indicateResults: 'Does the CSO/partner have mechanisms to combat fraud and corruption, prevent sexual exploitation and abuse, and protect and safeguard beneficiaries?',
+  certUpload: 'Has partner uploaded its valid, non-expired registration certificate issued by the ' +
+  'correct goverment body?',
+  mmConsistent: 'Are the partner\'s mandate and mission consistent with that of the UN?',
+  indicateResults: 'Does the partner have mechanisms to combat fraud and corruption, prevent sexual exploitation and abuse, and protect and safeguard beneficiaries?',
   observationsPose: 'Do these observations pose unacceptable risk to the UN?',
   riskRelated: 'Are there any other risk-related observations associated with the CSO/partner that are not captured in UN Partner Portal, but which pose unacceptable risk to the UN?',
   confirmVerification: 'I certify that the information provided in this verification form is accurate to the best of my knowledge.',
@@ -62,7 +63,7 @@ const verificationQuestions = [
 ];
 
 const AddVerification = (props) => {
-  const { classes, handleSubmit, readOnly, isYellowFlag, notCertUploaded } = props;
+  const { classes, handleSubmit, readOnly } = props;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -72,6 +73,7 @@ const AddVerification = (props) => {
           questionFieldName={verificationQuestions[0].questionFieldName}
           commentFieldName={verificationQuestions[0].commentFieldName}
           readOnly={readOnly}
+          warn
         />
       </GridColumn>
       <GridColumn>
@@ -80,6 +82,7 @@ const AddVerification = (props) => {
           questionFieldName={verificationQuestions[1].questionFieldName}
           commentFieldName={verificationQuestions[1].commentFieldName}
           readOnly={readOnly}
+          warn
         />
       </GridColumn>
       <GridColumn>
@@ -88,6 +91,7 @@ const AddVerification = (props) => {
           questionFieldName={verificationQuestions[2].questionFieldName}
           commentFieldName={verificationQuestions[2].commentFieldName}
           readOnly={readOnly}
+          warn
         />
       </GridColumn>
       <GridColumn>
@@ -97,6 +101,7 @@ const AddVerification = (props) => {
             questionFieldName={verificationQuestions[3].questionFieldName}
             commentFieldName={verificationQuestions[3].commentFieldName}
             readOnly={readOnly}
+            warn
           />
         </ObservationsTable>
       </GridColumn>
@@ -106,6 +111,7 @@ const AddVerification = (props) => {
           questionFieldName={verificationQuestions[4].questionFieldName}
           commentFieldName={verificationQuestions[4].commentFieldName}
           readOnly={readOnly}
+          warn
         />
       </GridColumn>
       <GridColumn>
@@ -128,8 +134,6 @@ AddVerification.propTypes = {
      */
   handleSubmit: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
-  isYellowFlag: PropTypes.bool,
-  notCertUploaded: PropTypes.bool,
 };
 
 const selector = formValueSelector('addVerification');
