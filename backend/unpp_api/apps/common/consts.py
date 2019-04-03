@@ -27,6 +27,7 @@ PARTNER_TYPES = Choices(
 CFEI_TYPES = Choices(
     ('Ope', 'open', 'Open Selection'),
     ('Dir', 'direct', 'Direct Selection / Retention'),
+    ('Ucn', 'unsolicited', 'Unsolicited Concept Note'),
 )
 
 APPLICATION_STATUSES = Choices(

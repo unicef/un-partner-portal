@@ -336,7 +336,11 @@ class AgencyApplicationListAPIView(ListAPIView):
             Q(created_by=self.request.user) | Q(focal_points=self.request.user)
         ).values_list('id', flat=True).distinct()
 
-        return Application.objects.filter(eoi_id__in=valid_eoi_ids)
+        quesryset = Application.objects.filter(
+            Q(eoi_id__in=valid_eoi_ids) | Q(eoi=None)
+        )
+
+        return quesryset
 
 
 class PartnerEOIApplicationCreateAPIView(CreateAPIView):

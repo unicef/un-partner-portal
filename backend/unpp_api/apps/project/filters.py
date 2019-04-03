@@ -121,6 +121,7 @@ class ApplicationsFilter(django_filters.FilterSet):
     did_win = BooleanFilter(widget=BooleanWidget())
     cfei_active = BooleanFilter(method='filter_cfei_active', widget=BooleanWidget())
     eoi = CharFilter(method='filter_eoi_type')
+    agency_app = CharFilter(method='filter_agency_applications')
 
     applications_status = ChoiceFilter(method='filter_applications_status', choices=EXTENDED_APPLICATION_STATUSES)
 
@@ -202,7 +203,13 @@ class ApplicationsFilter(django_filters.FilterSet):
         return queryset.filter(eoi__is_completed=True)
 
     def filter_eoi_type(self, quesryset, name, value):
-        return quesryset.filter(eoi__display_type=value)
+        if value == 'Ucn':
+            return quesryset.filter(is_unsolicited=True)
+        else:
+            return quesryset.filter(eoi__display_type=value)
+
+    def filter_agency_applications(self, quesryset, name, value):
+        return quesryset.filter(agency=value)
 
 
 class ApplicationsEOIFilter(django_filters.FilterSet):

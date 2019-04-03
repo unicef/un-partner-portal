@@ -25,10 +25,10 @@ const saveMembers = (state, action) => {
       cfei_type: item.cfei_type,
       did_win: item.did_win,
       created: item.created,
-      title: R.path(['eoi', 'title'], item),
+      title: R.path(['eoi', 'title'], item) || R.path(['proposal_of_eoi_details', 'title'], item),
       country_code: R.path(['eoi', 'country_code'], item),
       specializations: R.path(['eoi', 'specializations'], item) ? normalizeSingleCfei(item.eoi).specializations : [],
-      name: R.path(['eoi', 'agency', 'name'], item),
+      name: R.path(['eoi', 'agency', 'name'], item) || item.agency.name,
       eoi_id: R.path(['eoi', 'id'], item),
     }), action.response.results);
 
