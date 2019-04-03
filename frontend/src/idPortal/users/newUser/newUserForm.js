@@ -70,7 +70,7 @@ const mapStateToProps = (state, ownProps) => {
     const fullname = user.fullname;
     const email = user.email;
     const office_memberships = R.map(item => R.assoc('office_id', item.office.id,
-      R.assoc('role', item.role, R.assoc('is_role_editable', state.session.officeId === item.office.id || state.session.officeRole === AGENCY_ROLES.HQ_EDITOR , null)))
+      R.assoc('role', item.role, R.assoc('readOnly', state.session.officeId === item.office.id || state.session.officeRole === AGENCY_ROLES.HQ_EDITOR, null)))
       , user.office_memberships);
 
     initialValues = { fullname, email, office_memberships };

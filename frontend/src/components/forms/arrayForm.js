@@ -85,6 +85,7 @@ class RenderArrayMembers extends Component {
       classes.outerPaper,
       { [classes.error]: error },
     );
+    
     return (
       <Paper elevation={0} className={paperClass} >
         {error !== EMPTY_ERROR && error && <FormHelperText className={classes.errorText} error>{error}</FormHelperText>}
@@ -99,7 +100,7 @@ class RenderArrayMembers extends Component {
                     <div className={classes.items}>
                       {outerField(member, index, fields)}
                     </div>
-                    {!disableDeleting && index > 0 && !readOnly && <div className={classes.delete}>
+                    {R.pathOr(true, ['readOnly'], fields.get(index)) && !disableDeleting && index > 0 && !readOnly && <div className={classes.delete}>
                       <IconButton
                         type="button"
                         title="Remove Member"

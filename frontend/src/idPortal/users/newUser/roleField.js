@@ -9,15 +9,16 @@ import {
   selectNormalizedOffices,
   selectNormalizedOfficesFilter
 } from "../../../store";
+import { AGENCY_ROLES } from "../../../helpers/permissions";
 
-const Office = (values, readOnly, officesFilter, id, ...props) => (member, index, fields) => {
+const Office = (role, values, readOnly, officesFilter, id, ...props) => (member, index, fields) => {
   const chosenOffices = fields.getAll().map(field => field.office_id);
   const ownOffice = fields.get(index).office_id;
   let newValues = values.filter(
     value => ownOffice === value.value || !chosenOffices.includes(value.value)
   );
 
-  if (!fields.get(index).is_role_editable && id) {
+  if (!fields.get(index).readOnly && id && role !== AGENCY_ROLES.HQ_EDITOR) {
     newValues = officesFilter.filter(value => ownOffice === value.value);
   }
 
@@ -32,18 +33,21 @@ const Office = (values, readOnly, officesFilter, id, ...props) => (member, index
   );
 };
 
-const Roles = (values, readOnly, id, ...props) => (member, index, fields) => (
-  <SelectForm
+const Roles = (officeId, role, values, readOnly, id, ...props) => (member, index, fields) => {
+  const ownOffice = fields.get(index).office_id;
+  const readOnlyByOffice = role !== AGENCY_ROLES.HQ_EDITOR && ownOffice !== officeId;
+
+  return <SelectForm
     fieldName={`${member}.role`}
     label="Roles"
     values={values}
-    readOnly={readOnly || (!fields.get(index).is_role_editable && id)}
+    readOnly={readOnly || readOnlyByOffice}
     {...props}
   />
-);
+};
 
 const RoleField = props => {
-  const { formName, offices, roleChoices, officesFilter, readOnly, id, ...other } = props;
+  const { officeId, role, formName, offices, roleChoices, officesFilter, readOnly, id, ...other } = props;
 
   return (
     <ArrayForm
@@ -52,8 +56,8 @@ const RoleField = props => {
       initial
       validate={[hasLocations]}
       fieldName="office_memberships"
-      outerField={Office(offices, readOnly, officesFilter, id, formName, ...other)}
-      innerField={Roles(roleChoices, readOnly, id, ...other)}
+      outerField={Office(role, offices, readOnly, officesFilter, id, formName, ...other)}
+      innerField={Roles(officeId, role, roleChoices, readOnly, id, ...other)}
       {...other}
     />
   );
@@ -71,5 +75,7 @@ RoleField.propTypes = {
 export default connect((state) => ({
   roleChoices: selectNormalizedRoleChoices(state),
   offices: selectNormalizedOffices(state),
-  officesFilter: selectNormalizedOfficesFilter(state)
+  officesFilter: selectNormalizedOfficesFilter(state),
+  role: state.session.officeRole,
+  officeId: state.session.officeId,
 }))(RoleField);
