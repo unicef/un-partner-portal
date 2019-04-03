@@ -66,12 +66,12 @@ class PartnerApplicationListFilter extends Component {
   componentWillMount() {
     const { pathName, query, agencyId } = this.props;
 
-    const agency = this.props.query.agency ? this.props.query.agency : agencyId;
+    const agency = this.props.query.agency_app ? this.props.query.agency_app : agencyId;
 
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { agency },
+        { agency_app: agency },
       ),
     });
   }
@@ -79,12 +79,12 @@ class PartnerApplicationListFilter extends Component {
   componentWillReceiveProps(nextProps) {
     if (R.isEmpty(nextProps.query)) {
       const { pathname } = nextProps.location;
-      const agencyQ = R.is(Number, this.props.query.agency) ? this.props.query.agency : this.props.agencyId;
+      const agencyQ = R.is(Number, this.props.query.agency_app) ? this.props.query.agency_app : this.props.agencyId;
 
       history.push({
         pathname,
         query: R.merge(this.props.query,
-          { agency: agencyQ },
+          { agency_app: agencyQ },
         ),
       });
     }
@@ -93,15 +93,15 @@ class PartnerApplicationListFilter extends Component {
   onSearch(values) {
     const { pathName, query } = this.props;
 
-    const { project_title, agency, did_win, country_code, specializations, eoi } = values;
-    const agencyQ = R.is(Number, agency) ? agency : this.props.agencyId;
+    const { project_title, agency_app, did_win, country_code, specializations, eoi } = values;
+    const agencyQ = R.is(Number, agency_app) ? agency_app : this.props.agencyId;
 
     history.push({
       pathname: pathName,
       query: R.merge(query, {
         page: 1,
         project_title,
-        agency: agencyQ,
+        agency_app: agencyQ,
         did_win,
         country_code,
         specializations: Array.isArray(specializations) ? specializations.join(',') : specializations,
@@ -118,7 +118,7 @@ class PartnerApplicationListFilter extends Component {
     history.push({
       pathname: pathName,
       query: R.merge(query,
-        { agency: agencyId },
+        { agency_app: agencyId },
       ),
     });
   }
@@ -170,7 +170,7 @@ class PartnerApplicationListFilter extends Component {
             </Grid>
             <Grid item sm={3} xs={12}>
               <Agencies
-                fieldName="agency"
+                fieldName="agency_app"
                 label={messages.labels.agency}
                 placeholder={messages.choose}
                 optional
@@ -227,12 +227,12 @@ const formEoiFilter = reduxForm({
 const mapStateToProps = (state, ownProps) => {
   const { query: { project_title } = {} } = ownProps.location;
   const { query: { country_code } = {} } = ownProps.location;
-  const { query: { agency } = {} } = ownProps.location;
+  const { query: { agency_app } = {} } = ownProps.location;
   const { query: { did_win } = {} } = ownProps.location;
   const { query: { specializations } = {} } = ownProps.location;
   const { query: { eoi } = {} } = ownProps.location;
 
-  const agencyQ = Number(agency);
+  const agencyQ = Number(agency_app);
 
   const specializationsQ = specializations &&
       R.map(Number, specializations.split(','));
@@ -248,7 +248,7 @@ const mapStateToProps = (state, ownProps) => {
     initialValues: {
       project_title,
       country_code,
-      agency: agencyQ,
+      agency_app: agencyQ,
       did_win,
       specializations: specializationsQ,
       eoi,
