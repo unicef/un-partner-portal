@@ -78,6 +78,7 @@ AGENCY_ROLE_PERMISSIONS = {
         AgencyPermission.CSO_LIST_AND_DETAIL_VIEW,
         AgencyPermission.CFEI_VIEW,
         AgencyPermission.CFEI_FINALIZED_VIEW_WINNER_AND_CN,
+        AgencyPermission.CFEI_VIEW_APPLICATIONS,
         AgencyPermission.REVIEW_AND_MARK_SANCTIONS_MATCHES,
         AgencyPermission.VERIFY_INGO_HQ,
         AgencyPermission.VERIFY_CSOS_GLOBALLY,
