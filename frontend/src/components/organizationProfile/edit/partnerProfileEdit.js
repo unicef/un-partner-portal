@@ -35,6 +35,12 @@ class PartnerProfileEdit extends Component {
     this.partnerProfileTabs = this.partnerProfileTabs.bind(this);
   }
 
+  componentWillMount() {
+    const { partnerId } = this.props;
+
+    this.props.loadPartnerDetails(partnerId);
+  }
+
   componentDidMount() {
     if (!this.props.partnerProfile.identification) {
       this.props.loadPartnerDetails();

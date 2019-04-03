@@ -61,7 +61,15 @@ class PartnerSwitch extends Component {
 
     this.onClose();
 
-    const loc = history.getCurrentLocation();
+    const loc = history.getCurrentLocation(); 
+
+    if (R.contains('profile',loc.pathname)) {
+      const splitPath = R.split('/', loc.pathname); 
+      splitPath[2] = partner.id;
+
+      loc.pathname = splitPath.join('/');
+    }
+    
     startRefresh();
     history.push('/');
 

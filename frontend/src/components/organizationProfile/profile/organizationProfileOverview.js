@@ -15,6 +15,7 @@ import PartnerProfileOtherInfo from '../edit/otherInfo/partnerProfileOtherInfo';
 import { loadPartnerDetails } from '../../../reducers/partnerProfileDetails';
 import { changeTab } from '../../../reducers/partnerProfileEdit';
 import { checkPermission, PARTNER_PERMISSIONS } from '../../../helpers/permissions';
+import Loader from '../../../components/common/loader';
 
 const FIRST_INDEX = 0;
 
@@ -71,7 +72,7 @@ class OrganizationProfileOverview extends Component {
 
 
   render() {
-    const { completion, hq, hasEditHqProfilePermission, hasEditProfilePermission } = this.props;
+    const { completion, partnerLoading, hq, hasEditHqProfilePermission, hasEditProfilePermission } = this.props;
 
     return (
       <React.Fragment>
@@ -94,6 +95,7 @@ class OrganizationProfileOverview extends Component {
           </div>
           ))
         }
+        <Loader loading={partnerLoading} fullscreen />
       </React.Fragment>
     );
   }
@@ -107,6 +109,7 @@ OrganizationProfileOverview.propTypes = {
   hq: PropTypes.number,
   hasEditHqProfilePermission: PropTypes.bool,
   hasEditProfilePermission: PropTypes.bool,
+  partnerLoading: PropTypes.bool,
 };
 
 const mapDispatch = dispatch => ({
@@ -115,6 +118,7 @@ const mapDispatch = dispatch => ({
 });
 
 const mapStateToProps = state => ({
+  partnerLoading: state.partnerProfileDetails.detailsStatus.loading,
   completion: state.partnerProfileDetails.partnerProfileDetails.completion,
   hasEditProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_PROFILE, state),
   hasEditHqProfilePermission: checkPermission(PARTNER_PERMISSIONS.EDIT_HQ_PROFILE, state),
