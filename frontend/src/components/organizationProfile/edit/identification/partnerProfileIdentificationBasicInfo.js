@@ -3,12 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { FormSection, formValueSelector } from 'redux-form';
-import Grid from 'material-ui/Grid';
 import { connect } from 'react-redux';
 import SelectForm from '../../../forms/selectForm';
 import TextFieldForm from '../../../forms/textFieldForm';
 import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
 import { selectNormalizedOrganizationTypes } from '../../../../store';
+import GridColumn from '../../../common/grid/gridColumn';
 
 const messages = {
   legalName: 'Organization\'s Legal Name',
@@ -26,48 +26,37 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
 
   return (
     <FormSection name="basic">
-      <Grid item>
-        <Grid container direction="column" spacing={16}>
+      <GridColumn>
           <TextFieldForm
             label={messages.legalName}
             fieldName="legal_name"
             warn
             optional
-            readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
-          />
-          <Grid item sm={6} xs={12}>
+            readOnly={isReadOnly(isCountryProfile, displayType, readOnly)} />
             <TextFieldForm
               label={messages.alias}
               fieldName="alias_name"
               optional
               readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
-            />
-          </Grid>
-          <Grid item sm={6} xs={12}>
+            /> 
             <TextFieldForm
               label={messages.acronym}
               fieldName="acronym"
               optional
               readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
-            />
-          </Grid>
-          <Grid item sm={6} xs={12}>
+            /> 
             <TextFieldForm
               label={messages.formerLegalName}
               fieldName="former_legal_name"
               optional
               readOnly={isReadOnly(isCountryProfile, displayType, readOnly)}
-            />
-          </Grid>
-          <Grid item sm={6} xs={12}>
+            /> 
             <CountryField
               label={messages.countryOrigin}
               fieldName="country_code_origin"
               initialValue={countryCode}
               readOnly
-            />
-          </Grid>
-          <Grid item sm={6} xs={12}>
+            /> 
             <SelectForm
               fieldName="display_type"
               label={messages.organizationType}
@@ -75,10 +64,7 @@ const PartnerProfileIdentificationBasicInfo = (props) => {
               optional
               warn
               readOnly
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+            /></GridColumn>
     </FormSection>
   );
 };

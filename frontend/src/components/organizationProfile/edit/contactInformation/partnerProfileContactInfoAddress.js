@@ -8,6 +8,8 @@ import TextFieldForm from '../../../forms/textFieldForm';
 import CountryField from '../../../forms/fields/projectFields/locationField/countryField';
 import { selectNormalizedCountries } from '../../../../store';
 import { url, email, phoneNumber } from '../../../../helpers/validation';
+import GridColumn from '../../../common/grid/gridColumn';
+import GridRow from '../../../common/grid/gridRow';
 
 const messages = {
   mailingType: 'Type of mailing address',
@@ -40,41 +42,32 @@ const isStreetAddress = type => type && type === MAILING_TYPE_VALUES[0].value;
 const PartnerProfileContactInfoAddress = (props) => {
   const { readOnly, country, countries, mailingType } = props;
 
-  return (<FormSection name="address">
-    <Grid item>
-      <Grid container direction="column" spacing={16}>
-        <Grid item sm={6} xs={12}>
-          <RadioForm
-            fieldName="mailing_type"
-            label={messages.mailingType}
-            values={MAILING_TYPE_VALUES}
-            renderTextSelection
-            warn
-            optional
-            readOnly={readOnly}
-          />
-        </Grid>
-        <Grid item>
-          <Grid container direction="row">
-            <Grid item sm={3} xs={12}>
+  return (<FormSection name="address"> 
+      <GridColumn>
+      <RadioForm
+        fieldName="mailing_type"
+        label={messages.mailingType}
+        values={MAILING_TYPE_VALUES}
+        renderTextSelection
+        warn
+        optional
+        readOnly={readOnly}
+      /> 
+         <GridRow columns={4}>
               <TextFieldForm
                 label={isStreetAddress(mailingType) ? messages.streetAddress : messages.poBoxNumber}
                 fieldName="street"
                 warn
                 optional
                 readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={3} xs={12}>
+              /> 
               <TextFieldForm
                 label={messages.city}
                 fieldName="city"
                 warn
                 optional
                 readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={3} xs={12}>
+              /> 
               <CountryField
                 label={messages.country}
                 fieldName="country"
@@ -83,19 +76,15 @@ const PartnerProfileContactInfoAddress = (props) => {
                 warn
                 optional
                 readOnly={readOnly}
-              />
-            </Grid>
-            <Grid item sm={3} xs={12}>
+              /> 
               <TextFieldForm
                 label={messages.zipCode}
                 fieldName="zip_code"
                 optional
                 readOnly={readOnly}
               />
-            </Grid>
-            <Grid item sm={12} xs={12}>
-              <Grid container direction="row">
-                <Grid item sm={3} xs={12}>
+            </GridRow>
+            <GridRow columns={4}>
                   <TextFieldForm
                     label={messages.telephone}
                     fieldName="mailing_telephone"
@@ -104,16 +93,14 @@ const PartnerProfileContactInfoAddress = (props) => {
                     readOnly={readOnly}
                     validation={[phoneNumber]}
                   />
-                </Grid>
-                <Grid item sm={3} xs={12}>
+                
                   <TextFieldForm
                     label={messages.fax}
                     fieldName="mailing_fax"
                     optional
                     readOnly={readOnly}
                   />
-                </Grid>
-                <Grid item sm={3} xs={12}>
+                
                   <TextFieldForm
                     label={messages.website}
                     fieldName="website"
@@ -121,8 +108,7 @@ const PartnerProfileContactInfoAddress = (props) => {
                     optional
                     readOnly={readOnly}
                   />
-                </Grid>
-                <Grid item sm={3} xs={12}>
+               
                   <TextFieldForm
                     label={messages.organizationEmail}
                     fieldName="org_email"
@@ -133,13 +119,8 @@ const PartnerProfileContactInfoAddress = (props) => {
                       "type": "email"
                     }}
                   />
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
+                </GridRow>  
+            </GridColumn>
   </FormSection>);
 };
 

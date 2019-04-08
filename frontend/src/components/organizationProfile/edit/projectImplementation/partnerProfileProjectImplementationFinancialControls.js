@@ -24,7 +24,7 @@ const PartnerProfileProjectImplementationFinancialControls = (props) => {
   return (
     <FormSection name="financial_controls">
       <Grid container direction="column">
-        <Grid item sm={6} xs={12}>
+        <Grid item>
           <SelectForm
             fieldName="org_acc_system"
             label={messages.accountingSystem}
