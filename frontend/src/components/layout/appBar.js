@@ -23,17 +23,24 @@ const styleSheet = theme => ({
     [theme.breakpoints.down('xs')]: {
       width: '100%',
     },
+    position: 'fixed',
+    height: '70px',
     width: theme.spacing.unit * 28,
     justifyContent: 'center',
-    zIndex: 1,
+    zIndex: 1001,
     backgroundColor: theme.palette.secondary[500],
   },
   rightHeader: {
     flexShrink: 1,
+    height: '70px',
+    marginLeft: theme.spacing.unit * 28,
     // dark blue color added as extra to regular palette
     // backgroundColor: theme.palette.primary.strong,
     backgroundColor: '#FF0000',
+    position: 'fixed',
     '-ms-grid-column': 2,
+    zIndex: 1000,
+    width: `calc(100% - ${theme.spacing.unit * 28}px)`,
   },
   iconBox: {
     width: 48,
