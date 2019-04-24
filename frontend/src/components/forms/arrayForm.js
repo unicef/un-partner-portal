@@ -100,7 +100,7 @@ class RenderArrayMembers extends Component {
                     <div className={classes.items}>
                       {outerField(member, index, fields)}
                     </div>
-                    {R.pathOr(true, ['readOnly'], fields.get(index)) && !disableDeleting && index > 0 && !readOnly && <div className={classes.delete}>
+                    {R.pathOr(true, ['readOnly'], fields.get(index)) && !disableDeleting && (index > 0 || fields.length > 1) && !readOnly && <div className={classes.delete}>
                       <IconButton
                         type="button"
                         title="Remove Member"
