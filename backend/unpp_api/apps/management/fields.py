@@ -13,7 +13,9 @@ class CurrentAgencyFilteredPKField(serializers.PrimaryKeyRelatedField):
             queryset = queryset.filter(agency=request.user.agency)
             if not request.agency_member.role == AgencyRole.HQ_EDITOR.name:
                 # Only HQ_EDITOR users can assign users freely between all offices
-                queryset = queryset.filter(agency_members__user=request.user)
+                # frontend send in PATCH request all offices and it get error
+                # queryset = queryset.filter(agency_members__user=request.user)
+                pass
             return queryset
 
         return queryset.none()
