@@ -226,7 +226,7 @@ class PartnerInfoContainer extends Component {
             items={items}
             columns={columns}
             loading={loading}
-            componentHeaderAction={<HeaderActions checked={items.length === selectionIds.length} listRef={this.listRef} />}
+            componentHeaderAction={<HeaderActions listRef={this.listRef} />}
             hideList={R.isEmpty(queryParams)}
             itemsCount={totalCount}
             templateCell={this.tableCell}
