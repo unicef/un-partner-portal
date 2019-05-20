@@ -122,7 +122,7 @@ class CfeiManagementContainer extends Component {
             columns={columns}
             loading={loading}
             hideList={R.isEmpty(queryParams)}
-            componentHeaderAction={<HeaderActions listRef={this.listRef} />}
+            componentHeaderAction={<HeaderActions checked={items.length === selectionIds.length} listRef={this.listRef} />}
             itemsCount={totalCount}
             templateCell={this.tableCell}
           />
