@@ -41,7 +41,7 @@
     "material-ui": "v1.0.0-beta.25",
     "material-ui-icons": "^1.0.0-beta.17",
     "material-ui-old": "npm:material-ui",
-    "moment": "~2.22.2",
+    "moment": "~2.29.4",
     "moment-timezone": "0.5.17",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
